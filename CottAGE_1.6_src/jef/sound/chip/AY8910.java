@@ -119,7 +119,7 @@ public class AY8910 extends SoundChip implements SoundChipEmulator {
  */
 	public AY8910(int numChips, int clock) {
 		this.num = numChips;
-		this.baseClock = clock;
+		AY8910.baseClock = clock;
 	}
 
 /**

@@ -294,7 +294,7 @@ public class BasicMachine implements Machine {
 		boolean rendered = false;
 
 		int curCycle = 0;
-		int cpf = cd[0].frq / md.fps;
+		//int cpf = cd[0].frq / md.fps;
 
 		//System.out.println("***FRAME***");
 

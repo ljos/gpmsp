@@ -293,7 +293,7 @@ public class Pacman extends MAMEDriver implements Driver, MAMEConstants {
 			GAME(1985, rom_lizwiz(), 	ipt_lizwiz(), 	v.pacman(), ROT90, "Techstar (Sunn license)", "Lizard Wizard" );
 
 		} else if (name.equals("theglob")) {
-			m.fastBoard = false;	// decrypting is done at runtime
+			cottage.machine.Pacman.fastBoard = false;	// decrypting is done at runtime
 			this.md = machine_driver_theglob();
 			GAME(1980, rom_theglob(), 	ipt_theglob(), 	v.pacman(), ROT90, "Epos Corporation", "The Glob" );
 

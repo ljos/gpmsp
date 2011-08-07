@@ -71,8 +71,8 @@ public class SN76496 extends SoundChip implements SoundChipEmulator {
 	private static final int NG_PRESET = 0x0f35;
 
 	private int gain = 16;
-	private int Channel;
-	private int SampleRate;
+//	private int Channel;
+//	private int SampleRate;
 	private int UpdateStep;
 	private int[] VolTable = new int[16];	// volume table
 	private int[] Register = new int[8];	// registers
@@ -85,7 +85,7 @@ public class SN76496 extends SoundChip implements SoundChipEmulator {
 	private int[] Output = new int[4];
 	int vol[] = new int[4];
 	
-	private boolean changed = false;
+//	private boolean changed = false;
 
 /**
  * Constructor

@@ -154,7 +154,7 @@ public final class RomLoader {
 
 /* Request to read a file to memory (with CRC check) */
  public final void continueROM(int StoreAt, int Length) {
-	String name;
+//	String name;
 	int i;
 
 	/* Store needed info */
@@ -299,7 +299,7 @@ public final class RomLoader {
 	 ZipEntry ze;
 	 byte[] buffer;
 	 int i,j;
-	 String zipName;
+//	 String zipName;
 	 int length;
 	 int nreadbytes;
 	 int nbytes;
@@ -351,7 +351,7 @@ public final class RomLoader {
 			return;
 		}
 
-		zipName = ze.getName().toLowerCase();
+//		zipName = ze.getName().toLowerCase();
 	   	//System.out.println("ZE : " + ze.getName() + "," + Long.toHexString(ze.getCrc()));
 		for(i=0; i<this.romlist_index; i++) {
 			//if ((!this.romlist_loaded[i]) && (ze.getCrc() == (long)this.romlist_crc[i]) ) {

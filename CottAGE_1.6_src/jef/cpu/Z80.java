@@ -55,7 +55,7 @@ public final class Z80 implements Cpu, Z80debug
  private CpuBoard ram;
 // states
  public boolean state_HALT = false;
- private boolean state_INIT = false;
+// private boolean state_INIT = false;
 // interrupt
  public  int 	 IM 	= 0; 	// interrupt mode
  public  boolean IFF0 	= false; // IRQ interrupt flip-flop
@@ -63,7 +63,7 @@ public final class Z80 implements Cpu, Z80debug
  public  int 	 I_Vector = 0;
  public  boolean IRQ 	= false; // interrupt request
  public  boolean NMI 	= false; // Non-maskable interrupt
- private boolean goingToirq = false;// used to execute 1 more instruction after an irq
+// private boolean goingToirq = false;// used to execute 1 more instruction after an irq
 // Current cycle of execution
  public int cycle = 0;
 // Currently executed instruction
@@ -1089,7 +1089,7 @@ public final class Z80 implements Cpu, Z80debug
 
 /** $DD and $FD prefix opcodes (index instructions) */
  private final int execXY(int XY) {
-	int tmp1, tmp2, tmp3;
+	int tmp1, tmp2;// tmp3;
 	instruction = (instruction << 8) + ram.read8opc(PC++);
 	IXYd = (XY + sign(ram.read8arg(PC))) & 0xffff;
 	switch (instruction&0xff) {
@@ -1856,7 +1856,7 @@ public final class Z80 implements Cpu, Z80debug
  private final void halt() {
 	 cycle -= 4;
 	 state_HALT = true;
-	 goingToirq = false;
+	// goingToirq = false;
 	 PC--;
 	 cycle = 0;
  }
@@ -2299,7 +2299,7 @@ public final class Z80 implements Cpu, Z80debug
  private final void ei() {
 	 cycle -= 4;
 	 IFF0 = IFF1 = true;
-	 goingToirq = true;
+//	 goingToirq = true;
 	 cycle = checkInterrupt(cycle);
  }
 
@@ -2336,10 +2336,10 @@ public final class Z80 implements Cpu, Z80debug
 	 return ram.read8(HL());
  }
 
- private final void AF(int nn) {
+ /*private final void AF(int nn) {
 	 A = nn >> 8;
 	 F = nn & 0xff;
- }
+ } */
  private final void BC(int nn) {
 	 B = nn >> 8;
 	 C = nn & 0xff;

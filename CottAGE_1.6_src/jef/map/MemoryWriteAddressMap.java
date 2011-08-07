@@ -19,7 +19,7 @@ import java.util.Map;
 public class MemoryWriteAddressMap implements WriteMap {
 
     private int[] mem;
-    private Map map = new HashMap();
+    private Map<Integer, WriteHandler> map = new HashMap<Integer, WriteHandler>();
     private WriteHandler    RAM = new RAMwrite();
     private WriteHandler    ROM = new ROMwrite();
     private MEMWriteBanked   BANKS[] = new MEMWriteBanked[8];

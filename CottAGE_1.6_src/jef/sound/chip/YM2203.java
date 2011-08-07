@@ -47,7 +47,6 @@ public class YM2203 extends SoundChip implements SoundChipEmulator, FMConstants 
 	public static int[] ENV_CURVE = new int[3*EG_ENT+1];
 	public static int[] DRAR_TABLE = new int[EG_ENT];
 	
-	private static YM2203_f cur_chip;
 	private static FMState  State;			/* basic status */
 	private static FMChan[]  cch = new FMChan[8];			/* pointer of FM channels */
 	
@@ -321,9 +320,6 @@ public class YM2203 extends SoundChip implements SoundChipEmulator, FMConstants 
 		YM2203_f F2203 = (FM2203[num]);
 		FMOpn OPN =   (FM2203[num].OPN);
 		int i;
-		FMChan ch;
-
-		cur_chip = F2203;
 		State = F2203.OPN.ST;
 		cch[0]   = F2203.CH[0];
 		cch[1]   = F2203.CH[1];

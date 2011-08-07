@@ -224,7 +224,7 @@ public class Pacman extends BasicMachine implements Machine {
 		}
 
 		public int irq() {
-			if (m.irqEnabled) {
+			if (Pacman.irqEnabled) {
 				return jef.cpu.Cpu.INTERRUPT_TYPE_NMI;	// nmi
 			} else {
 				return jef.cpu.Cpu.INTERRUPT_TYPE_IGNORE;	// ignore interrupt
@@ -240,7 +240,7 @@ public class Pacman extends BasicMachine implements Machine {
 		}
 
 		public int irq() {
-			if (m.irqEnabled) {
+			if (Pacman.irqEnabled) {
 				return jef.cpu.Cpu.INTERRUPT_TYPE_IRQ;	// irq
 			} else {
 				return jef.cpu.Cpu.INTERRUPT_TYPE_IGNORE;	// ignore interrupt
@@ -256,7 +256,7 @@ public class Pacman extends BasicMachine implements Machine {
 		}
 
 		public void write(int address, int value) {
-			m.irqEnabled = (value != 0);
+			Pacman.irqEnabled = (value != 0);
 		}
 	}
 
@@ -284,7 +284,7 @@ public class Pacman extends BasicMachine implements Machine {
 	public class HiScore implements WriteHandler {
 		
 		/** Offset in memory of the lsb of the score */
-		private static final int OFFSET_SCORE = 0x43f7;
+//		private static final int OFFSET_SCORE = 0x43f7;
 		
 		/** Offset in memory of the lsb of the high score */
 		private static final int OFFSET_HIGH_SCORE = 0x43ed;

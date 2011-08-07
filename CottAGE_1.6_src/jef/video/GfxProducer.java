@@ -13,6 +13,11 @@ import java.awt.image.ImageProducer;
 public abstract class GfxProducer 	extends 	java.applet.Applet
 									implements  Runnable, ImageProducer {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9154718342186756092L;
+	
 	// data
     int _width;
     int _height;
