@@ -6,12 +6,17 @@ import java.awt.event.KeyEvent;
 import java.net.URL;
 
 import jef.machine.Machine;
-import jef.video.BitMap;
+//import jef.video.BitMap;
 import jef.video.GfxProducer;
 import jef.util.Throttle;
 
 public class Cottage extends GfxProducer {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8867847222040282809L;
+	
 	public static final String VERSION = "1.0 beta";
 	public static final String RELEASE_DATE = "20-10-2005";
 
@@ -158,7 +163,7 @@ public class Cottage extends GfxProducer {
 
         System.out.println("Running...");
 
-        Throttle.init(m.getProperty(m.FPS), getThread());
+        Throttle.init(m.getProperty(Machine.FPS), getThread());
 
         while(true) {
 			if(!paused) {
@@ -168,11 +173,11 @@ public class Cottage extends GfxProducer {
         }
     }
 
-    private final int dimColor(int col) {
+ /*   private final int dimColor(int col) {
 		return (col>>1) & 0x7F7F7F;
-    }
+    } */
 
-    private int[] getDisplay(BitMap bm) {
+/*    private int[] getDisplay(BitMap bm) {
     	int[] pix = bm.getPixels();
         if(!doubled && !scale2x) {
             if(paused) {
@@ -198,7 +203,7 @@ public class Cottage extends GfxProducer {
 		}
 		
         return pixel;
-    }
+    } */
 
     public void postPaint(Graphics g) {
         if (paused) {

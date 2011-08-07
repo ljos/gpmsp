@@ -38,7 +38,7 @@ package jef.map;
  * MemoryReadAddress.java */
 public class MemoryReadAddress implements ReadMap {
 
-	private int			size;
+//	private int			size;
 	private ReadHandler	readMap[];
 	private UndefinedRead   defread  = new UndefinedRead();
 
@@ -48,7 +48,7 @@ public class MemoryReadAddress implements ReadMap {
 	public int[]		mem;
 	static final boolean debug = false;
     
-    private int opcodeOffset = 0;
+ //   private int opcodeOffset = 0;
 
 	public MemoryReadAddress(int[] mem) {
 		this.mem = mem;

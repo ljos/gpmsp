@@ -1917,20 +1917,20 @@ public class CPU6809 implements CPU6809Const, Cpu
               readByte(SWI_VECTOR_LO);
 
   }
-  private void swi2()
+ /* private void swi2()
   { flagE = true;
     pull_push8BitBase(false, true, 0xff); //push everything in S
     tCycle += 12;
     pc = (readByte(SWI2_VECTOR_HI) << 8) |
               readByte(SWI2_VECTOR_LO);
-  }
+  } 
   private void swi3()
   { flagE = true;
     pull_push8BitBase(false, true, 0xff); //push everything in S
     tCycle += 12;
     pc = (readByte(SWI3_VECTOR_HI) << 8) |
               readByte(SWI3_VECTOR_LO);
-  }
+  } */
 
   // done - not checked
   private void sync()

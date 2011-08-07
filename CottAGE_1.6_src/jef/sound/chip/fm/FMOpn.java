@@ -13,7 +13,7 @@ import jef.sound.chip.YM2203;
 public class FMOpn implements FMConstants {
 	public static final int TYPE_YM2203 = 0;
 
-	private static final double freq_table[] = { 3.98, 5.56, 6.02, 6.37, 6.88, 9.63, 48.1, 72.2 };
+//	private static final double freq_table[] = { 3.98, 5.56, 6.02, 6.37, 6.88, 9.63, 48.1, 72.2 };
 	
 	public int type; /* chip type */
 	public FMState ST; /* general state */

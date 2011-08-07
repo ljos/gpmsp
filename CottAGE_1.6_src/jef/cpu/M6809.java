@@ -1917,7 +1917,7 @@ public class M6809 implements M6809Const, Cpu
               readByte(SWI_VECTOR_LO);
 
   }
-  private void swi2()
+/*  private void swi2()
   { flagE = true;
     pull_push8BitBase(false, true, 0xff); //push everything in S
     tCycle += 12;
@@ -1930,7 +1930,7 @@ public class M6809 implements M6809Const, Cpu
     tCycle += 12;
     pc = (readByte(SWI3_VECTOR_HI) << 8) |
               readByte(SWI3_VECTOR_LO);
-  }
+  } */
 
   // done - not checked
   private void sync()

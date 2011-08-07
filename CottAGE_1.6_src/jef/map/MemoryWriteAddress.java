@@ -38,7 +38,7 @@ package jef.map;
  * MemoryWriteAddress.java */
 public class MemoryWriteAddress implements WriteMap {
 
-	private int			size;
+//	private int			size;
 	public WriteHandler 	writeMap[];
 	private UndefinedWrite  defwrite  = new UndefinedWrite();
 	private WriteHandler	RAM;
@@ -57,7 +57,7 @@ public class MemoryWriteAddress implements WriteMap {
 	}
 
 	public MemoryWriteAddress(int size) {
-		this.size = size;
+	//	this.size = size;
 		this.writeMap = new WriteHandler[size];
 		set(0, size-1, (WriteHandler)defwrite);
 	}

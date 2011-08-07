@@ -82,8 +82,8 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 	private SoundChipEmulator[] soundChips = new SoundChipEmulator[8];
 	private int snd_count = 0;
 
-	private String GAMEmanufacturer = "";
-	private String GAMEname = "";
+//	private String GAMEmanufacturer = "";
+//	private String GAMEname = "";
 
 	private String DriverName = "";
 

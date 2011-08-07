@@ -33,7 +33,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 package jef.cpu;
 
 
-import java.io.*;
+//import java.io.*;
 import jef.cpuboard.CpuBoard;
 
 /**
@@ -52,7 +52,7 @@ public final class I8080 implements Cpu
  private CpuBoard ram;
 // states
  public boolean state_HALT = false;
- private boolean state_INIT = false;
+// private boolean state_INIT = false;
 // interrupt
  public  int 	 IM 	= 0; 	// interrupt mode
  public  boolean IFF0 	= false; // IRQ interrupt flip-flop
@@ -79,12 +79,12 @@ public final class I8080 implements Cpu
  public  boolean debugDisabled;
  public  boolean debugSelectMemEqVal = false; // Memory Location = value
  public  boolean debugSelectStart = false; 	// if true, debugFrom is a breakpoint
- private DataOutputStream log;
- private DataInputStream opcodeReader;
- private String[] opcodes1;
- private String[] opcodes2;
- private String[] opcodes3;
- private int opcgroup;
+// private DataOutputStream log;
+// private DataInputStream opcodeReader;
+// private String[] opcodes1;
+// private String[] opcodes2;
+// private String[] opcodes3;
+// private int opcgroup;
  public int error=0; 			// holds an unknown instruction opcode if one is encountered
 // flag tables
  private static final boolean parity[] 	= new boolean[256];
@@ -94,7 +94,7 @@ public final class I8080 implements Cpu
  private static final int SZHV_dec[] 	= new int[256];
  private static final int SZHVC_add[] 	= new int[2*256*256];
  private static final int SZHVC_sub[] 	= new int[2*256*256];
- private static final int INTERRUPT_IRQ = 0;
+// private static final int INTERRUPT_IRQ = 0;
  private static final int INTERRUPT_NMI = 1;
 
  private String tag;

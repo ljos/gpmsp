@@ -137,7 +137,7 @@ public final class BitMapImpl implements BitMap {
 	 * 	 * @param bm	 * @param x	 * @param y	 * @param fx	 * @param fy	 */
 	public final void toBitMap(BitMap bm, int x, int y, boolean fx, boolean fy) {
 
-		int c, index, iix, iiy;
+		int c, iix, iiy;
 
 		for (int iy = 0; iy < h; iy ++) {
 			iiy = fy? (h1-iy)*w : iy*w;
@@ -155,7 +155,7 @@ public final class BitMapImpl implements BitMap {
 	 * 	 * @param bm	 * @param x	 * @param y	 * @param fx	 * @param fy	 * @param overwriteTransparency	 */
 	public final void toBitMap(BitMap bm, int x, int y, boolean fx, boolean fy, boolean overwriteTransparency) {
 
-		int c, index, iix, iiy;
+		int c, iix, iiy;
 
 		int maxx = w;
 		if ((maxx + x) > bm.getWidth()) {
@@ -357,18 +357,13 @@ public final class BitMapImpl implements BitMap {
 				for (int y = 1; y < dy - 1; y++) {
 					for (int x = 1; x < dx - 1; x++) {
 						int E0,E1,E2,E3;
-						int A,B,C,D,E,F,G,H,I;
+						int B,D,E,F,H;
 
-						A = pixels[srcofs-dx-1];
 						B = pixels[srcofs-dx];
-						C = pixels[srcofs-dx+1];
 						D = pixels[srcofs-1];
 						E = pixels[srcofs];
 						F = pixels[srcofs+1];
-						G = pixels[srcofs+dx-1];
 						H = pixels[srcofs+dx];
-						I = pixels[srcofs+dx+1];
-	
 						E0 = D == B && B != F && D != H ? D : E;
 						E1 = B == F && B != D && F != H ? F : E;
 						E2 = D == H && D != B && H != F ? D : E;

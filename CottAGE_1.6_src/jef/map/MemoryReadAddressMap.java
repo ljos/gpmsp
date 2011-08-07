@@ -17,7 +17,7 @@ import java.util.Map;
 public class MemoryReadAddressMap implements ReadMap {
     
     int[] mem;
-    Map map = new HashMap(0x100);
+    Map<Integer, ReadHandler> map = new HashMap<Integer, ReadHandler>(0x100);
     
     MEMreadBanked    BANKS[] = new MEMreadBanked[8];
     ReadHandler memRead = new MEMRead();

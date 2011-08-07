@@ -13,6 +13,7 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
+import javax.sound.sampled.DataLine.Info;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
@@ -26,14 +27,14 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  */
 public class SamplePlayer {
 
-	private javax.sound.sampled.Line.Info lineInfo;
+//	private javax.sound.sampled.Line.Info lineInfo;
 
-	private Vector afs = new Vector();
-	private Vector sizes = new Vector();
-	private Vector infos = new Vector();
-	private Vector audios = new Vector();
-	private Vector urls = new Vector();
-	private Vector clips = new Vector();
+	private Vector<AudioFormat> afs = new Vector<AudioFormat>();
+	private Vector<Integer> sizes = new Vector<Integer>();
+	private Vector<Info> infos = new Vector<Info>();
+	private Vector<byte[]> audios = new Vector<byte[]>();
+	private Vector<String> urls = new Vector<String>();
+	private Vector<Clip> clips = new Vector<Clip>();
 	private int num = 0;
 
 

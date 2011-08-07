@@ -186,7 +186,6 @@ public class GfxManager implements VideoConstants {
 		int charAddress= offset + (tile  % gdi.gfx.total) * (gdi.gfx.bytes >> 3);
 		int indexSelect = (rot<<2)|flip;
 		int colorIndex = 0;
-		int index = 0;
 		int cc = 0;
 
 		for (int y=0; y<=h; y++) {
