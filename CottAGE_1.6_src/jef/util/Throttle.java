@@ -165,49 +165,6 @@ public class Throttle {
         fps = (long)targetFPS;
         t = System.currentTimeMillis();
 	}
-    
-    public static void init(int _fps) {
-
-		targetFPS = _fps;
-		throttle = true;
-		autoFS = true;
-		fskip = 0;
-		throttleStep = DEFAULT_THROTTLE_STEP;
-		frameNumber = 0;
-		recalcCount = 0;
-		sumFPS = 0;
-		avgFPS = 0f;
-		fps = 0;
-
-        // This part is weird... Its intention is to set the minimumSleep variable, which is the
-        // minimum amount of milliseconds that the throttle may slow down 1 frame.
-        // Why? Because, depending on the VM and/or OS (not sure yet), there is a minimum value
-        // for Thread.Sleep(ms) to have an effect.
-        // When running M$ JRE on Win2k, this value is incredibly high (11 ms.),
-        // Running SUN JRE on Win2k, it's better (5 ms.).
-        // It would be logical to look for vm.vendor, but this is not allowed in an applet :o(
-        // Now, I look for os.name (which is allowed) and make use of the fact that the M$ VM
-        // thinks that Windows 2000 is NT, where Sun seems to be better at distinguishing between
-        // M$'s OS-es (!).
-        // This mega dirty hack works on win2k, but probably not on NT.
-        // ....This whole throttling in java gives me a headache....
-        String osname = System.getProperty("os.name");
-        minimumSleep = osname.endsWith("NT") ? 11 : 5;
-        sleep = minimumSleep;
-        throttleStep = DEFAULT_THROTTLE_STEP;
-        minFPS = targetFPS - (int)((float)(targetFPS * MAX_FPS_DEVIATION));
-        if(minFPS == targetFPS) {
-            minFPS = targetFPS - 1;
-        }
-        maxFPS = targetFPS + (int)((float)(targetFPS * MAX_FPS_DEVIATION));
-        if(maxFPS == targetFPS) {
-            maxFPS = targetFPS + 1;
-        }
-
-		frameDuration = 1000/targetFPS;
-        fps = (long)targetFPS;
-        t = System.currentTimeMillis();
-	}
 
 	/**
 	 * Call this method each frame.
