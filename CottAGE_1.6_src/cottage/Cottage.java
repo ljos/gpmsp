@@ -3,7 +3,6 @@ package cottage;
 import java.awt.AWTEvent;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import jef.machine.Machine;
@@ -99,36 +98,6 @@ public class Cottage extends GfxProducer {
             m.keyRelease(code);
             break;
         }
-    }
-    
-    public static void main(String args[]) throws MalformedURLException {
-    	 String driver = ""; 
-         System.out.println("CottAGE version " + VERSION + " using JEF version " + jef.Version.VERSION + ".");
-         URL base_URL = new URL("file://localhost/Users/bjarte/Documents/workspace/mspacman/bin/");
-         driver   = "mspacman";
-         boolean sound    = false;
-
-         int sLineBuf = 4096;
-         jef.util.Config.SOUND_BUFFER_SIZE = sLineBuf;
-
-         int sSampFrq = 22050;
-         jef.util.Config.SOUND_SAMPLING_FREQ = sSampFrq;
-
-         CottageDriver d = new CottageDriver();
-
-         Machine m = d.getMachine(base_URL, driver);
-         m.setSound(sound);
-
- 	  	pixel = new int[m.refresh(true).getPixels().length * 4];
-
-        pixel = m.refresh(true).getPixels();
-
-        Throttle.init(m.getProperty(Machine.FPS));
-
-         while(true) {
-        	m.refresh(true);
- 			Throttle.throttle();
-         }
     }
 
     public void main(int w, int h) {

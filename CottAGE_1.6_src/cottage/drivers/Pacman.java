@@ -262,10 +262,51 @@ public class Pacman extends MAMEDriver implements Driver, MAMEConstants {
 		input_port_3_r = (ReadHandler)in[3];
 
 
-		if (name.equals("mspacman")) {
+		if (name.equals("pacman")) {
+			this.md = machine_driver_pacman();
+			GAME(1980, rom_pacman(), 	ipt_pacman(), 	v.pacman(), ROT90, "Namco", "PuckMan (Japan set 1)" );
+			//m.setHighScoreSupported(true);
+		} else if (name.equals("mspacman")) {
 			this.md = machine_driver_pacman();
 			GAME(1981, rom_mspacman(), 	ipt_mspacman(), v.pacman(), ROT90, "Bootleg", "Ms. Pac-Man" );
+			//m.setHighScoreSupported(true);
+			
+			
+
+		} else if (name.equals("ponpoko")) {
+			this.md = machine_driver_pacman();
+			GAME(1980, rom_ponpoko(), 	ipt_ponpoko(), 	v.pacman(), ROT0, "Sigma Ent. Inc.", "Ponpoko" );
+			init_ponpoko();
+
+		} else if (name.equals("eyes")) {
+			this.md = machine_driver_pacman();
+			GAME(1982, rom_eyes(), 		ipt_eyes(), 	v.pacman(), ROT90, "Digitrex Techstar (Rock-ola license)", "Eyes (Digitrex Techstar)" );
+			init_eyes();
+
+		} else if (name.equals("mrtnt")) {
+			this.md = machine_driver_pacman();
+			GAME(1983, rom_mrtnt(), 	ipt_mrtnt(), 	v.pacman(), ROT90,  "Telko", "Mr. TNT" );
+			init_eyes();
+
+		} else if (name.equals("lizwiz")) {
+			this.md = machine_driver_pacman();
+			GAME(1985, rom_lizwiz(), 	ipt_lizwiz(), 	v.pacman(), ROT90, "Techstar (Sunn license)", "Lizard Wizard" );
+
+		} else if (name.equals("theglob")) {
+			cottage.machine.Pacman.fastBoard = false;	// decrypting is done at runtime
+			this.md = machine_driver_theglob();
+			GAME(1980, rom_theglob(), 	ipt_theglob(), 	v.pacman(), ROT90, "Epos Corporation", "The Glob" );
+
+		} else if (name.equals("vanvan")) {
+			this.md = machine_driver_vanvan();
+			GAME(1983, rom_vanvan(), 	ipt_vanvan(), 	v.pacman(), ROT270, "Sanritsu", "Van-Van Car" );
+
+		} else if (name.equals("dremshpr")) {
+			this.md = machine_driver_dremshpr();
+			GAME(1982, rom_dremshpr(), 	ipt_dremshpr(),	v.pacman(), ROT270, "Sanritsu", "Dream Shopper" );
+
 		}
+
 
 		v.setRegions(REGION_PROMS, REGION_CPU1);
 
