@@ -36,6 +36,10 @@ public class Pacman extends MAMEVideo implements VideoEmulator,
 		this.REGION_PROMS = proms;
 		this.REGION_CPU	  = mem;
 	}
+	
+	public int[] getREGION_CPU() {
+		return REGION_CPU;
+	}
 
 	public boolean pacman() {
 		return true;

@@ -393,6 +393,10 @@ public class MachineDriver {
 	public Machine getMachine() {
 		return this.mach;
 	}
+	
+	public int[] getREGION_CPU() {
+		return ((cottage.vidhrdw.Pacman)ve).getREGION_CPU();
+	}
 
 
 }
