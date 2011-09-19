@@ -40,6 +40,7 @@ public class Cottage extends GfxProducer {
 
 /** reference to the driver **/
     Machine m;
+    Throttle t;
 
     protected void processKeyEvent(KeyEvent e) {
         int code = e.getKeyCode();
@@ -57,26 +58,26 @@ public class Cottage extends GfxProducer {
 				break;
 
             case KeyEvent.VK_7:
-                if(Throttle.getFrameSkip() > 0) {
-                    Throttle.setFrameSkip(Throttle.getFrameSkip()-1);
-                    Throttle.enableAutoFrameSkip(false);
+                if(t.getFrameSkip() > 0) {
+                    t.setFrameSkip(t.getFrameSkip()-1);
+                    t.enableAutoFrameSkip(false);
                 } else {
-                    Throttle.enableAutoFrameSkip(true);
+                    t.enableAutoFrameSkip(true);
                 }
                 break;
 
             case KeyEvent.VK_8:
-                if(Throttle.isAutoFrameSkip()) {
-                    Throttle.enableAutoFrameSkip(false);
-                    Throttle.setFrameSkip(0);
-                } else if(Throttle.getFrameSkip() < 12) {
-                    Throttle.setFrameSkip(Throttle.getFrameSkip()+1);
-                    Throttle.enableAutoFrameSkip(false);
+                if(t.isAutoFrameSkip()) {
+                    t.enableAutoFrameSkip(false);
+                    t.setFrameSkip(0);
+                } else if(t.getFrameSkip() < 12) {
+                    t.setFrameSkip(t.getFrameSkip()+1);
+                    t.enableAutoFrameSkip(false);
                 }
                 break;
 
             case KeyEvent.VK_9:
-                Throttle.enable(!Throttle.isEnabled());
+                t.enable(!t.isEnabled());
                 break;
 
             case KeyEvent.VK_0:
@@ -163,13 +164,14 @@ public class Cottage extends GfxProducer {
 
         System.out.println("Running...");
 
-        Throttle.init(m.getProperty(Machine.FPS), getThread());
+        t = new Throttle(m.getProperty(Machine.FPS));
+      
 
         while(true) {
 			if(!paused) {
 				update(m.refresh(true));
 			}
-			Throttle.throttle();
+			t.throttle();
         }
     }
 
@@ -211,12 +213,12 @@ public class Cottage extends GfxProducer {
 			jef.video.Console.drawTextLine(g, getWidth()/2 - 6 * text.length()/2, getHeight()/2 + 6, text);
         } else if (showFPS) {
             StringBuffer buf = new StringBuffer();
-            String fs = Integer.toString(Throttle.getFrameSkip());
-            String afs = Float.toString(Throttle.getAverageFPS());
-            if(Throttle.isAutoFrameSkip()) fs = "AUTO(" + fs + ")";
-            buf.append(Throttle.getFPS()).append("/").append(Throttle.getTargetFPS()).append("/").append(afs);
-            buf.append("  thr:").append(Throttle.isEnabled());
-            buf.append("  sl:").append(Throttle.getSleep());
+            String fs = Integer.toString(t.getFrameSkip());
+            String afs = Float.toString(t.getAverageFPS());
+            if(t.isAutoFrameSkip()) fs = "AUTO(" + fs + ")";
+            buf.append(t.getFPS()).append("/").append(t.getTargetFPS()).append("/").append(afs);
+            buf.append("  thr:").append(t.isEnabled());
+            buf.append("  sl:").append(t.getSleep());
             buf.append("  fs:").append(fs);
 			jef.video.Console.drawTextLine(g, 1, 12, buf.toString());
         } else if (showTXT) {
