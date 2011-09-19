@@ -1,26 +1,3 @@
-
-bin/cottage/MsPacmanGame.class
-
-bin/jef/util/Throttle.class
-
-bin/jef/util/Throttle.class
-
-bin/jef/util/Throttle.class
-
-bin/jef/util/Throttle.class
+*.class
 
 bin/java.policy.applet
-
-bin/cottage/Cottage.class
-
-bin/cottage/Cottage.class
-
-bin/cottage/Cottage.class
-
-bin/cottage/vidhrdw/Pacman.class
-
-bin/cottage/vidhrdw/Pacman$Videoram_w.class
-
-bin/cottage/drivers/Pacman.class
-
-bin/cottage/CottageDriver.class

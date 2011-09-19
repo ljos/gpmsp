@@ -6,7 +6,6 @@ import java.awt.event.KeyEvent;
 import java.net.URL;
 
 import jef.machine.Machine;
-//import jef.video.BitMap;
 import jef.video.GfxProducer;
 import jef.util.Throttle;
 
@@ -146,8 +145,6 @@ public class Cottage extends GfxProducer {
 
         m.setSound(sound);
 
-	  	pixel = new int[m.refresh(true).getPixels().length * 4];
-
         if(!doubled && !scale2x)
             pixel = m.refresh(true).getPixels();
         else
@@ -168,6 +165,27 @@ public class Cottage extends GfxProducer {
 			t.throttle();
         }
     }
+    
+    public long getScore() {
+		return getScore(0x43ed, ((cottage.machine.Pacman)m).md.getREGION_CPU());
+	}
+	
+	private long getScore(int offset, int[] mem) {
+		final int ZERO_CHAR = 0x00;
+		final int BLANK_CHAR = 0x40;
+		
+		long score = 0;
+		
+		// calculate the score
+		for (int i = 0; i < 7; i++) {
+			int c = mem[offset + i];
+			if (c == 0x00 || c == BLANK_CHAR) c = ZERO_CHAR;
+			c -= ZERO_CHAR;
+			score += (c * Math.pow(10, i));
+		}
+		
+		return (score > 9999999) ? 0 : score;
+	}
 
     public void postPaint(Graphics g) {
         if (paused) {

@@ -76,12 +76,9 @@ public class BasicMachine implements Machine {
 
 	private long highScore;
 
-	//protected HighScoreHandler highScoreHandler;
-
 	protected BitMap backBuffer;
 
 	public BasicMachine() {
-		//Timer.setMachine(this);
 	}
 
 	/**
@@ -294,9 +291,6 @@ public class BasicMachine implements Machine {
 		boolean rendered = false;
 
 		int curCycle = 0;
-		//int cpf = cd[0].frq / md.fps;
-
-		//System.out.println("***FRAME***");
 
 		for (int slice = 0; slice < slicesPerFrame; slice++) { // each frame is
 			// divided in
@@ -305,9 +299,9 @@ public class BasicMachine implements Machine {
 			currentSlice = slice;
 
 			for (int c = 0; c < cd.length; c++) { // iterate through all cpu
-				// boards,
-				// give them their timeslice
-				// and cause an interrupt when needed.
+												  // boards,
+												  // give them their timeslice
+												  // and cause an interrupt whene needed.
 
 				if (!cd[c].isAudioCpu || (soundEnabled && cd[c].isAudioCpu)) {
 
@@ -316,7 +310,6 @@ public class BasicMachine implements Machine {
 
 					if (c == 0) {
 						curCycle += cyclesPerTimeSlice;
-						//System.out.println("cc="+curCycle);
 					}
 
 					cd[c].cpu.exec(cyclesPerTimeSlice);
@@ -328,7 +321,6 @@ public class BasicMachine implements Machine {
 
 						if ((slice % slicesPerInterrupt) == 0) {
 							cb[c].interrupt(cd[c].irh.irq(), true);
-							//System.out.println("**IRQ");
 						}
 					}
 				}
@@ -337,8 +329,6 @@ public class BasicMachine implements Machine {
 			if (!rendered && render && curCycle > md.getVideoBlankDuration()) {
 				backBuffer = getDisplay();
 				rendered = true;
-				//System.out.println("CurCycle=" + curCycle + "
-				// vbd="+md.getVideoBlankDuration());
 			}
 
 		}
@@ -348,12 +338,6 @@ public class BasicMachine implements Machine {
 
 		// UPDATE INPUT (for Impulse Events)
 		updateInput();
-
-		// UPDATEH HIGH SCORES
-		//if (highScoreHandler != null) {
-		//	highScoreHandler.update();
-		//}
-
 		return backBuffer;
 	}
 

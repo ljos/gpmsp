@@ -38,14 +38,14 @@ public class MsPacmanGame implements Runnable {
 		m = d.getMachine(base_URL, driver);
 		m.setSound(sound);
 
-		pixel = new int[m.refresh(true).getPixels().length * 4];
+		pixel = new int[m.refresh(true).getPixels().length];
 
 		pixel = m.refresh(true).getPixels();
 
 		t = new Throttle(m.getProperty(Machine.FPS));
 
 		while (true) {
-			m.refresh(true);
+			pixel = m.refresh(true).getPixels();
 			t.throttle();
 		}
 	}
@@ -81,5 +81,11 @@ public class MsPacmanGame implements Runnable {
 		}
 		
 		return (score > 9999999) ? 0 : score;
+	}
+	
+	public static void main(String args[]) {
+		MsPacmanGame g = new MsPacmanGame();
+		g.run();
+		
 	}
 }
