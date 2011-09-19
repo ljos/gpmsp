@@ -101,9 +101,6 @@ public class Throttle {
     /** Frame Skip */
     private int fskip;
 
-    /** Amount of ms. of one frame */
-    private int frameDuration;
-
     /** Time in ms. */
     private long t;
 
@@ -162,7 +159,6 @@ public class Throttle {
             maxFPS = targetFPS + 1;
         }
 
-		frameDuration = 1000/targetFPS;
         fps = (long)targetFPS;
         t = System.currentTimeMillis();
 	}
