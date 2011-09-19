@@ -84,11 +84,6 @@ public class Cottage extends GfxProducer {
                 showFPS = !showFPS;
                 break;
 
-            /*case KeyEvent.VK_F12:
-                sound = !sound;
-                m.setSound(sound);
-                break;*/
-
             default:
 				m.keyPress(code);
 				break;
@@ -173,38 +168,6 @@ public class Cottage extends GfxProducer {
 			t.throttle();
         }
     }
-
- /*   private final int dimColor(int col) {
-		return (col>>1) & 0x7F7F7F;
-    } */
-
-/*    private int[] getDisplay(BitMap bm) {
-    	int[] pix = bm.getPixels();
-        if(!doubled && !scale2x) {
-            if(paused) {
-                for(int ofs=0; ofs<pix.length; ofs++)
-                    pix[ofs] = dimColor(pix[ofs]);
-            } else if(showFPS) {
-                for(int ofs=0; ofs<getWidth() * 16; ofs++)
-		        	pix[ofs] = dimColor(pix[ofs]);
-			}
-
-            return pix;
-        } else {
-			if (doubled) pixel = bm.getScaledBitMap(2, BitMap.SCALE_MODE_TV ).getPixels();
-			else if (scale2x) pixel = bm.getScaledBitMap(2, BitMap.SCALE_MODE_SCALE2X ).getPixels();
-		}
-
-        if(paused) {
-            for(int ofs=0; ofs<pixel.length; ofs++)
-            	pixel[ofs] = dimColor(pixel[ofs]);
-        } else if(showFPS) {
-        	for(int offs=0; offs<getWidth() * 16; offs++)
-				pixel[offs] = dimColor(pixel[offs]);
-		}
-		
-        return pixel;
-    } */
 
     public void postPaint(Graphics g) {
         if (paused) {
