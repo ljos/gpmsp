@@ -66,66 +66,67 @@ public class Throttle {
     static final boolean TRY_ALT_SKIP_CALC = true;
 
 	/** Throttle is enabled by default */
-    static boolean throttle;
+    private boolean throttle;
 
 	/** Auto Frame Skip */
-    static boolean autoFS;
+    private boolean autoFS;
 
     /** Frames Per Second */
-    static long fps;
+    private long fps;
     
     /** Sum Frames Per Second for measuring avg FPS */
-    static long sumFPS = 0;
+    private long sumFPS = 0;
     
     /** Average FPS */
-    static float avgFPS = 0f;
+    private float avgFPS = 0f;
 
     /** Amount of sleep time in ms. */
-    static long sleep;
+    private long sleep;
 
 	/** The FPS that needs to be throttled to */
-    static int targetFPS;
+    private int targetFPS;
 
     /** How fast the throttle changes sleep time */
-    static int throttleStep;
+    private int throttleStep;
 
     /** Minimum FPS */
-    static int minFPS;
+    private int minFPS;
 
     /** Maximum FPS */
-    static int maxFPS;
+    private int maxFPS;
 
     /** Minimum sleeptime to have effect on the JVM */
-    static long minimumSleep;
+    private long minimumSleep;
 
     /** Frame Skip */
-    static int fskip;
+    private int fskip;
 
     /** Amount of ms. of one frame */
-    static int frameDuration;
+    private int frameDuration;
 
     /** Time in ms. */
-    static long t;
+    private long t;
 
     /** Time in ms. */
-    static long tempT;
+    private long tempT;
 
     /** Framenumber relative to last recalc */
-    static int frameNumber;
+    private int frameNumber;
     
     /** Count recalc for measuring avg fps */
-    static long recalcCount = 0;
-
-    /** The thread to throttle */
-    static Thread thread;
+    private long recalcCount = 0;
 
     /**
      * Initialize the throttle.
      */
-    public static void init(int _fps, Thread _thread) {
+    
+    public Throttle(int fps) {
+    	this.init(fps);
+    }
+    
+    private void init(int _fps) {
 
 		targetFPS = _fps;
-		thread = _thread;
 		throttle = true;
 		autoFS = true;
 		fskip = 0;
@@ -170,7 +171,7 @@ public class Throttle {
 	 * Call this method each frame.
 	 * Here the actual throttling takes place.
 	 */
-	public static void throttle() {
+	public void throttle() {
 		// Try slow down to the machine's original speed
 		if(throttle & ((frameNumber % throttleStep) == 0)) {
 			try {
@@ -190,63 +191,63 @@ public class Throttle {
 	/**
 	 * Get current sleep time in ms.
 	 */
-	public static long getSleep() {
+	public long getSleep() {
 		return sleep;
 	}
 
 	/**
 	 * Returns true if a frame needs to be skipped.
 	 */
-	public static boolean skipFrame() {
+	public boolean skipFrame() {
 		return !((fskip==0)||((frameNumber%(fskip+1))==0));
 	}
 
 	/**
 	 * Enable/disable automatic frame skip.
 	 */
-	public static void enableAutoFrameSkip(boolean enable) {
+	public void enableAutoFrameSkip(boolean enable) {
 		autoFS = enable;
 	}
 
 	/**
 	 * Returns true if automatic frame skip is enabled.
 	 */
-	public static boolean isAutoFrameSkip() {
+	public boolean isAutoFrameSkip() {
 		return autoFS;
 	}
 
 	/**
 	 * Enable throttle.
 	 */
-	public static void enable(boolean enable) {
+	public void enable(boolean enable) {
 		throttle = enable;
 	}
 
 	/**
 	 * Returns false if throttling is not enabled.
 	 */
-	public static boolean isEnabled() {
+	public boolean isEnabled() {
 		return throttle;
 	}
 
 	/**
 	 * Set the amount of frames to skip.
 	 */
-	public static void setFrameSkip(int skip) {
+	public void setFrameSkip(int skip) {
 		fskip = skip;
 	}
 
 	/**
 	 * Get current amount of frames to be skipped.
 	 */
-	public static int getFrameSkip() {
+	public int getFrameSkip() {
 		return fskip;
 	}
 
 	/**
 	 * Get current FPS.
 	 */
-	public static int getFPS() {
+	public int getFPS() {
 		return (int)fps;
 	}
 
@@ -255,14 +256,14 @@ public class Throttle {
 	 * 
 	 * @return int
 	 */
-	public static int getTargetFPS() {
+	public int getTargetFPS() {
 		return targetFPS;
 	}
 	
 	/**
 	 * Get the average FPS
 	 * 	 * @return float	 */
-	public static float getAverageFPS() {
+	public float getAverageFPS() {
 		return avgFPS;
 	}
 
@@ -270,7 +271,7 @@ public class Throttle {
 	 * Called after FRAMES_UNTIL_THROTTLE_RECALC is reached.
 	 * Here the sleep time and auto frame skip is re-evaluated.
 	 */
-	private static void recalcTiming() {
+	private void recalcTiming() {
 		tempT = System.currentTimeMillis();
 		fps = 1000 / ((tempT - t) / FRAMES_UNTIL_THROTTLE_RECALC);
 		t = tempT;
