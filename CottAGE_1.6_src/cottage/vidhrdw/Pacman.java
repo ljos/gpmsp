@@ -75,16 +75,7 @@ public class Pacman extends MAMEVideo implements VideoEmulator,
 					sx = mx + 2;
 					sy = my - 2;
 				}
-
-				//if (flipscreen)
-				//{
-				//	sx = 35 - sx;
-				//	sy = 27 - sy;
-				//}
-
-				//sy += 2;
-
-
+				
 				drawgfx(charLayer,0,
 						REGION_CPU[0x4000 + offs],
 						REGION_CPU[0x4400 + offs] & 0x1f,
@@ -112,14 +103,6 @@ public class Pacman extends MAMEVideo implements VideoEmulator,
 					(REGION_CPU[0x4ff0 + offs] & 1) != 0, (REGION_CPU[0x4ff0 + offs] & 2) != 0,
 					sx,sy,
 					GfxManager.TRANSPARENCY_COLOR,0);
-
-			/* also plot the sprite with wraparound (tunnel in Crush Roller) */
-			//drawgfx(backBuffer,1,
-			//		REGION_CPU[0x4ff0 + offs] >> 2,
-			//		REGION_CPU[0x4ff0 + offs + 1] & 0x1f,
-			//		(REGION_CPU[0x4ff0 + offs] & 1) != 0, (REGION_CPU[0x4ff0 + offs] & 2) != 0,
-			//		sx - 256,sy,
-			//		TRANSPARENCY_COLOR,0);
 		}
 
 		/* In the Pac Man based games (NOT Pengo) the first two sprites must be offset */
@@ -138,14 +121,6 @@ public class Pacman extends MAMEVideo implements VideoEmulator,
 					(REGION_CPU[0x4ff0 + offs] & 1) != 0, (REGION_CPU[0x4ff0 + offs] & 2) != 0,
 					sx,sy + xoffsethack,
 					GfxManager.TRANSPARENCY_COLOR,0);
-
-			/* also plot the sprite with wraparound (tunnel in Crush Roller) */
-			//drawgfx(backBuffer,1,
-			//		REGION_CPU[0x4ff0 + offs] >> 2,
-			//		REGION_CPU[0x4ff0 + offs + 1] & 0x1f,
-			//		(REGION_CPU[0x4ff0 + offs] & 1) != 0, (REGION_CPU[0x4ff0 + offs] & 2) != 0,
-			//		sx - 256,sy + xoffsethack,
-			//		TRANSPARENCY_COLOR,0);
 		}
 		return bitmap;
 	}
