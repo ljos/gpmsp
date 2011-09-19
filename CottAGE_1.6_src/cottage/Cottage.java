@@ -165,7 +165,6 @@ public class Cottage extends GfxProducer {
         System.out.println("Running...");
 
         t = new Throttle(m.getProperty(Machine.FPS));
-      
 
         while(true) {
 			if(!paused) {
