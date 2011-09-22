@@ -10,172 +10,176 @@ import java.awt.image.DirectColorModel;
 import java.awt.image.ImageConsumer;
 import java.awt.image.ImageProducer;
 
-public abstract class GfxProducer 	extends 	java.applet.Applet
-									implements  Runnable, ImageProducer {
+public abstract class GfxProducer extends javax.swing.JApplet implements
+		Runnable, ImageProducer {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -9154718342186756092L;
-	
+
 	// data
-    int _width;
-    int _height;
-    int _realheight;
-    Image _image;
-    Thread _thread;
-    ImageConsumer _consumer;
-    DirectColorModel _model;
-    Graphics _graphics;
-    boolean zoomed = false;
-    
-    public Thread getThread() {
-    	return this._thread;
-    }
-    
-    public int getWidth() {
-    	return this._width;
-    }
-    
-    public int getHeight() {
-    	return this._height;
-    }
-    
-    public boolean isZoomed() {
-    	return this.zoomed;
-    }
-    
-    public synchronized void update(BitMap bitmap) {
-    	update(bitmap.getPixels());
-    }
+	int _width;
+	int _height;
+	int _realheight;
+	Image _image;
+	Thread _thread;
+	ImageConsumer _consumer;
+	DirectColorModel _model;
+	Graphics _graphics;
+	boolean zoomed = false;
 
-    public synchronized void update(int[] pixels) {
-        // check consumer
-        if (_consumer!=null) {
-            // copy integer pixel data to image consumer
-        	_consumer.setPixels(0,0,_width,_height,_model,pixels,0,_width);
+	public Thread getThread() {
+		return this._thread;
+	}
 
-            // notify image consumer that the frame is done
-            _consumer.imageComplete(ImageConsumer.SINGLEFRAMEDONE);
-        }
+	public int getWidth() {
+		return this._width;
+	}
 
-        // draw image to graphics context
-	  	if (zoomed)
-     	  	_graphics.drawImage(_image,0,0,_width*2,_height*2,0,0,_width,_height,null);
-        else
-     	  	_graphics.drawImage(_image,0,0,_width,_height,null);
+	public int getHeight() {
+		return this._height;
+	}
 
-        postPaint(_graphics);
-    }
+	public boolean isZoomed() {
+		return this.zoomed;
+	}
 
-    public void start() {
+	public synchronized void update(BitMap bitmap) {
+		update(bitmap.getPixels());
+	}
 
-        // check thread
-        if (_thread==null) {
-            // create thread
-            _thread = new Thread(this);
+	public synchronized void update(int[] pixels) {
+		// check consumer
+		if (_consumer != null) {
+			// copy integer pixel data to image consumer
+			_consumer.setPixels(0, 0, _width, _height, _model, pixels, 0,
+					_width);
 
-            // start thread
-            _thread.start();
-        }
-    }
+			// notify image consumer that the frame is done
+			_consumer.imageComplete(ImageConsumer.SINGLEFRAMEDONE);
+		}
 
-    public void run() {
+		// draw image to graphics context
+		if (zoomed) {
+			_graphics.drawImage(_image, 0, 0, _width * 2, _height * 2, 0, 0,
+					_width, _height, null);
+		} else {
+			_graphics.drawImage(_image, 0, 0, _width, _height, null);
+		}
+		postPaint(_graphics);
+	}
 
-	  	zoomed = false;
+	public void start() {
 
-        try {
-            zoomed  = getParameter("ZOOM").equals("Yes");
-        } catch(Exception e) {
-        }
+		// check thread
+		if (_thread == null) {
+			// create thread
+			_thread = new Thread(this);
 
-        try {
-            String parStr = getParameter("REALHEIGHT");
-            if(parStr != null) {
-                _realheight = Integer.parseInt(parStr);
-            }
-        } catch(Exception e) {
-        }
+			// start thread
+			_thread.start();
+		}
+	}
 
-        // get component size
-        Dimension size = this.getSize();
+	public void run() {
+
+		zoomed = false;
+
+		try {
+			zoomed = getParameter("ZOOM").equals("Yes");
+		} catch (Exception e) {
+		}
+
+		try {
+			String parStr = getParameter("REALHEIGHT");
+			if (parStr != null) {
+				_realheight = Integer.parseInt(parStr);
+			}
+		} catch (Exception e) {
+		}
+
+		// get component size
+		Dimension size = this.getSize();
 
 		if (zoomed) {
 			// setup data
-	      	_width = size.width/2;
-		    _height = _realheight/2;
+			_width = size.width / 2;
+			_height = _realheight / 2;
 		} else {
-		    // setup data
-	      	_width = size.width;
-		    _height = size.height;
+			// setup data
+			_width = size.width;
+			_height = size.height;
 		}
 
-        // setup color model
-        _model = new DirectColorModel(32,0x00FF0000,0x000FF00,0x000000FF,0);
+		// setup color model
+		_model = new DirectColorModel(32, 0x00FF0000, 0x000FF00, 0x000000FF, 0);
 
-        // create image using default toolkit
-        _image = Toolkit.getDefaultToolkit().createImage(this);
+		// create image using default toolkit
+		_image = Toolkit.getDefaultToolkit().createImage(this);
 
-        // get component graphics object
-        _graphics = getGraphics();
+		// get component graphics object
+		_graphics = getGraphics();
 
-        // call user main
-        main(_width,_height);
-    }
+		// call user main
+		main(_width, _height);
+	}
 
-    public void stop() {
-        // null thread
-        _thread = null;
-    }
+	public void stop() {
+		// null thread
+		_thread = null;
+	}
 
-    public void postPaint(Graphics g) {}
+	public void postPaint(Graphics g) {
+	}
 
-    public void update() {
+	public void update() {
 		if (_graphics != null) {
 			_graphics.setColor(Color.black);
 			if (zoomed)
-				_graphics.fillRect(0, 0, _width*2, _height*2);
+				_graphics.fillRect(0, 0, _width * 2, _height * 2);
 			else
 				_graphics.fillRect(0, 0, _width, _height);
 			postPaint(_graphics);
 		}
 	}
 
+	public synchronized void addConsumer(ImageConsumer ic) {
+		// register image consumer
+		_consumer = ic;
 
-    public synchronized void addConsumer(ImageConsumer ic) {
-        // register image consumer
-        _consumer = ic;
+		// set image dimensions
+		_consumer.setDimensions(_width, _height);
 
-        // set image dimensions
-        _consumer.setDimensions(_width,_height);
+		// System.out.println("ic " + _width * _height);
 
-        //System.out.println("ic " + _width * _height);
+		// set image consumer hints for speed
+		_consumer.setHints(ImageConsumer.TOPDOWNLEFTRIGHT
+				| ImageConsumer.COMPLETESCANLINES | ImageConsumer.SINGLEPASS
+				| ImageConsumer.SINGLEFRAME);
 
-        // set image consumer hints for speed
-        _consumer.setHints(ImageConsumer.TOPDOWNLEFTRIGHT|ImageConsumer.COMPLETESCANLINES|ImageConsumer.SINGLEPASS|ImageConsumer.SINGLEFRAME);
+		// set image color model
+		_consumer.setColorModel(_model);
+	}
 
-        // set image color model
-        _consumer.setColorModel(_model);
-    }
+	public synchronized boolean isConsumer(ImageConsumer ic) {
+		// check if consumer is registered
+		return true;
+	}
 
-    public synchronized boolean isConsumer(ImageConsumer ic) {
-        // check if consumer is registered
-        return true;
-    }
+	public synchronized void removeConsumer(ImageConsumer ic) {
+		// remove image consumer
+	}
 
-    public synchronized void removeConsumer(ImageConsumer ic) {
-        // remove image consumer
-    }
+	public void startProduction(ImageConsumer ic) {
+		// add consumer
+		addConsumer(ic);
+	}
 
-    public void startProduction(ImageConsumer ic) {
-        // add consumer
-        addConsumer(ic);
-    }
+	public void requestTopDownLeftRightResend(ImageConsumer ic) {
+		// ignore resend request
+	}
 
-    public void requestTopDownLeftRightResend(ImageConsumer ic) {
-        // ignore resend request
-    }
-
-    public void main(int width,int height) {
-    }
+	public void main(int width, int height) {
+	}
 }

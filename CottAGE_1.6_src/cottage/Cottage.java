@@ -1,9 +1,19 @@
 package cottage;
 
 import java.awt.AWTEvent;
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Graphics;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.net.URL;
+
+import javax.swing.JFrame;
 
 import jef.machine.Machine;
 import jef.video.GfxProducer;
@@ -36,6 +46,8 @@ public class Cottage extends GfxProducer {
     boolean scale2x = false;
     boolean scanlines = false;
     boolean sound = true;
+    
+    boolean stop = false;
 
 /** reference to the driver **/
     Machine m;
@@ -94,6 +106,7 @@ public class Cottage extends GfxProducer {
             break;
         }
     }
+    
 
     public void main(int w, int h) {
         String driver = "";
@@ -160,7 +173,7 @@ public class Cottage extends GfxProducer {
 
         t = new Throttle(m.getProperty(Machine.FPS));
 
-        while(true) {
+        while(!stop) {
 			if(!paused) {
 				update(m.refresh(true));
 			}
@@ -168,7 +181,19 @@ public class Cottage extends GfxProducer {
         }
     }
     
-    public long getScore() {
+    public int[] getPixels() {
+		return pixel;
+	}
+	
+	public void keyPressed(int keyCode) {
+		m.keyPress(keyCode);
+	}
+	
+	public void keyReleased(int keyCode) {
+		m.keyRelease(keyCode);
+	}
+	
+	public long getScore() {
 		return getScore(0x43ed, ((cottage.machine.Pacman)m).md.getREGION_CPU());
 	}
 	
@@ -181,14 +206,16 @@ public class Cottage extends GfxProducer {
 		// calculate the score
 		for (int i = 0; i < 7; i++) {
 			int c = mem[offset + i];
-			if (c == 0x00 || c == BLANK_CHAR) {
-				c = ZERO_CHAR;
-			}
+			if (c == 0x00 || c == BLANK_CHAR) c = ZERO_CHAR;
 			c -= ZERO_CHAR;
 			score += (c * Math.pow(10, i));
 		}
 		
 		return (score > 9999999) ? 0 : score;
+	}
+	
+	public void stop(boolean stop) {
+		this.stop = stop;
 	}
 
     public void postPaint(Graphics g) {
@@ -224,5 +251,28 @@ public class Cottage extends GfxProducer {
         } catch(Exception e) {
         }
         return returnValue;
+    }
+    
+    public static void main(String[] args) {
+    	Cottage[] cs = new Cottage[5];
+    	for(int i = 0; i < cs.length; ++i) {
+    		Cottage c = new Cottage();
+    		c.setSize(224, 288+22);	
+    		cs[i] = c;
+    	}
+    	
+    	for(int i = 0; i < 5; ++i) {
+    		JFrame app = new JFrame("Ms. Pacman " + i);
+    		app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        	app.setSize(224,288+22);
+        	app.setLocation(300*i, 0)
+;        
+        	app.getContentPane().add(cs[i], BorderLayout.CENTER);
+        	app.setVisible(true);
+    	}
+        
+    	for(Cottage c : cs) {
+    		new Thread(c).start();
+    	}
     }
 }
