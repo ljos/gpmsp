@@ -65,6 +65,7 @@ public class BasicCpuBoard implements CpuBoard {
 
 
 /** Initialize the CpuBoard */
+	@Override
 	public boolean init(CpuDriver cpuDriver) {
 
 		this.cpu = cpuDriver.cpu;
@@ -83,16 +84,19 @@ public class BasicCpuBoard implements CpuBoard {
 	}
 
 /** Get the memory */
+	@Override
 	public int[] getMem() {
 		return mem;
 	}
 
 /** Get the CPU */
+	@Override
 	public Cpu getCpu() {
 		return cpu;
 	}
 
 /** Reset the CPU */
+	@Override
 	public void reset(boolean hard) {
 		cpu.reset();
 		if (hard) {
@@ -103,46 +107,54 @@ public class BasicCpuBoard implements CpuBoard {
 	}
 
 /** Execute the CPU for a given number of cycles */
+	@Override
 	public void exec(int cycles) {
 		cpu.exec(cycles);
 	}
 
 /** Cause an interrupt on the CPU */
+	@Override
 	public void interrupt(int type, boolean irq) {
 		cpu.interrupt(type, irq);
 	}
 
 /** Write a byte */
+	@Override
 	public void write8(int address, int data) {
         mwa.write(address, data);
 		//writeMap[address].write(address, data);
 	}
 
 /** Write a byte */
+	@Override
 	public void write8fast(int address, int data) {
         mwa.write(address, data);
 		//writeMap[address].write(address, data);
 	}
 
 /** Read a byte */
+	@Override
 	public int read8(int address) {
         return mra.read(address);
 		//return readMap[address].read(address);
 	}
 
 /** Read an opcode byte */
+	@Override
 	public int read8opc(int address) {
         return mra.read(address);
         //return readMap[address].read(address);
 	}
 
 /** Read a byte */
+	@Override
 	public int read8arg(int address) {
         return mra.read(address);
         //return readMap[address].read(address);
 	}
 
 /** Write a word */
+	@Override
 	public void write16(int address, int data) {
 		mwa.write(address++, data & 0xff);
 		mwa.write(address, data>>8);
@@ -151,6 +163,7 @@ public class BasicCpuBoard implements CpuBoard {
 	}
 
 /** Write a word */
+	@Override
 	public void write16fast(int address, int data) {
         mwa.write(address++, data & 0xff);
         mwa.write(address, data>>8);
@@ -159,12 +172,14 @@ public class BasicCpuBoard implements CpuBoard {
 	}
 
 /** Read a word */
+	@Override
 	public int read16(int address) {
 		return mra.read(address++) | (mra.read(address) << 8);
         //return readMap[address].read(address++) | (readMap[address].read(address) << 8);
 	}
 
 /** Read a word */
+	@Override
 	public int read16arg(int address) {
         return mra.read(address++) | (mra.read(address) << 8);
         //return readMap[address].read(address++) | (readMap[address].read(address) << 8);
@@ -172,6 +187,7 @@ public class BasicCpuBoard implements CpuBoard {
 
 
 /** Write to port */
+	@Override
 	public void out(int port, int value) {
 		//System.out.println(Integer.toHexString(port) + " - " + portOutMap[port].toString());
 		//portOutMap[port].write(port, value);
@@ -179,6 +195,7 @@ public class BasicCpuBoard implements CpuBoard {
 	}
 
 /** Read from port */
+	@Override
 	public int in(int port) {
 		//return portInMap[port].read(port);
         return ior.read(port);

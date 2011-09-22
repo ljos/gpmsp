@@ -256,18 +256,21 @@ public final class Z80 implements Cpu, Z80debug
 	 this.debugLevel = 0;
  }
 
- public void	setTag(String tag) {
+ @Override
+public void	setTag(String tag) {
 	 this.tag = tag;
  }
 
- public String	getTag() {
+ @Override
+public String	getTag() {
 	 return this.tag;
  }
 
 /**
  * Initialize
  */
- public boolean init(CpuBoard ram, int debug) {
+ @Override
+public boolean init(CpuBoard ram, int debug) {
 	 this.ram = ram;
 	 return true;
  }
@@ -275,11 +278,13 @@ public final class Z80 implements Cpu, Z80debug
 /**
  * returns the currently excecuted instruction
  */
- public final long getInstruction() {
-	 return (long)instruction;
+ @Override
+public final long getInstruction() {
+	 return instruction;
  }
 
- public final void interrupt(int type, boolean irq) {
+ @Override
+public final void interrupt(int type, boolean irq) {
 	 if (type == INTERRUPT_TYPE_NMI) {
 		 nmi();
 	 } else if (type == jef.cpu.Cpu.INTERRUPT_TYPE_IRQ) { // type ==IRQ
@@ -294,14 +299,17 @@ public final class Z80 implements Cpu, Z80debug
 	 return PC;
  }
 
- public final void setDebug(int debugLevel) {
+ @Override
+public final void setDebug(int debugLevel) {
  }
 
- public final int getDebug() {
+ @Override
+public final int getDebug() {
 	 return debugLevel;
  }
 
- public final void setProperty(int property, int value) {
+ @Override
+public final void setProperty(int property, int value) {
 	 if (property == PROPERTY_Z80_IRQ_VECTOR) {
 		 this.I_Vector = value;
 	 }
@@ -328,7 +336,8 @@ public final class Z80 implements Cpu, Z80debug
 /**
  * Reset CPU - Only resets the registers
  */
- public final void reset() {
+ @Override
+public final void reset() {
  	SP=0x10000; 	// it's actually 0 but since the 1st stack instruction is never a POP
  					// we can set it to default 0x10000 in order to prevent AND-ing SP
  					// with 0xffff all the time...
@@ -339,7 +348,8 @@ public final class Z80 implements Cpu, Z80debug
  	//{ log("***Z80 RESET***"); }
  }
  
- public final int getCyclesLeft() {
+ @Override
+public final int getCyclesLeft() {
  	return cycle;
  }
 
@@ -349,7 +359,8 @@ public final class Z80 implements Cpu, Z80debug
  * @param	cycles
  *			number of cycles to be excecuted
  */
- public final void exec(int cycles) {
+ @Override
+public final void exec(int cycles) {
 
   cycle += cycles;
 

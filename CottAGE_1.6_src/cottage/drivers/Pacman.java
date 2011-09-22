@@ -210,11 +210,11 @@ public class Pacman extends MAMEDriver implements Driver, MAMEConstants {
 	cottage.vidhrdw.Pacman 	    v						= new cottage.vidhrdw.Pacman();
 	WriteHandler 				videoram_w				= v.videoram_w(REGION_CPU1, v);
 	WriteHandler				colorram_w				= videoram_w;
-	Eof_callback				noCallback				= (Eof_callback)v;
-	Vh_refresh 					pengo_vh_screenrefresh 	= (Vh_refresh)v;
-	Vh_start					pacman_vh_start			= (Vh_start)v;
-	Vh_stop						generic_vh_stop			= (Vh_stop)v;
-	Vh_convert_color_proms 		pacman_vh_convert_color_prom = (Vh_convert_color_proms)v;
+	Eof_callback				noCallback				= v;
+	Vh_refresh 					pengo_vh_screenrefresh 	= v;
+	Vh_start					pacman_vh_start			= v;
+	Vh_stop						generic_vh_stop			= v;
+	Vh_convert_color_proms 		pacman_vh_convert_color_prom = v;
 
 	cottage.machine.Pacman m				= new cottage.machine.Pacman();
 	InterruptHandler pacman_interrupt		= m.pacman_interrupt(m);
@@ -229,6 +229,7 @@ public class Pacman extends MAMEDriver implements Driver, MAMEConstants {
 	VoidFunction	 theglob_init_machine	= m.theglob_init_machine(m,REGION_CPU1);
 
 
+	@Override
 	public Machine getMachine(URL url, String name) {
 		super.getMachine(url,name);
 		super.setVideoEmulator(v);
@@ -238,10 +239,10 @@ public class Pacman extends MAMEDriver implements Driver, MAMEConstants {
 		in[2] = new InputPort();
 		in[3] = new InputPort();
 
-		input_port_0_r = (ReadHandler)in[0];
-		input_port_1_r = (ReadHandler)in[1];
-		input_port_2_r = (ReadHandler)in[2];
-		input_port_3_r = (ReadHandler)in[3];
+		input_port_0_r = in[0];
+		input_port_1_r = in[1];
+		input_port_2_r = in[2];
+		input_port_3_r = in[3];
 
 
 		if (name.equals("mspacman")) {
@@ -252,7 +253,7 @@ public class Pacman extends MAMEDriver implements Driver, MAMEConstants {
 		v.setRegions(REGION_PROMS, REGION_CPU1);
 
 		m.init(md);
-		return (Machine)m;
+		return m;
 	}
 
 
@@ -479,12 +480,12 @@ public class Pacman extends MAMEDriver implements Driver, MAMEConstants {
 		CpuDriver[] cpuDriver = new CpuDriver[1];
 		SoundChipEmulator[] soundChip = new SoundChipEmulator[1];
 
-		cpuDriver[0] = new CpuDriver( (Cpu) new Z80(),
+		cpuDriver[0] = new CpuDriver( new Z80(),
 										18432000/6,	/* 3.072 Mhz */
 										readmem(), writemem(), readport(), writeport(),
 										pacman_interrupt, 1 );
 
-		soundChip[0] = (SoundChipEmulator)namco;
+		soundChip[0] = namco;
 
 		int[] visibleArea = { 0*8, 36*8-1, 0*8, 28*8-1 };
 
@@ -517,12 +518,12 @@ public class Pacman extends MAMEDriver implements Driver, MAMEConstants {
 		CpuDriver[] cpuDriver = new CpuDriver[1];
 		SoundChipEmulator[] soundChip = new SoundChipEmulator[1];
 
-		cpuDriver[0] = new CpuDriver( (Cpu) new Z80(),
+		cpuDriver[0] = new CpuDriver( new Z80(),
 										18432000/6,	/* 3.072 Mhz */
 										theglob_readmem(), writemem(), theglob_readport(), writeport(),
 										pacman_interrupt, 1 );
 
-		soundChip[0] = (SoundChipEmulator)namco;
+		soundChip[0] = namco;
 
 		int[] visibleArea = { 0*8, 36*8-1, 0*8, 28*8-1 };
 
@@ -554,7 +555,7 @@ public class Pacman extends MAMEDriver implements Driver, MAMEConstants {
 	public MachineDriver machine_driver_vanvan() {
 		CpuDriver[] cpuDriver = new CpuDriver[1];
 
-		cpuDriver[0] = new CpuDriver( (Cpu) new Z80(),
+		cpuDriver[0] = new CpuDriver( new Z80(),
 										18432000/6,	/* 3.072 Mhz */
 										vanvan_readmem(), vanvan_writemem(), readport(), vanvan_writeport(),
 										nmi_interrupt, 1 );
@@ -590,12 +591,12 @@ public class Pacman extends MAMEDriver implements Driver, MAMEConstants {
 		CpuDriver[] cpuDriver = new CpuDriver[1];
 		SoundChipEmulator[] soundChip = new SoundChipEmulator[1];
 
-		cpuDriver[0] = new CpuDriver( (Cpu) new Z80(),
+		cpuDriver[0] = new CpuDriver( new Z80(),
 										18432000/6,	/* 3.072 Mhz */
 										readmem(), writemem(), readport(), dremshpr_writeport(),
 										nmi_interrupt, 1 );
 
-		soundChip[0] = (SoundChipEmulator)ay8910;
+		soundChip[0] = ay8910;
 
 		int[] visibleArea = { 0*8, 36*8-1, 0*8, 28*8-1 };
 

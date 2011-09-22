@@ -87,6 +87,7 @@ public final class HiFiSound/* extends Thread*/ {
 /**
  * This should fix the hanging sound problem.
  */
+	@Override
 	public void finalize() {
 		terminate();
 		try {

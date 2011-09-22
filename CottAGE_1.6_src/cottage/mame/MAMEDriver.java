@@ -104,6 +104,7 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 	protected static final SoundChipEmulator[] noSound = null;
 
 	protected class Soundlatch_r implements ReadHandler {
+		@Override
 		public int read(int offset) {
 			//System.out.println("Soundlatch_r :" + soundLatch);
 			return soundLatch;
@@ -118,6 +119,7 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 	}
 
 	private class Soundlatch_w implements WriteHandler {
+		@Override
 		public void write(int address, int data) {
 			//System.out.println("Soundlatch_w :" + data);
 			soundLatch = data;
@@ -147,6 +149,7 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 		return getMachine(null, fname);
 	}
 
+	@Override
 	public Machine getMachine(URL url, String fname) {
 		base_URL = url;
 		DriverName = fname;
@@ -158,31 +161,35 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 
 		for (int i = 0; i < 10; i++)
 			inps[i] = new InputPort();
-		input_port_0_r = (ReadHandler) inps[0];
-		input_port_1_r = (ReadHandler) inps[1];
-		input_port_2_r = (ReadHandler) inps[2];
-		input_port_3_r = (ReadHandler) inps[3];
-		input_port_4_r = (ReadHandler) inps[4];
-		input_port_5_r = (ReadHandler) inps[5];
-		input_port_6_r = (ReadHandler) inps[6];
-		input_port_7_r = (ReadHandler) inps[7];
-		input_port_8_r = (ReadHandler) inps[8];
-		input_port_9_r = (ReadHandler) inps[9];
+		input_port_0_r = inps[0];
+		input_port_1_r = inps[1];
+		input_port_2_r = inps[2];
+		input_port_3_r = inps[3];
+		input_port_4_r = inps[4];
+		input_port_5_r = inps[5];
+		input_port_6_r = inps[6];
+		input_port_7_r = inps[7];
+		input_port_8_r = inps[8];
+		input_port_9_r = inps[9];
 		return null;
 	}
 
+	@Override
 	public int getProperty(int property) {
 		return properties[property];
 	}
 
+	@Override
 	public void setProperty(int property, int value) {
 		properties[property] = value;
 	}
 
+	@Override
 	public String getDriverInfo() {
 		return "AbstractDriver";
 	}
 
+	@Override
 	public String getGameInfo() {
 		return "AbstractDriver supports nothing at all ;o)";
 	}

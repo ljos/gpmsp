@@ -101,10 +101,10 @@ public class GfxManager implements VideoConstants {
 			int x, int y, int transparency, int transcolor) {
 
 		switch(rot) {
-			case GfxManager.ROT0: getTile(tile,color,transparency,transcolor).toBitMap(target, x, y, flipx, flipy, owTrans); break;
-			case GfxManager.ROT90: getTile(tile,color,transparency,transcolor).toBitMap(target, (target.getWidth() - w - 1) - y, x, flipx, flipy, owTrans); break;
-			case GfxManager.ROT180: getTile(tile,color,transparency,transcolor).toBitMap(target, (target.getWidth() - w - 1) - x, (target.getHeight() - h - 1) - y, flipx, flipy, owTrans); break;
-			case GfxManager.ROT270: getTile(tile,color,transparency,transcolor).toBitMap(target, y, (target.getHeight() - h - 1) - x, flipx, flipy, owTrans); break;
+			case VideoConstants.ROT0: getTile(tile,color,transparency,transcolor).toBitMap(target, x, y, flipx, flipy, owTrans); break;
+			case VideoConstants.ROT90: getTile(tile,color,transparency,transcolor).toBitMap(target, (target.getWidth() - w - 1) - y, x, flipx, flipy, owTrans); break;
+			case VideoConstants.ROT180: getTile(tile,color,transparency,transcolor).toBitMap(target, (target.getWidth() - w - 1) - x, (target.getHeight() - h - 1) - y, flipx, flipy, owTrans); break;
+			case VideoConstants.ROT270: getTile(tile,color,transparency,transcolor).toBitMap(target, y, (target.getHeight() - h - 1) - x, flipx, flipy, owTrans); break;
 		}
 	}
 

@@ -15,6 +15,7 @@ public class MsPacmanGame implements Runnable {
 	private boolean stop = false;
 	
 	
+	@Override
 	public void run() {
 		String driver = "";
 		System.out.println("Version " + VERSION);

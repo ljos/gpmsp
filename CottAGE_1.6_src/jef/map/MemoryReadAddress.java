@@ -54,19 +54,22 @@ public class MemoryReadAddress implements ReadMap {
 		this.mem = mem;
 		this.readMap = new ReadHandler[mem.length];
 		this.RAM = new MEMread();
-		set(0, mem.length - 1, (ReadHandler)defread);
+		set(0, mem.length - 1, defread);
 	}
 
+	@Override
 	public void setBankAddress(int bank, int address) {
 		BANKS[bank-1].setBankAdr(address); // the 1st bank is 1, not 0
 	}
 
+	@Override
 	public void set(int from, int until, ReadHandler memRead) {
 		for (int i = from; i <= until; i++) {
 			this.readMap[i] = memRead;
 		}
 	}
 
+	@Override
 	public void setMR(int from, int until, int readerType) {
 		ReadHandler rh = null;
 
@@ -93,11 +96,13 @@ public class MemoryReadAddress implements ReadMap {
 		}
 	}
 
+	@Override
 	public int getSize() {
 		return mem.length;
 	}
     
-    public int read(int address) {
+    @Override
+	public int read(int address) {
         return readMap[address].read(address);
     }
 
@@ -106,6 +111,7 @@ public class MemoryReadAddress implements ReadMap {
 	//}
 
 	public class UndefinedRead implements ReadHandler {
+		@Override
 		public int read(int address) {
 			if (debug) System.out.println("Undefined Read at " + Integer.toHexString(address));
 			return 0;
@@ -113,6 +119,7 @@ public class MemoryReadAddress implements ReadMap {
 	}
 
 	public class MEMread implements ReadHandler {
+		@Override
 		public int read(int address) {
 			return mem[address];
 		}
@@ -126,6 +133,7 @@ public class MemoryReadAddress implements ReadMap {
 			this.startArea = startArea;
 		}
 
+		@Override
 		public int read(int address) {
 			return mem[address + this.bank_address];
 		}
@@ -138,7 +146,8 @@ public class MemoryReadAddress implements ReadMap {
     /* (non-Javadoc)
      * @see jef.map.ReadMap#getMemory()
      */
-    public int[] getMemory() {
+    @Override
+	public int[] getMemory() {
         return mem;
     }
 

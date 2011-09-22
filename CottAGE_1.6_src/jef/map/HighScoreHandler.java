@@ -69,7 +69,8 @@ public class HighScoreHandler implements WriteHandler {
      * 
      * @see jef.map.WriteHandler#write(int, int)
      */
-    public void write(int address, int data) {
+    @Override
+	public void write(int address, int data) {
         if (memory[address] != data) {
 
             writeHandler.write(address, data);

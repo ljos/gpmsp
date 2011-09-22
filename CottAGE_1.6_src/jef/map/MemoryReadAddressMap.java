@@ -33,7 +33,8 @@ public class MemoryReadAddressMap implements ReadMap {
     
     class MEMRead implements ReadHandler {
 
-        public int read(int address) {
+        @Override
+		public int read(int address) {
             return mem[address];
         }
     }
@@ -47,7 +48,8 @@ public class MemoryReadAddressMap implements ReadMap {
             this.startArea = startArea;
         }
 
-        public int read(int address) {
+        @Override
+		public int read(int address) {
             return mem[address + this.bank_address];
         }
 
@@ -59,14 +61,16 @@ public class MemoryReadAddressMap implements ReadMap {
     /* (non-Javadoc)
      * @see jef.map.ReadMap#setBankAddress(int, int)
      */
-    public void setBankAddress(int b, int address) {
+    @Override
+	public void setBankAddress(int b, int address) {
         BANKS[b-1].setBankAdr(address); // the 1st bank is 1, not 0
     }
 
     /* (non-Javadoc)
      * @see jef.map.ReadMap#set(int, int, jef.map.ReadHandler)
      */
-    public void set(int from, int until, ReadHandler memRead) {
+    @Override
+	public void set(int from, int until, ReadHandler memRead) {
         for (int i = from; i <= until; i++) {
             //Value key = new Value(i);
             Integer key = new Integer(i);
@@ -78,7 +82,8 @@ public class MemoryReadAddressMap implements ReadMap {
     /* (non-Javadoc)
      * @see jef.map.ReadMap#set(int, int, int)
      */
-    public void setMR(int from, int until, int readerType) {
+    @Override
+	public void setMR(int from, int until, int readerType) {
         for (int i = from; i <= until; i++) {
             //map.put(key, handlers[readerType]);
         }
@@ -88,7 +93,8 @@ public class MemoryReadAddressMap implements ReadMap {
     /* (non-Javadoc)
      * @see jef.map.ReadMap#getSize()
      */
-    public int getSize() {
+    @Override
+	public int getSize() {
         // TODO Auto-generated method stub
         return 0;
     }
@@ -96,8 +102,9 @@ public class MemoryReadAddressMap implements ReadMap {
     /* (non-Javadoc)
      * @see jef.map.ReadHandler#read(int)
      */
-    public int read(int address) {
-        ReadHandler rh = (ReadHandler) map.get(new Integer(address));
+    @Override
+	public int read(int address) {
+        ReadHandler rh = map.get(new Integer(address));
         if (rh == null) return memRead.read(address);
         else {
             //System.out.println(rh);
@@ -108,7 +115,8 @@ public class MemoryReadAddressMap implements ReadMap {
     /* (non-Javadoc)
      * @see jef.map.ReadMap#getMemory()
      */
-    public int[] getMemory() {
+    @Override
+	public int[] getMemory() {
         return mem;
     }
 

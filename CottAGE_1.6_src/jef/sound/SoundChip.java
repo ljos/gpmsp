@@ -56,6 +56,7 @@ public abstract class SoundChip implements SoundChipEmulator {
 /**
  * Initialize the sound.
  */
+	@Override
 	public void init(boolean useJavaxSound, int freq, int linbuflen, int fps) {
 
 		this.LINE_BUFSIZE = linbuflen;
@@ -85,6 +86,7 @@ public abstract class SoundChip implements SoundChipEmulator {
 /**
  * Enable sound
  */
+	@Override
 	public void enable() {
 		if (enabled == false) {
 			enabled = true;
@@ -95,6 +97,7 @@ public abstract class SoundChip implements SoundChipEmulator {
 /**
  * Disable sound
  */
+	@Override
 	public void disable() {
 		if (enabled == true) {
 			enabled = false;
@@ -106,7 +109,8 @@ public abstract class SoundChip implements SoundChipEmulator {
 /**
  * Updates the sun.audio soundbuffers.
  */
-    public void update() {
+    @Override
+	public void update() {
 
 		// only update if the registers have changed
 		if (/*soundHasChanged &&*/ enabled) {
@@ -126,7 +130,8 @@ public abstract class SoundChip implements SoundChipEmulator {
     }
 
 
-    public abstract void writeBuffer();
+    @Override
+	public abstract void writeBuffer();
 
 	public int getSampFreq() {
 		return SAMPLE_FREQUENCY;
@@ -139,6 +144,7 @@ public abstract class SoundChip implements SoundChipEmulator {
  * Convert linear buffer to a byte stream and return it.
  * Needed for javax.sound implementation.
  */
+	@Override
 	public byte[] getByteStream() {
 	  	for(int i = 0; i < linBuffer.length; i++) {
 			linByteStream[i<<1] = (byte)(linBuffer[i] >> 8);

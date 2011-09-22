@@ -97,6 +97,7 @@ public class SN76496 extends SoundChip implements SoundChipEmulator {
 /**
  * Initialize the sound.
  */
+	@Override
 	public void init(boolean useJavaxSound, int sampRate, int buflen, int fps) {
 
 		super.init(useJavaxSound, sampRate, buflen, fps);
@@ -109,7 +110,7 @@ public class SN76496 extends SoundChip implements SoundChipEmulator {
 		/* at the given sample rate. No. of events = sample rate / (clock/16). */
 		/* STEP is a multiplier used to turn the fraction into a fixed point */
 		/* number. */
-		UpdateStep = (int)((STEP * sampRate * 16) / (SN76496_FREQ / 16));
+		UpdateStep = ((STEP * sampRate * 16) / (SN76496_FREQ / 16));
 
 		for (i = 0;i < 4;i++) {
 			Volume[i] = 0;
@@ -132,7 +133,7 @@ public class SN76496 extends SoundChip implements SoundChipEmulator {
 		gain &= 0xff;
 
 		/* increase max output basing on gain (0.2 dB per step) */
-		out = (float)(MAX_OUTPUT / 3);
+		out = (MAX_OUTPUT / 3);
 		while (gain-- > 0) {
 			out = (float)(out * 1.023292992);	/* = (10 ^ (0.2/20)) */
 		}
@@ -141,7 +142,7 @@ public class SN76496 extends SoundChip implements SoundChipEmulator {
 		for (i = 0;i < 15;i++) {
 			/* limit volume to avoid clipping */
 			if (out > (MAX_OUTPUT / 3)) {
-				VolTable[i] = (int)(MAX_OUTPUT / 3);
+				VolTable[i] = (MAX_OUTPUT / 3);
 			}
 			else {
 				VolTable[i] = (int)out;
@@ -153,7 +154,8 @@ public class SN76496 extends SoundChip implements SoundChipEmulator {
 
 	}
 
-    public void writeBuffer() {
+    @Override
+	public void writeBuffer() {
     	
 			clearBuffer();
 	
@@ -252,13 +254,14 @@ public class SN76496 extends SoundChip implements SoundChipEmulator {
 				if (out > (MAX_OUTPUT * STEP)) {
 					out = MAX_OUTPUT * STEP;
 				}
-				writeLinBuffer(b, (int) (out / STEP));
+				writeLinBuffer(b, (out / STEP));
 			}
 	}
 
 
 	public WriteHandler sn76496_command_w() { return new SN76496_command_w(); }
 	public class SN76496_command_w implements WriteHandler {
+		@Override
 		public void write(int address, int data) {
 			command_w(data);
 		}
@@ -269,7 +272,7 @@ public class SN76496 extends SoundChip implements SoundChipEmulator {
 		{
 			//System.out.println("SN76496 command_w:" + Integer.toHexString(data));
 			int r = (data & 0x70) >> 4;
-			int c = (int)(r/2);
+			int c = (r/2);
 			int n = 0;
 
 			LastRegister = r;
@@ -314,7 +317,7 @@ public class SN76496 extends SoundChip implements SoundChipEmulator {
 			}
 		} else {
 			int r = LastRegister;
-			int c = (int)(r/2);
+			int c = (r/2);
 
 			switch (r)
 			{

@@ -53,21 +53,23 @@ public class MemoryWriteAddress implements WriteMap {
 		this.RAM	  = new RAMwrite();
 		this.ROM	  = new ROMwrite();
 		this.writeMap = new WriteHandler[mem.length];
-		set(0, mem.length-1, (WriteHandler)defwrite);
+		set(0, mem.length-1, defwrite);
 	}
 
 	public MemoryWriteAddress(int size) {
 	//	this.size = size;
 		this.writeMap = new WriteHandler[size];
-		set(0, size-1, (WriteHandler)defwrite);
+		set(0, size-1, defwrite);
 	}
 
+	@Override
 	public void set(int from, int until, WriteHandler memWrite) {
 		for (int i = from; i <= until; i++) {
 			this.writeMap[i] = memWrite;
 		}
 	}
 
+	@Override
 	public void setMW(int from, int until, int type) {
 		WriteHandler wh = null; //(type == 0) ? RAM : ROM;
 
@@ -95,6 +97,7 @@ public class MemoryWriteAddress implements WriteMap {
 		}
 	}
 
+	@Override
 	public int getSize() {
 		return mem.length;
 	}
@@ -103,23 +106,27 @@ public class MemoryWriteAddress implements WriteMap {
 		return writeMap;
 	}*/
     
-    public void write(int address, int data) {
+    @Override
+	public void write(int address, int data) {
         writeMap[address].write(address, data);
     }
 
 	public class UndefinedWrite implements WriteHandler {
+		@Override
 		public void write(int address, int value) {
 			if (debug) System.out.println("Undefined Write at " + Integer.toHexString(address) + ", value : " + Integer.toHexString(value));
 		}
 	}
 
 	public class RAMwrite implements WriteHandler {
+		@Override
 		public void write(int address, int value) {
 			mem[address] = value;
 		}
 	}
 
 	public class ROMwrite implements WriteHandler {
+		@Override
 		public void write(int address, int value) {}
 	}
 	
@@ -134,6 +141,7 @@ public class MemoryWriteAddress implements WriteMap {
 		public void setBankAdr(int adr) {
 			this.bank_address = adr - this.startArea;
 		}
+		@Override
 		public void write(int address, int value) {
 			mem[address + this.bank_address] = value;
 		}

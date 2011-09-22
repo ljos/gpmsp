@@ -29,6 +29,7 @@ public class DecryptingMachine extends BasicMachine {
 		this.offset = offset;
 	}
 
+	@Override
 	public CpuBoard createCpuBoard(int id) {
 		return new BasicDecryptingCpuBoard(offset);
 	}

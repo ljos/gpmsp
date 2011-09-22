@@ -514,6 +514,7 @@ public class InputPort implements ReadHandler {
 	 * 
 	 * @see jef.map.ReadHandler#read(int)
 	 */
+	@Override
 	public int read(int port) {
 		if (!analog) {
 			return value;

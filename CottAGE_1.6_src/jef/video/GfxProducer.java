@@ -33,10 +33,12 @@ public abstract class GfxProducer extends javax.swing.JApplet implements
 		return this._thread;
 	}
 
+	@Override
 	public int getWidth() {
 		return this._width;
 	}
 
+	@Override
 	public int getHeight() {
 		return this._height;
 	}
@@ -70,6 +72,7 @@ public abstract class GfxProducer extends javax.swing.JApplet implements
 		postPaint(_graphics);
 	}
 
+	@Override
 	public void start() {
 
 		// check thread
@@ -82,6 +85,7 @@ public abstract class GfxProducer extends javax.swing.JApplet implements
 		}
 	}
 
+	@Override
 	public void run() {
 
 		zoomed = false;
@@ -125,6 +129,7 @@ public abstract class GfxProducer extends javax.swing.JApplet implements
 		main(_width, _height);
 	}
 
+	@Override
 	public void stop() {
 		// null thread
 		_thread = null;
@@ -144,6 +149,7 @@ public abstract class GfxProducer extends javax.swing.JApplet implements
 		}
 	}
 
+	@Override
 	public synchronized void addConsumer(ImageConsumer ic) {
 		// register image consumer
 		_consumer = ic;
@@ -162,20 +168,24 @@ public abstract class GfxProducer extends javax.swing.JApplet implements
 		_consumer.setColorModel(_model);
 	}
 
+	@Override
 	public synchronized boolean isConsumer(ImageConsumer ic) {
 		// check if consumer is registered
 		return true;
 	}
 
+	@Override
 	public synchronized void removeConsumer(ImageConsumer ic) {
 		// remove image consumer
 	}
 
+	@Override
 	public void startProduction(ImageConsumer ic) {
 		// add consumer
 		addConsumer(ic);
 	}
 
+	@Override
 	public void requestTopDownLeftRightResend(ImageConsumer ic) {
 		// ignore resend request
 	}

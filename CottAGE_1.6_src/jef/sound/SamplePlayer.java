@@ -56,7 +56,7 @@ public class SamplePlayer {
 		infos.add(info);
 		audios.add(audio);
 		
-		Clip clip = (Clip) AudioSystem.getLine((DataLine.Info) info);
+		Clip clip = (Clip) AudioSystem.getLine(info);
 		clip.open(af,audio,0,size);
 
 		clips.add(clip);
@@ -86,7 +86,7 @@ public class SamplePlayer {
 			System.out.println(
 					"playSound: sample nr[" + x + "] is not available");
 		} else {
-			Clip clip = (Clip) clips.elementAt(x);
+			Clip clip = clips.elementAt(x);
 			if (!clip.isActive()) clip.setFramePosition(0);
 			clip.start();
 		}
@@ -94,7 +94,7 @@ public class SamplePlayer {
 	
 	private int getIndex(String s) {
 		for (int i = 0; i < urls.size(); i++) {
-			String u = (String)urls.get(i);
+			String u = urls.get(i);
 			if (u.equals(s)) return i;
 		}
 		return -1;

@@ -40,7 +40,8 @@ public class MemoryMap implements ReadMap, WriteMap {
             this.memory = memory;
         }
 
-        public int read(int offset) {
+        @Override
+		public int read(int offset) {
             return memory[offset];
         }
         
@@ -53,13 +54,15 @@ public class MemoryMap implements ReadMap, WriteMap {
             this.memory = memory;
         }
 
-        public void write(int offset, int data) {
+        @Override
+		public void write(int offset, int data) {
             memory[offset] = data;
         }
     }
 
     public class ROMwrite implements WriteHandler {
-        public void write(int address, int value) {}
+        @Override
+		public void write(int address, int value) {}
     }
 
     public class MEMWriteBanked implements WriteHandler {
@@ -73,7 +76,8 @@ public class MemoryMap implements ReadMap, WriteMap {
         public void setBankAdr(int adr) {
             this.bank_address = adr;
         }
-        public void write(int offset, int value) {
+        @Override
+		public void write(int offset, int value) {
             memory[offset + this.bank_address] = value;
         }
     }
@@ -90,7 +94,8 @@ public class MemoryMap implements ReadMap, WriteMap {
             this.bank_address = adr;
         }
         
-        public int read(int offset) {
+        @Override
+		public int read(int offset) {
             return memory[offset + this.bank_address];
         }
     }
@@ -98,7 +103,8 @@ public class MemoryMap implements ReadMap, WriteMap {
     /* (non-Javadoc)
      * @see jef.map.ReadMap#setBankAddress(int, int)
      */
-    public void setBankAddress(int b, int address) {
+    @Override
+	public void setBankAddress(int b, int address) {
         // TODO Auto-generated method stub
         
     }
@@ -114,7 +120,8 @@ public class MemoryMap implements ReadMap, WriteMap {
     /* (non-Javadoc)
      * @see jef.map.ReadMap#getSize()
      */
-    public int getSize() {
+    @Override
+	public int getSize() {
         // TODO Auto-generated method stub
         return 0;
     }
@@ -123,7 +130,8 @@ public class MemoryMap implements ReadMap, WriteMap {
     /* (non-Javadoc)
      * @see jef.map.ReadMap#getMemory()
      */
-    public int[] getMemory() {
+    @Override
+	public int[] getMemory() {
         return rom;
     }
 
@@ -132,7 +140,8 @@ public class MemoryMap implements ReadMap, WriteMap {
     /* (non-Javadoc)
      * @see jef.map.ReadHandler#read(int)
      */
-    public int read(int address) {
+    @Override
+	public int read(int address) {
         for (int i = 0; i < nrOfReadRegions; i++) {
             ReadRegion r = readRegions[i];
             //System.out.println(Integer.toHexString(r.from) + "-" + Integer.toHexString(r.until));
@@ -148,7 +157,8 @@ public class MemoryMap implements ReadMap, WriteMap {
     /* (non-Javadoc)
      * @see jef.map.WriteHandler#write(int, int)
      */
-    public void write(int address, int data) {
+    @Override
+	public void write(int address, int data) {
         for (int i = 0; i < nrOfWriteRegions; i++) {
             WriteRegion w = writeRegions[i];
             if (address >= w.from && address <= w.until) {
@@ -163,7 +173,8 @@ public class MemoryMap implements ReadMap, WriteMap {
      * Only use for NON-RAM/ROM handlers
      * @see jef.map.ReadMap#set(int, int, jef.map.ReadHandler)
      */
-    public void set(int from, int until, ReadHandler handler) {
+    @Override
+	public void set(int from, int until, ReadHandler handler) {
         readRegions[nrOfReadRegions++] = new ReadRegion(from, until, handler);
     }
 
@@ -171,14 +182,16 @@ public class MemoryMap implements ReadMap, WriteMap {
      * Only use for NON_RAM/ROM handlers
      * @see jef.map.WriteMap#set(int, int, jef.map.WriteHandler)
      */
-    public void set(int from, int until, WriteHandler handler) {
+    @Override
+	public void set(int from, int until, WriteHandler handler) {
         writeRegions[nrOfWriteRegions++] = new WriteRegion(from, until, handler);
     }
 
     /* (non-Javadoc)
      * @see jef.map.ReadMap#set(int, int, int)
      */
-    public void setMR(int from, int until, int readerType) {
+    @Override
+	public void setMR(int from, int until, int readerType) {
         ReadHandler rh;
         int[] memory;
         switch (readerType) {
@@ -219,7 +232,8 @@ public class MemoryMap implements ReadMap, WriteMap {
     /* (non-Javadoc)
      * @see jef.map.WriteMap#setMW(int, int, int)
      */
-    public void setMW(int from, int until, int type) {
+    @Override
+	public void setMW(int from, int until, int type) {
         WriteHandler wh;
         int[] mem;
         switch (type) {

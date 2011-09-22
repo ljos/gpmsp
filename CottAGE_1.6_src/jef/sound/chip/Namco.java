@@ -83,13 +83,15 @@ public class Namco extends SoundChip implements SoundChipEmulator {
 /**
  * Initialize the sound.
  */
+	@Override
 	public void init(boolean useJavaxSound, int sampRate, int buflen, int fps) {
 		this.freqDivider = clockFreq / sampRate;
-		freqDivider = freqDivider * ((float)sampRate / 8000.0f);
+		freqDivider = freqDivider * (sampRate / 8000.0f);
 		super.init(useJavaxSound, sampRate, buflen, fps);
 	}
 
-    public void writeBuffer() {
+    @Override
+	public void writeBuffer() {
 
 		clearBuffer();
 
@@ -130,6 +132,7 @@ public class Namco extends SoundChip implements SoundChipEmulator {
 			this.base = base;
 		}
 
+		@Override
 		public void write(int address, int value) {
 
 			if (mem[address] != (value & 15)) {

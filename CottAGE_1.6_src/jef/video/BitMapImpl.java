@@ -53,6 +53,7 @@ public final class BitMapImpl implements BitMap {
 	/**
 	 * Sets the internal pixels array.
 	 * 	 * @param pixels	 */
+	@Override
 	public final void setPixels(int[] pixels) {
 		this.pixels = pixels;
 	}
@@ -60,6 +61,7 @@ public final class BitMapImpl implements BitMap {
 	/**
 	 * Gets the internal pixels array.
 	 * 	 * @return int[]	 */
+	@Override
 	public final int[] getPixels() {
 		return pixels;
 	}
@@ -67,6 +69,7 @@ public final class BitMapImpl implements BitMap {
 	/**
 	 * Width of the BitMap.
 	 * 	 * @return int	 */
+	@Override
 	public final int getWidth() {
 		return w;
 	}
@@ -74,6 +77,7 @@ public final class BitMapImpl implements BitMap {
 	/**
 	 * Height of the BitMap.
 	 * 	 * @return int	 */
+	@Override
 	public final int getHeight() {
 		return h;
 	}
@@ -81,6 +85,7 @@ public final class BitMapImpl implements BitMap {
 	/**
 	 * Change one pixel.
 	 * 	 * @param x	 * @param y	 * @param c	 */
+	@Override
 	public final void setPixel(int x, int y, int c) {
 		if (x>=0 && x<w && y>=0 && y<h) {
 			pixels[x + y * w] = c;
@@ -93,6 +98,7 @@ public final class BitMapImpl implements BitMap {
 	/**
 	 * Set one pixel without doing bounds checking.
 	 * 	 * @param x	 * @param y	 * @param c	 */
+	@Override
 	public final void setPixelFast(int x, int y, int c) {
 		pixels[x + y * w] = c;
 		//Statistics.pixels(1);
@@ -101,6 +107,7 @@ public final class BitMapImpl implements BitMap {
 	/**
 	 * Get one pixel.
 	 * 	 * @param x	 * @param y	 * @return int	 */
+	@Override
 	public final int getPixel(int x, int y) {
 		if (x>=0 && x<w && y>=0 && y<h) return pixels[x + y * w];
 		else return -1;
@@ -109,6 +116,7 @@ public final class BitMapImpl implements BitMap {
 	/**
 	 * Fast blitting to a pixels array, assuming they are equal in size.
 	 * 	 * @param target	 */
+	@Override
 	public final void toPixels(int[] target) {
 		System.arraycopy(pixels, 0, target, 0, target.length);
 		//Statistics.pixels(target.length);
@@ -117,6 +125,7 @@ public final class BitMapImpl implements BitMap {
 	/**
 	 * Blit to another bitmap.
 	 * 	 * @param bm	 * @param x	 * @param y	 */
+	@Override
 	public final void toBitMap(BitMap bm, int x, int y) {
 
 		int c;
@@ -135,6 +144,7 @@ public final class BitMapImpl implements BitMap {
 	/**
 	 * Blit to another bitmap with support for X/Y flipping.
 	 * 	 * @param bm	 * @param x	 * @param y	 * @param fx	 * @param fy	 */
+	@Override
 	public final void toBitMap(BitMap bm, int x, int y, boolean fx, boolean fy) {
 
 		int c, iix, iiy;
@@ -153,6 +163,7 @@ public final class BitMapImpl implements BitMap {
 	/**
 	 * Blit to another bitmap with support for X/Y flipping and transparent layer.
 	 * 	 * @param bm	 * @param x	 * @param y	 * @param fx	 * @param fy	 * @param overwriteTransparency	 */
+	@Override
 	public final void toBitMap(BitMap bm, int x, int y, boolean fx, boolean fy, boolean overwriteTransparency) {
 
 		int c, iix, iiy;
@@ -194,6 +205,7 @@ public final class BitMapImpl implements BitMap {
 	/**
 	 * Blit to another bitmap.
 	 * 	 * @param bm	 * @param x	 * @param y	 * @param sx	 * @param sy	 * @param sw	 * @param sh	 */
+	@Override
 	public final void toBitMap(BitMap bm, int x, int y, int sx, int sy, int sw, int sh) {
 
 		int c;
@@ -215,6 +227,7 @@ public final class BitMapImpl implements BitMap {
 	/**
 	 * Blit to another bitmap.
 	 * 	 * @param bm	 * @param x	 * @param y	 * @param sx	 * @param sy	 * @param sw	 * @param sh	 * @param transp	 */
+	@Override
 	public final void toBitMap(BitMap bm, int x, int y, int sx, int sy, int sw, int sh,int transp) {
 
 		int c;
@@ -256,6 +269,7 @@ public final class BitMapImpl implements BitMap {
 	 * Destination BitMap is the virtual screen.
 	 * This BitMap is the playfield.
 	 * 	 * @param dest	 * @param xScroll	 * @param yScroll	 * @param transparency	 * @param transcolor	 */
+	@Override
 	public final void toBitMapScrollXY(BitMap dest, int xScroll, int yScroll,
 									int transparency, int transcolor) {
 
@@ -290,6 +304,7 @@ public final class BitMapImpl implements BitMap {
 	/**
 	 * Copy a row of this BitMap to another and wrap it if necessary.
 	 */
+	@Override
 	public final void toBitMapScrollXRow(BitMap dest, int xScroll, int ySrc, int srcHeight, int yDst) {
 		// TO DO
 	}
@@ -297,6 +312,7 @@ public final class BitMapImpl implements BitMap {
 	/**
 	 * Copy a column of this BitMap to another and wrap it if necessary.
 	 */
+	@Override
 	public final void toBitMapScrollYCol(BitMap dest, int yScroll, int xSrc, int srcWidth, int xDst) {
 		// TO DO
 	}
@@ -304,6 +320,7 @@ public final class BitMapImpl implements BitMap {
 	/**
 	 * Returns a scaled version of this BitMap rendered with the specified rendering mode.
 	 * 	 * @param scale	 * @param mode	 * @return BitMap	 */
+	@Override
 	public final BitMap getScaledBitMap(int scale, int renderMode) {
 		//switch (scale) {
 		//	case 0:
