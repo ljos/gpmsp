@@ -46,13 +46,13 @@ public class IOWritePort implements WriteHandler {
 	public IOWritePort() {
 		this.size = 0x100;
 		this.writeMap = new WriteHandler[size];
-		set(0, size-1, (WriteHandler)defwrite);
+		set(0, size-1, defwrite);
 	}
 
 	public IOWritePort(int size) {
 		this.size = size;
 		this.writeMap = new WriteHandler[size];
-		set(0, size-1, (WriteHandler)defwrite);
+		set(0, size-1, defwrite);
 	}
 
 	public void set(int from, int until, WriteHandler memWrite) {
@@ -68,11 +68,13 @@ public class IOWritePort implements WriteHandler {
 	/*public WriteHandler[] get() {
 		return writeMap;
 	}*/
-    public void write(int address, int data) {
+    @Override
+	public void write(int address, int data) {
         writeMap[address].write(address, data);
     }
 
 	public class UndefinedWrite implements WriteHandler {
+		@Override
 		public void write(int address, int value) {
 			if (debug) System.out.println("Undefined Write at " + Integer.toHexString(address) + ", value : " + Integer.toHexString(value));
 		}

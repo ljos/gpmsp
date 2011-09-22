@@ -84,6 +84,7 @@ public class BasicMachine implements Machine {
 	/**
 	 * Initialize the machine
 	 */
+	@Override
 	public void init(MachineDriver md) {
 
 		md.mach = this;
@@ -167,6 +168,7 @@ public class BasicMachine implements Machine {
 	/**
 	 * Enables or disables sound
 	 */
+	@Override
 	public void setSound(boolean enable) {
 		this.soundEnabled = enable;
 		if (md.soundChips != null) {
@@ -182,6 +184,7 @@ public class BasicMachine implements Machine {
 	/**
 	 * Set high score support.
 	 */
+	@Override
 	public void setHighScoreSupported(boolean b) {
 		this.highScoreSupported = b;
 	}
@@ -189,6 +192,7 @@ public class BasicMachine implements Machine {
 	/**
 	 * Check if high scores are supported.
 	 */
+	@Override
 	public boolean isHighScoreSupported() {
 		return this.highScoreSupported;
 	}
@@ -197,6 +201,7 @@ public class BasicMachine implements Machine {
 	 * Update the high score, but only if high scores are supported and if the
 	 * score is higher than the current high score.
 	 */
+	@Override
 	public void setHighScore(long score) {
 		if (this.highScoreSupported && score > highScore) {
 			this.highScore = score;
@@ -206,6 +211,7 @@ public class BasicMachine implements Machine {
 	/**
 	 * Return the high score
 	 */
+	@Override
 	public long getHighScore() {
 		return this.highScore;
 	}
@@ -226,6 +232,7 @@ public class BasicMachine implements Machine {
 	/**
 	 * Reset machine
 	 */
+	@Override
 	public void reset(boolean hard) {
 		if (!highScoreSupported) {
 			for (int c = 0; c < cd.length; c++) {
@@ -237,6 +244,7 @@ public class BasicMachine implements Machine {
 	/**
 	 * Get a property
 	 */
+	@Override
 	public int getProperty(int property) {
 		if (property == FPS)
 			return md.fps;
@@ -248,6 +256,7 @@ public class BasicMachine implements Machine {
 	/**
 	 * Signal the machine a key has been pressed
 	 */
+	@Override
 	public void keyPress(int keyCode) {
 		for (int i = 0; i < md.input.length; i++) {
 			md.input[i].keyPress(keyCode);
@@ -257,6 +266,7 @@ public class BasicMachine implements Machine {
 	/**
 	 * Signal the machine a key has been released
 	 */
+	@Override
 	public void keyRelease(int keyCode) {
 		for (int i = 0; i < md.input.length; i++) {
 			md.input[i].keyRelease(keyCode);
@@ -286,6 +296,7 @@ public class BasicMachine implements Machine {
 	/**
 	 * Do everything for one frame
 	 */
+	@Override
 	public BitMap refresh(boolean render) {
 
 		boolean rendered = false;
@@ -374,6 +385,7 @@ public class BasicMachine implements Machine {
 		return new NMI_interrupt_switched();
 	}
 	public class NMI_interrupt_switched implements InterruptHandler {
+		@Override
 		public int irq() {
 			return nmi_interrupt_enabled ? 1 : -1;
 		}
@@ -386,6 +398,7 @@ public class BasicMachine implements Machine {
 		return new Interrupt_switched();
 	}
 	public class Interrupt_switched implements InterruptHandler {
+		@Override
 		public int irq() {
 			return interrupt_enabled ? 0 : -1;
 		}
@@ -398,6 +411,7 @@ public class BasicMachine implements Machine {
 		return new NMI_interrupt_enable();
 	}
 	public class NMI_interrupt_enable implements WriteHandler {
+		@Override
 		public void write(int address, int value) {
 			nmi_interrupt_enabled = (value != 0);
 		}
@@ -410,6 +424,7 @@ public class BasicMachine implements Machine {
 		return new Interrupt_enable();
 	}
 	public class Interrupt_enable implements WriteHandler {
+		@Override
 		public void write(int address, int value) {
 			interrupt_enabled = (value != 0);
 		}
@@ -422,6 +437,7 @@ public class BasicMachine implements Machine {
 		return new NMI_interrupt();
 	}
 	public class NMI_interrupt implements InterruptHandler {
+		@Override
 		public int irq() {
 			return 1;
 		}
@@ -434,6 +450,7 @@ public class BasicMachine implements Machine {
 		return new Interrupt();
 	}
 	public class Interrupt implements InterruptHandler {
+		@Override
 		public int irq() {
 			return 0;
 		}
@@ -444,9 +461,10 @@ public class BasicMachine implements Machine {
 	 * 
 	 * @see jef.machine.Machine#getProgress()
 	 */
+	@Override
 	public double getProgress() {
 		double cyclesPerFrame = (double) md.getCpuDriver()[0].frq / (double) md.fps;
-		double cyclesPerSlice = cyclesPerFrame / (double) slicesPerFrame;
+		double cyclesPerSlice = cyclesPerFrame / slicesPerFrame;
 		double curSliceCyclesLeft = cb[0].getCpu().getCyclesLeft();
 		double cyclesPerFrameLeft =
 			cyclesPerFrame - (((currentSlice + 1) * cyclesPerSlice) - curSliceCyclesLeft);

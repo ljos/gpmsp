@@ -150,16 +150,16 @@ public class Throttle {
         minimumSleep = osname.endsWith("NT") ? 11 : 5;
         sleep = minimumSleep;
         throttleStep = DEFAULT_THROTTLE_STEP;
-        minFPS = targetFPS - (int)((float)(targetFPS * MAX_FPS_DEVIATION));
+        minFPS = targetFPS - (int)(targetFPS * MAX_FPS_DEVIATION);
         if(minFPS == targetFPS) {
             minFPS = targetFPS - 1;
         }
-        maxFPS = targetFPS + (int)((float)(targetFPS * MAX_FPS_DEVIATION));
+        maxFPS = targetFPS + (int)(targetFPS * MAX_FPS_DEVIATION);
         if(maxFPS == targetFPS) {
             maxFPS = targetFPS + 1;
         }
 
-        fps = (long)targetFPS;
+        fps = targetFPS;
         t = System.currentTimeMillis();
 	}
 

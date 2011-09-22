@@ -222,6 +222,7 @@ public class MAMEVideo implements VideoEmulator,Vh_convert_color_proms,Eof_callb
 
 	public ReadHandler paletteram_r() { return new Paletteram_r(); }
 	public class Paletteram_r implements ReadHandler {
+		@Override
 		public int read(int offset) {
 			return RAM[offset];
 		}
@@ -229,6 +230,7 @@ public class MAMEVideo implements VideoEmulator,Vh_convert_color_proms,Eof_callb
 
 	public WriteHandler videoram_w() { return new Videoram_w(); }
 	public class Videoram_w implements WriteHandler {
+		@Override
 		public void write(int offset, int data) {
 			if (RAM[offset] != data)
 			{
@@ -240,6 +242,7 @@ public class MAMEVideo implements VideoEmulator,Vh_convert_color_proms,Eof_callb
 
 	public WriteHandler colorram_w() { return new Colorram_w(); }
 	public class Colorram_w implements WriteHandler {
+		@Override
 		public void write(int offset, int data) {
 			if (RAM[offset] != data)
 			{
@@ -261,6 +264,7 @@ public class MAMEVideo implements VideoEmulator,Vh_convert_color_proms,Eof_callb
 	***************************************************************************/
 	public Vh_convert_color_proms RRRR_GGGG_BBBB() { return new RRRR_GGGG_BBBB_pi(); }
 	public class RRRR_GGGG_BBBB_pi implements Vh_convert_color_proms {
+		@Override
 		public void palette_init() {
 			int i;
 
@@ -297,6 +301,7 @@ public class MAMEVideo implements VideoEmulator,Vh_convert_color_proms,Eof_callb
 	
 	public Vh_convert_color_proms BBBB_GGGG_RRRR() { return new BBBB_GGGG_RRRR_pi(); }
 	public class BBBB_GGGG_RRRR_pi implements Vh_convert_color_proms {
+		@Override
 		public void palette_init() {
 			int i;
 
@@ -332,6 +337,7 @@ public class MAMEVideo implements VideoEmulator,Vh_convert_color_proms,Eof_callb
 	
 	public WriteHandler paletteram_RRRRGGGGBBBBxxxx_split1_w() { return new Paletteram_RRRRGGGGBBBBxxxx_split1_w(); }
 	public class Paletteram_RRRRGGGGBBBBxxxx_split1_w implements WriteHandler {
+		@Override
 		public void write(int address, int data) {
 			RAM[address] = data;
 			changecolor_RRRRGGGGBBBBxxxx(address - paletteram, RAM[address] | (RAM[address-paletteram+paletteram_2] << 8));
@@ -340,6 +346,7 @@ public class MAMEVideo implements VideoEmulator,Vh_convert_color_proms,Eof_callb
 
 	public WriteHandler paletteram_RRRRGGGGBBBBxxxx_split2_w() { return new Paletteram_RRRRGGGGBBBBxxxx_split2_w(); }
 	public class Paletteram_RRRRGGGGBBBBxxxx_split2_w implements WriteHandler {
+		@Override
 		public void write(int address, int data) {
 			RAM[address] = data;
 			changecolor_RRRRGGGGBBBBxxxx(address - paletteram_2, RAM[address-paletteram_2+paletteram] | (RAM[address] << 8));
@@ -379,6 +386,7 @@ public class MAMEVideo implements VideoEmulator,Vh_convert_color_proms,Eof_callb
 
 	public WriteHandler paletteram_xxxxRRRRGGGGBBBB_swap_w() { return new Paletteram_xxxxRRRRGGGGBBBB_swap_w(); }
 	public class Paletteram_xxxxRRRRGGGGBBBB_swap_w implements WriteHandler {
+		@Override
 		public void write(int address, int data) {
 			RAM[address] = data;
 			changecolor_xxxxRRRRGGGGBBBB((address - paletteram)>>1, RAM[address | 1] | (RAM[address & ~1] << 8));
@@ -401,6 +409,7 @@ public class MAMEVideo implements VideoEmulator,Vh_convert_color_proms,Eof_callb
 
 	public WriteHandler paletteram_RRRRGGGGBBBBxxxx_swap_w() { return new Paletteram_RRRRGGGGBBBBxxxx_swap_w(); }
 	public class Paletteram_RRRRGGGGBBBBxxxx_swap_w implements WriteHandler {
+		@Override
 		public void write(int address, int data) {
 			RAM[address] = data;
 			changecolor_RRRRGGGGBBBBxxxx((address - paletteram)>>1, RAM[address | 1] | (RAM[address & ~1] << 8));
@@ -456,6 +465,7 @@ public class MAMEVideo implements VideoEmulator,Vh_convert_color_proms,Eof_callb
 		this.Machine_visible_area_max_y = md.visible[3];
 	}
 
+	@Override
 	public void  init(MachineDriver md) {
 		this.md = md;
 		this.width = md.w;
@@ -472,24 +482,24 @@ public class MAMEVideo implements VideoEmulator,Vh_convert_color_proms,Eof_callb
 		this.color = md.col;
 		this.rot = md.ROT;
 		this.pixels = new int[((visible[1]+1) - visible[0]) * ((visible[3]+1) - visible[2])];
-		this.videoModifiesPalette = (md.videoFlags & GfxManager.VIDEO_MODIFIES_PALETTE) != 0;
-		if ((md.videoFlags & VideoEmulator.VIDEO_BUFFERS_SPRITERAM) != 0)
+		this.videoModifiesPalette = (md.videoFlags & VideoConstants.VIDEO_MODIFIES_PALETTE) != 0;
+		if ((md.videoFlags & VideoConstants.VIDEO_BUFFERS_SPRITERAM) != 0)
 			this.buffered_spriteram = new int[spriteram_size];
 		
 		this.vX =  - visible[0];
 		this.vY =  - visible[2];
 
 		switch (rot) {
-			case GfxManager.ROT0:
+			case VideoConstants.ROT0:
 				vX =  - (visible[0]);
 				vY =  - (visible[2]);
-			case GfxManager.ROT180:
+			case VideoConstants.ROT180:
 				backBuffer = new BitMapImpl(((visible[1]+1) - visible[0]),((visible[3]+1) - visible[2]), pixels);
 				break;
-			case GfxManager.ROT90:
+			case VideoConstants.ROT90:
 				vX =  - (visible[0]);
 				vY =  - (visible[2]);
-			case GfxManager.ROT270:
+			case VideoConstants.ROT270:
 				backBuffer = new BitMapImpl(((visible[3]+1) - visible[2]),((visible[1]+1) - visible[0]), pixels);
 				break;
 		}
@@ -535,26 +545,32 @@ public class MAMEVideo implements VideoEmulator,Vh_convert_color_proms,Eof_callb
 		return palette[c];
 	}
 
+	@Override
 	public void palette_init() {
 		//System.out.println("No color proms to decode...");
 	}
 
+	@Override
 	public void eof_callback() {
 		//
 	}
 
+	@Override
 	public int vh_start() {
 		return 0;
 	}
 
+	@Override
 	public void vh_stop() {
 		//
 	}
 
+	@Override
 	public BitMap video_update() {
 		return bitmap;
 	}
 
+	@Override
 	public void video_post_update() {
 		if (videoModifiesPalette) {
 			for (int i = 0; i < gfxMan.length; i++) {
@@ -592,13 +608,13 @@ public class MAMEVideo implements VideoEmulator,Vh_convert_color_proms,Eof_callb
 							int transparency, int transcolor ) {
 
 		switch (rot) {
-			case GfxManager.ROT0:
+			case VideoConstants.ROT0:
 				gfxMan[type].drawTile(target, tile, color, flipx, flipy, x + vX, y + vY, transparency, transcolor); break;
-			case GfxManager.ROT90:
+			case VideoConstants.ROT90:
 				gfxMan[type].drawTile(target, tile, color, flipy, flipx, x + vX, y + vY, transparency, transcolor); break;
-			case GfxManager.ROT180:
+			case VideoConstants.ROT180:
 				gfxMan[type].drawTile(target, tile, color, flipx, flipy, x + vX, y + vY, transparency, transcolor); break;
-			case GfxManager.ROT270:
+			case VideoConstants.ROT270:
 				gfxMan[type].drawTile(target, tile, color, flipy, flipx, x + vX, y + vY, transparency, transcolor); break;
 		}
 
@@ -609,13 +625,13 @@ public class MAMEVideo implements VideoEmulator,Vh_convert_color_proms,Eof_callb
 							int flipx, int flipy, int x, int y,
 							int transparency, int transcolor ) {
 		switch (rot) {
-			case GfxManager.ROT0:
+			case VideoConstants.ROT0:
 				gfxMan[type].drawTile(target, tile, color, (flipx!=0), (flipy!=0), x + vX, y + vY, transparency, transcolor); break;
-			case GfxManager.ROT90:
+			case VideoConstants.ROT90:
 				gfxMan[type].drawTile(target, tile, color, (flipy!=0), (flipx!=0), x + vX, y + vY, transparency, transcolor); break;
-			case GfxManager.ROT180:
+			case VideoConstants.ROT180:
 				gfxMan[type].drawTile(target, tile, color, (flipx!=0), (flipy!=0), x + vX, y + vY, transparency, transcolor); break;
-			case GfxManager.ROT270:
+			case VideoConstants.ROT270:
 				gfxMan[type].drawTile(target, tile, color, (flipy!=0), (flipx!=0), x + vX, y + vY, transparency, transcolor); break;
 		}
 	}
@@ -628,13 +644,13 @@ public class MAMEVideo implements VideoEmulator,Vh_convert_color_proms,Eof_callb
 			y += vY;
 		}
 		switch (rot) {
-			case GfxManager.ROT0:
+			case VideoConstants.ROT0:
 				gfxMan[type].drawTile(target, tile, color, (flipx!=0), (flipy!=0), x, y, transparency, transcolor); break;
-			case GfxManager.ROT90:
+			case VideoConstants.ROT90:
 				gfxMan[type].drawTile(target, tile, color, (flipy!=0), (flipx!=0), x, y, transparency, transcolor); break;
-			case GfxManager.ROT180:
+			case VideoConstants.ROT180:
 				gfxMan[type].drawTile(target, tile, color, (flipx!=0), (flipy!=0), x, y, transparency, transcolor); break;
-			case GfxManager.ROT270:
+			case VideoConstants.ROT270:
 				gfxMan[type].drawTile(target, tile, color, (flipy!=0), (flipx!=0), x, y, transparency, transcolor); break;
 		}
 	}
@@ -755,7 +771,7 @@ public class MAMEVideo implements VideoEmulator,Vh_convert_color_proms,Eof_callb
 			sh = src.getHeight();
 
 			if ( (rot & 1) == 0) {
-				if (transparency == GfxManager.TRANSPARENCY_COLOR)
+				if (transparency == VideoConstants.TRANSPARENCY_COLOR)
 					tt = transcolor;
 				else
 					tt = -1;

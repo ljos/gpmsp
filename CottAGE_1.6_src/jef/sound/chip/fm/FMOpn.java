@@ -101,7 +101,7 @@ public class FMOpn implements FMConstants {
 			break;
 			//#endif
 		case 0x24:	/* timer A High 8*/
-			ST.TA = (ST.TA & 0x03)|(((int)v)<<2);
+			ST.TA = (ST.TA & 0x03)|(v<<2);
 			break;
 		case 0x25:	/* timer A Low 2*/
 			ST.TA = (ST.TA & 0x3fc)|(v&3);
@@ -257,7 +257,7 @@ public class FMOpn implements FMConstants {
 			switch( OPN_SLOT(r) ){
 			case 0:		/* 0xa0-0xa2 : FNUM1 */
 			{
-				int fn  = (((int)( (CH.fn_h)&7))<<8) + v;
+				int fn  = (( (CH.fn_h)&7)<<8) + v;
 				int blk = CH.fn_h>>3;
 				/* make keyscale code */
 				CH.kcode = (blk<<2)|OPN_FKTABLE[(fn>>7)];
@@ -272,7 +272,7 @@ public class FMOpn implements FMConstants {
 			case 2:		/* 0xa8-0xaa : 3CH FNUM1 */
 				if( r < 0x100)
 				{
-					int fn  = (((int)(SL3.fn_h[c]&7))<<8) + v;
+					int fn  = ((SL3.fn_h[c]&7)<<8) + v;
 					int blk = SL3.fn_h[c]>>3;
 					/* make keyscale code */
 					SL3.kcode[c]= (blk<<2)|OPN_FKTABLE[(fn>>7)];
@@ -344,7 +344,7 @@ public class FMOpn implements FMConstants {
 		for (i = 0; i < 2048; i++) {
 			/* it is freq table for octave 7 */
 			/* opn freq counter = 20bit */
-			FN_TABLE[i] = (long) ((double) i * ST.freqbase * FREQ_RATE * (1 << 7) / 2);
+			FN_TABLE[i] = (long) (i * ST.freqbase * FREQ_RATE * (1 << 7) / 2);
 		}
 		//#if FM_LFO_SUPPORT
 		/* LFO wave table */

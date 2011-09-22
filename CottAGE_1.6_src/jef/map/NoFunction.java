@@ -37,6 +37,7 @@ package jef.map;
  * 
  * NoFunction.java */
 public class NoFunction implements VoidFunction {
+	@Override
 	public void exec() {
 		// do nothing
 	}

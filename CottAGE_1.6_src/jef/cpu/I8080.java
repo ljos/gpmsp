@@ -263,18 +263,21 @@ public final class I8080 implements Cpu
 	 this.debugLevel = 0;
  }
 
- public void	setTag(String tag) {
+ @Override
+public void	setTag(String tag) {
 	 this.tag = tag;
  }
 
- public String	getTag() {
+ @Override
+public String	getTag() {
 	 return this.tag;
  }
 
 /**
  * Initialize
  */
- public boolean init(CpuBoard ram, int debug) {
+ @Override
+public boolean init(CpuBoard ram, int debug) {
 	 this.ram = ram;
 	 return true;
  }
@@ -282,11 +285,13 @@ public final class I8080 implements Cpu
 /**
  * returns the currently excecuted instruction
  */
- public final long getInstruction() {
-	 return (long)CurInstr;
+ @Override
+public final long getInstruction() {
+	 return CurInstr;
  }
 
- public final void interrupt(int type, boolean irq) {
+ @Override
+public final void interrupt(int type, boolean irq) {
 	 if (type == INTERRUPT_NMI) {
 		 NMI = true;
 	 } else { // type == INTERRUPT_IRQ
@@ -297,7 +302,8 @@ public final class I8080 implements Cpu
 /**
  * Reset CPU - Only resets the registers
  */
- public final void reset() {
+ @Override
+public final void reset() {
  	SP=0x10000; 	// it's actually 0 but since the 1st stack instruction is never a POP
  					// we can set it to default 0x10000 in order to prevent AND-ing SP
  					// with 0xffff all the time...
@@ -312,7 +318,8 @@ public final class I8080 implements Cpu
  * @param	cycles
  *			number of cycles to be excecuted
  */
- public final void exec(int num_cycles) {
+ @Override
+public final void exec(int num_cycles) {
   this.cycles_left += num_cycles;
 
   // Make variables local
@@ -865,24 +872,28 @@ public final class I8080 implements Cpu
  /**
   * Sets the required debuglevel (if enabled):
   */
- public final void setDebug(int debugLevel) {
+ @Override
+public final void setDebug(int debugLevel) {
 	 if (!debugDisabled)
 	 {
 		 this.debugLevel = debugLevel;
 	 }
  }
 
- public final int getDebug() {
+ @Override
+public final int getDebug() {
 	 return debugLevel;
  }
 
- public final void setProperty(int property, int value) {
+ @Override
+public final void setProperty(int property, int value) {
 	 //
  }
 
 /* (non-Javadoc)
  * @see jef.cpu.Cpu#getCyclesLeft()
  */
+@Override
 public int getCyclesLeft() {
 	return cycles_left;
 }

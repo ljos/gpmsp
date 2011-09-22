@@ -46,13 +46,13 @@ public class IOReadPort implements ReadHandler {
 	public IOReadPort() {
 		this.size = 0x100;
 		this.readMap = new ReadHandler[size];
-		set(0, size-1, (ReadHandler)defread);
+		set(0, size-1, defread);
 	}
 
 	public IOReadPort(int size) {
 		this.size = size;
 		this.readMap = new ReadHandler[size];
-		set(0, size-1, (ReadHandler)defread);
+		set(0, size-1, defread);
 	}
 
 	public void set(int from, int until, ReadHandler memRead) {
@@ -70,13 +70,15 @@ public class IOReadPort implements ReadHandler {
 	}
 
 	public class UndefinedRead implements ReadHandler {
+		@Override
 		public int read(int address) {
 			if (debug) System.out.println("Undefined Read at " + Integer.toHexString(address));
 			return 0;
 		}
 	}
 
-    public int read(int address) {
+    @Override
+	public int read(int address) {
         return readMap[address].read(address);
     }
 

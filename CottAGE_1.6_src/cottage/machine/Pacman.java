@@ -25,6 +25,7 @@ public class Pacman extends BasicMachine implements Machine {
 	public VoidFunction theglob_init_machine(cottage.machine.Pacman m, int[] mem) { return new init(m,mem); }
 	public WriteHandler hiscore(int[] mem, WriteHandler wh) {				return new HiScore(mem,wh); }
 	
+	@Override
 	public CpuBoard createCpuBoard(int id) {
 		if (fastBoard)
 			return new FastCpuBoard();
@@ -41,6 +42,7 @@ public class Pacman extends BasicMachine implements Machine {
 			this.mem = mem;
 		}
 
+		@Override
 		public void exec() {
 			System.out.println("Decrypting roms...");
 			m.theglob_decrypt_rom_8(mem);
@@ -182,6 +184,7 @@ public class Pacman extends BasicMachine implements Machine {
 			this.mem = mem;
 		}
 
+		@Override
 		public int read(int address) {
 			return mem[m.readOffset + address];
 		}
@@ -195,6 +198,7 @@ public class Pacman extends BasicMachine implements Machine {
 			this.m = m;
 		}
 
+		@Override
 		public int read(int offset) {
 
 			if ( (offset & 0x01) != 0) {
@@ -223,6 +227,7 @@ public class Pacman extends BasicMachine implements Machine {
 			this.m = m;
 		}
 
+		@Override
 		public int irq() {
 			if (Pacman.irqEnabled) {
 				return jef.cpu.Cpu.INTERRUPT_TYPE_NMI;	// nmi
@@ -239,6 +244,7 @@ public class Pacman extends BasicMachine implements Machine {
 			this.m = m;
 		}
 
+		@Override
 		public int irq() {
 			if (Pacman.irqEnabled) {
 				return jef.cpu.Cpu.INTERRUPT_TYPE_IRQ;	// irq
@@ -255,6 +261,7 @@ public class Pacman extends BasicMachine implements Machine {
 			this.m = m;
 		}
 
+		@Override
 		public void write(int address, int value) {
 			Pacman.irqEnabled = (value != 0);
 		}
@@ -267,6 +274,7 @@ public class Pacman extends BasicMachine implements Machine {
 			this.m = m;
 		}
 
+		@Override
 		public void write(int address, int value) {
 			m.cd[0].cpu.setProperty(0,value);
 		}
@@ -307,6 +315,7 @@ public class Pacman extends BasicMachine implements Machine {
 		/**
 		 * @see jef.map.WriteHandler#write(int, int)
 		 */
+		@Override
 		public void write(int address, int value) {
 			if (mem[address] != value) {
 				mem[address] = value;

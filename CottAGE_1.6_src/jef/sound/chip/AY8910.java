@@ -125,6 +125,7 @@ public class AY8910 extends SoundChip implements SoundChipEmulator {
 /**
  * Initialize the sound.
  */
+	@Override
 	public void init(boolean useJavaxSound, int sampRate, int buflen, int fps) {
 		super.init(useJavaxSound, sampRate, buflen, fps);
 
@@ -382,7 +383,8 @@ public class AY8910 extends SoundChip implements SoundChipEmulator {
 	}
 
 
-    public void writeBuffer() {
+    @Override
+	public void writeBuffer() {
 
 		clearBuffer();
 
@@ -788,6 +790,7 @@ public class AY8910 extends SoundChip implements SoundChipEmulator {
 		public AY8910_read_port_r(int context) {
 			this.context = context;
 		}
+		@Override
 		public int read(int address) {
 			return AY8910Read(context);
 		}
@@ -803,6 +806,7 @@ public class AY8910 extends SoundChip implements SoundChipEmulator {
 		public AY8910_control_port_w(int context) {
 			this.context = context;
 		}
+		@Override
 		public void write (int address, int data) {
 			//System.out.println("AY8910_control_port_w " + context + " , " + data);
 			AY8910Write(context,0,data);
@@ -819,6 +823,7 @@ public class AY8910 extends SoundChip implements SoundChipEmulator {
 		public AY8910_write_port_w(int context) {
 			this.context = context;
 		}
+		@Override
 		public void write (int address, int data) {
 			//System.out.println("AY8910_write_port_w " + context + " , " + data);
 			AY8910Write(context,1,data);

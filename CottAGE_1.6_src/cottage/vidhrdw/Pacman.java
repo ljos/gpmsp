@@ -9,6 +9,7 @@ import jef.video.Vh_convert_color_proms;
 import jef.video.Vh_refresh;
 import jef.video.Vh_start;
 import jef.video.Vh_stop;
+import jef.video.VideoConstants;
 import jef.video.VideoEmulator;
 
 import cottage.mame.MAMEVideo;
@@ -27,6 +28,7 @@ public class Pacman extends MAMEVideo implements VideoEmulator,
 
 	boolean[] dirtybuffer = new boolean[0x400];
 
+	@Override
 	public void init(MachineDriver md) {
 		super.init(md);
 		charLayer = new BitMapImpl(backBuffer.getWidth(), backBuffer.getHeight());
@@ -45,6 +47,7 @@ public class Pacman extends MAMEVideo implements VideoEmulator,
 		return true;
 	}
 
+	@Override
 	public BitMap video_update() {
 		int offs;
 
@@ -81,7 +84,7 @@ public class Pacman extends MAMEVideo implements VideoEmulator,
 						REGION_CPU[0x4400 + offs] & 0x1f,
 						false,false,
 						sx*8,sy*8,
-						GfxManager.TRANSPARENCY_NONE,0);
+						VideoConstants.TRANSPARENCY_NONE,0);
 			}
 		}
 
@@ -102,7 +105,7 @@ public class Pacman extends MAMEVideo implements VideoEmulator,
 					REGION_CPU[0x4ff0 + offs + 1] & 0x1f,
 					(REGION_CPU[0x4ff0 + offs] & 1) != 0, (REGION_CPU[0x4ff0 + offs] & 2) != 0,
 					sx,sy,
-					GfxManager.TRANSPARENCY_COLOR,0);
+					VideoConstants.TRANSPARENCY_COLOR,0);
 		}
 
 		/* In the Pac Man based games (NOT Pengo) the first two sprites must be offset */
@@ -120,11 +123,12 @@ public class Pacman extends MAMEVideo implements VideoEmulator,
 					REGION_CPU[0x4ff0 + offs + 1] & 0x1f,
 					(REGION_CPU[0x4ff0 + offs] & 1) != 0, (REGION_CPU[0x4ff0 + offs] & 2) != 0,
 					sx,sy + xoffsethack,
-					GfxManager.TRANSPARENCY_COLOR,0);
+					VideoConstants.TRANSPARENCY_COLOR,0);
 		}
 		return bitmap;
 	}
 
+	@Override
 	public void palette_init() {
 		int i;
 		int pointer = 0;
@@ -172,6 +176,7 @@ public class Pacman extends MAMEVideo implements VideoEmulator,
 			this.video	= video;
 		}
 
+		@Override
 		public void write(int address, int value) {
 			mem[0x4000 + (address & 0x7ff)] = value;
 			video.dirtybuffer[address & 0x3ff] = true;

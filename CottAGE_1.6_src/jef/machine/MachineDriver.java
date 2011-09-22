@@ -95,30 +95,35 @@ public class MachineDriver {
 	/** For video emulation initialization */
 	public VideoEmulator ve = new NoVE();
 	public class NoVE implements VideoEmulator {
+		@Override
 		public void init(MachineDriver mDr) {}
 	}
 
 	/** Function to convert the color proms */
 	public Vh_convert_color_proms initProms = new NoProms();
 	public class NoProms implements Vh_convert_color_proms {
+		@Override
 		public void palette_init() {}
 	}
 
 	/** Function called at end of frame */
 	public Eof_callback	eof_callback = new NoEof();
 	public class NoEof implements Eof_callback {
+		@Override
 		public void eof_callback() {}
 	}
 
 	/** Function called to initialize video emulation */
 	public Vh_start		vh_start = new NoStart();
 	public class NoStart implements Vh_start {
+		@Override
 		public int vh_start() { return 0; }
 	}
 
 	/** Function called to end video emulation */
 	public Vh_stop		vh_stop = new NoStop();
 	public class NoStop implements Vh_stop {
+		@Override
 		public void vh_stop() {}
 	}
 

@@ -69,6 +69,7 @@ public class LoFiSound {
 /**
  * This should fix the hanging sound problem.
  */
+	@Override
 	public void finalize() {
 		disable();
 		try {

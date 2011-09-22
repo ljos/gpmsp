@@ -71,7 +71,7 @@ public class FMState implements FMConstants {
 				if (Timer_Handler != null) {
 					Timer_Handler.n = n;
 					Timer_Handler.c = 1;
-					Timer_Handler.cnt = (double) TBC;
+					Timer_Handler.cnt = TBC;
 					Timer_Handler.stepTime = TimerBase;
 				}
 
@@ -95,7 +95,7 @@ public class FMState implements FMConstants {
 				if (Timer_Handler != null) {
 					Timer_Handler.n = n;
 					Timer_Handler.c = 0;
-					Timer_Handler.cnt = (double) TAC;
+					Timer_Handler.cnt = TAC;
 					Timer_Handler.stepTime = TimerBase;
 				}
 
@@ -205,7 +205,7 @@ public class FMState implements FMConstants {
 		/* DeTune table */
 		for (d = 0;d <= 3;d++){
 			for (i = 0;i <= 31;i++){
-				rate = (double)DTTABLE[d*32 + i] * this.freqbase * FREQ_RATE;
+				rate = DTTABLE[d*32 + i] * this.freqbase * FREQ_RATE;
 				this.DT_TABLE[d][i]   =  (int) rate;
 				this.DT_TABLE[d+4][i] = (int) -rate;
 			}
@@ -216,7 +216,7 @@ public class FMState implements FMConstants {
 			rate  = this.freqbase;						/* frequency rate */
 			if( i < 60 ) rate *= 1.0+(i&3)*0.25;		/* b0-1 : x1 , x1.25 , x1.5 , x1.75 */
 			rate *= 1<<((i>>2)-1);						/* b2-5 : shift bit */
-			rate *= (double)(EG_ENT<<ENV_BITS);
+			rate *= (EG_ENT<<ENV_BITS);
 			this.AR_TABLE[i] = (int) (rate / ARRATE);
 			this.DR_TABLE[i] = (int) (rate / DRRATE);
 		}

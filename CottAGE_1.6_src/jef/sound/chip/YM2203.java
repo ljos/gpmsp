@@ -82,6 +82,7 @@ public class YM2203 extends SoundChip implements SoundChipEmulator, FMConstants 
 		}
 	}
 	
+	@Override
 	public void init(boolean useJavaxSound, int sampRate, int buflen, int fps) {
 		super.init(useJavaxSound, sampRate, buflen, fps);
 		
@@ -452,6 +453,7 @@ public class YM2203 extends SoundChip implements SoundChipEmulator, FMConstants 
 	 * 
 	 * @see jef.sound.SoundChip#writeBuffer()
 	 */
+	@Override
 	public void writeBuffer() {
 		SSG.writeBuffer();
 		SSG.update();
@@ -474,6 +476,7 @@ public class YM2203 extends SoundChip implements SoundChipEmulator, FMConstants 
 		public YM2203_status_port_r(int context) {
 			c = context;
 		}
+		@Override
 		public int read(int address) {
 			int i = YM2203Read(c,0);
 			//System.out.println("YM2203_status_port_r" + c + " : " + i);
@@ -491,6 +494,7 @@ public class YM2203 extends SoundChip implements SoundChipEmulator, FMConstants 
 		public YM2203_read_port_r(int context) {
 			c = context;
 		}
+		@Override
 		public int read(int address) {
 			int i = YM2203Read(c,1);
 			//System.out.println("YM2203_read_port_r" + c + " : " + i);
@@ -508,6 +512,7 @@ public class YM2203 extends SoundChip implements SoundChipEmulator, FMConstants 
 		public YM2203_control_port_w(int context) {
 			c = context;
 		}
+		@Override
 		public void write(int address, int data) {
 			//System.out.println("YM2203_control_port_w" + c + " : " + data);
 			YM2203Write(c,0,data);
@@ -524,6 +529,7 @@ public class YM2203 extends SoundChip implements SoundChipEmulator, FMConstants 
 		public YM2203_write_port_w(int context) {
 			c = context;
 		}
+		@Override
 		public void write(int address, int data) {
 			//System.out.println("YM2203_write_port_w" + c + " : " + data);
 			YM2203Write(c,1,data);

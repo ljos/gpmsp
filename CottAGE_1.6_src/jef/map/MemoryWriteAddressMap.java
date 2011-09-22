@@ -33,7 +33,8 @@ public class MemoryWriteAddressMap implements WriteMap {
     /* (non-Javadoc)
      * @see jef.map.WriteMap#set(int, int, jef.map.WriteHandler)
      */
-    public void set(int from, int until, WriteHandler memWrite) {
+    @Override
+	public void set(int from, int until, WriteHandler memWrite) {
         for (int i = from; i <= until; i++) {
             Integer key = new Integer(i);
             map.put(key, memWrite);
@@ -43,7 +44,8 @@ public class MemoryWriteAddressMap implements WriteMap {
     /* (non-Javadoc)
      * @see jef.map.WriteMap#set(int, int, int)
      */
-    public void setMW(int from, int until, int type) {
+    @Override
+	public void setMW(int from, int until, int type) {
         for (int i = from; i <= until; i++) {
             switch (type) {
                 case MWA_ROM:
@@ -68,15 +70,17 @@ public class MemoryWriteAddressMap implements WriteMap {
     /* (non-Javadoc)
      * @see jef.map.WriteMap#getSize()
      */
-    public int getSize() {
+    @Override
+	public int getSize() {
         // TODO Auto-generated method stub
         return 0;
     }
     /* (non-Javadoc)
      * @see jef.map.WriteHandler#write(int, int)
      */
-    public void write(int address, int data) {
-        WriteHandler wh = (WriteHandler) map.get(new Integer(address));
+    @Override
+	public void write(int address, int data) {
+        WriteHandler wh = map.get(new Integer(address));
         if (wh == null) RAM.write(address, data);
         else {
             wh.write(address, data);
@@ -85,13 +89,15 @@ public class MemoryWriteAddressMap implements WriteMap {
     }
     
     public class RAMwrite implements WriteHandler {
-        public void write(int address, int value) {
+        @Override
+		public void write(int address, int value) {
             mem[address] = value;
         }
     }
 
     public class ROMwrite implements WriteHandler {
-        public void write(int address, int value) {}
+        @Override
+		public void write(int address, int value) {}
     }
     
     public class MEMWriteBanked implements WriteHandler {
@@ -105,7 +111,8 @@ public class MemoryWriteAddressMap implements WriteMap {
         public void setBankAdr(int adr) {
             this.bank_address = adr - this.startArea;
         }
-        public void write(int address, int value) {
+        @Override
+		public void write(int address, int value) {
             mem[address + this.bank_address] = value;
         }
     }

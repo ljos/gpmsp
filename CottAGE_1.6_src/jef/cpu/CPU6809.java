@@ -127,7 +127,8 @@ public class CPU6809 implements CPU6809Const, Cpu
    *  only affect dp, ir, ea, pc and cc
    */
 
-  public final void reset()
+  @Override
+public final void reset()
   {
     dp = ir = ea = 0;
 
@@ -147,12 +148,14 @@ public class CPU6809 implements CPU6809Const, Cpu
 // Implementation of CottAGE Cpu.java interface methods
 //
 //**********************************************************************
-  public final boolean init(CpuBoard cb, int debug)
+  @Override
+public final boolean init(CpuBoard cb, int debug)
   {	this.cb = cb;
 	return true;
   }
 
-  public final void interrupt(int type, boolean irq)
+  @Override
+public final void interrupt(int type, boolean irq)
   {	switch (type)
 	{	case INTERRUPT_TYPE_IRQ:
 		  irq();
@@ -166,7 +169,8 @@ public class CPU6809 implements CPU6809Const, Cpu
 	  }
   }
 
-  public final long getInstruction()
+  @Override
+public final long getInstruction()
   {	// most instructions are 1-byte long,
     // except those in page 2 and 3 are 2-byte.
     // an int can hold them anyway
@@ -176,26 +180,31 @@ public class CPU6809 implements CPU6809Const, Cpu
     // b0 = ir.int curInstr = ir;
     if (page == 2) curInstr |= 0x1000;
     else if (page == 3) curInstr |= 0x1100;
-    return (long)curInstr;
+    return curInstr;
   }
 
-  public final void setProperty(int p, int v)
+  @Override
+public final void setProperty(int p, int v)
   {
   }
 
-  public final void setDebug(int d)
+  @Override
+public final void setDebug(int d)
   {
   }
 
-  public final int getDebug()
+  @Override
+public final int getDebug()
   { return 0;
   }
 
-  public void	setTag(String tag)
+  @Override
+public void	setTag(String tag)
   { this.tag = tag;
   }
 
-  public String	getTag()
+  @Override
+public String	getTag()
   { return this.tag;
   }
 
@@ -225,7 +234,8 @@ public class CPU6809 implements CPU6809Const, Cpu
   /**
    * Execute a number of clock cycles
    */
-  public void exec(int cycles)
+  @Override
+public void exec(int cycles)
   {
     tCycle = cycles;
 
@@ -1963,6 +1973,7 @@ public class CPU6809 implements CPU6809Const, Cpu
 /* (non-Javadoc)
  * @see jef.cpu.Cpu#getCyclesLeft()
  */
+@Override
 public int getCyclesLeft() {
 	// TODO Auto-generated method stub
 	return 0;
