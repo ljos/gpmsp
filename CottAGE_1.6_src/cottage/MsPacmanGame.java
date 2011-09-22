@@ -1,5 +1,6 @@
 package cottage;
 
+import java.awt.event.KeyEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -11,6 +12,7 @@ public class MsPacmanGame implements Runnable {
 	private int[] pixel;
 	private Machine m;
 	private Throttle t;
+	private boolean stop = false;
 	
 	
 	public void run() {
@@ -44,7 +46,7 @@ public class MsPacmanGame implements Runnable {
 
 		t = new Throttle(m.getProperty(Machine.FPS));
 
-		while (true) {
+		while (!stop) {
 			pixel = m.refresh(true).getPixels();
 			t.throttle();
 		}
@@ -83,9 +85,37 @@ public class MsPacmanGame implements Runnable {
 		return (score > 9999999) ? 0 : score;
 	}
 	
-	public static void main(String args[]) {
+	public void stop(boolean stop) {
+		this.stop = stop;
+	}
+	
+	public static void main(String args[]) throws InterruptedException {
 		MsPacmanGame g = new MsPacmanGame();
-		g.run();
+		Thread t = new Thread(g);
+		t.start();
+		Thread.sleep(6000);
+		g.keyPressed(KeyEvent.VK_5);
+		System.out.println("####5#####");
+		Thread.sleep(500);
+		g.keyReleased(KeyEvent.VK_5);
+		System.out.println("@@@@release 5@@@@");
+		Thread.sleep(500);
+		System.out.println("@@@@@1@@@@@");
+		g.keyPressed(KeyEvent.VK_1);
+		Thread.sleep(100);
+		g.keyReleased(KeyEvent.VK_1);
+		System.out.println("@@@@@release 1@@@@");
+		Thread.sleep(200);
+		System.out.println("@@@@@LEFT@@@@@@@");
+		g.keyPressed(KeyEvent.VK_LEFT);
+		for(int i = 0; i < 30; ++i) {
+			Thread.sleep(1000);
+			System.out.println(i);
+		}
+		System.out.println(g.getScore() + " " + t.isAlive());
+		g.stop(true);
+		Thread.sleep(1000);
+		System.out.println(t.isAlive());
 		
 	}
 }

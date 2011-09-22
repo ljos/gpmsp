@@ -145,10 +145,12 @@ public class Cottage extends GfxProducer {
 
         m.setSound(sound);
 
-        if(!doubled && !scale2x)
-            pixel = m.refresh(true).getPixels();
-        else
-            pixel = new int[m.refresh(true).getPixels().length * 4];
+        if(!doubled && !scale2x) {
+        	pixel = m.refresh(true).getPixels();
+        }
+        else {
+        	pixel = new int[m.refresh(true).getPixels().length * 4];
+        }
 
         enableEvents(AWTEvent.KEY_EVENT_MASK);
 
@@ -179,7 +181,9 @@ public class Cottage extends GfxProducer {
 		// calculate the score
 		for (int i = 0; i < 7; i++) {
 			int c = mem[offset + i];
-			if (c == 0x00 || c == BLANK_CHAR) c = ZERO_CHAR;
+			if (c == 0x00 || c == BLANK_CHAR) {
+				c = ZERO_CHAR;
+			}
 			c -= ZERO_CHAR;
 			score += (c * Math.pow(10, i));
 		}
