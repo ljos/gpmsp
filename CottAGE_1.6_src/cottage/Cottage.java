@@ -262,7 +262,7 @@ public class Cottage extends GfxProducer {
 		Cottage[] cs = new Cottage[5];
 		for (int i = 0; i < cs.length; ++i) {
 			Cottage c = new Cottage();
-			c.setSize(224, 288 + 22);
+			c.setSize(224, 288 + 22); // I think the + 22 is because of the top bar.
 			cs[i] = c;
 		}
 
