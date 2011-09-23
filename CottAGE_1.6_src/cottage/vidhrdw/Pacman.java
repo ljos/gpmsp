@@ -4,14 +4,12 @@ import jef.machine.MachineDriver;
 import jef.map.WriteHandler;
 import jef.video.BitMap;
 import jef.video.BitMapImpl;
-import jef.video.GfxManager;
 import jef.video.Vh_convert_color_proms;
 import jef.video.Vh_refresh;
 import jef.video.Vh_start;
 import jef.video.Vh_stop;
 import jef.video.VideoConstants;
 import jef.video.VideoEmulator;
-
 import cottage.mame.MAMEVideo;
 
 public class Pacman extends MAMEVideo implements VideoEmulator,

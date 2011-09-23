@@ -1,8 +1,21 @@
 package cottage.mame;
 
-import jef.machine.*;
-import jef.map.*;
-import jef.video.*;
+import jef.machine.MachineDriver;
+import jef.map.ReadHandler;
+import jef.map.WriteHandler;
+import jef.video.BitMap;
+import jef.video.BitMapImpl;
+import jef.video.Eof_callback;
+import jef.video.Get_tile_info;
+import jef.video.GfxDecodeInfo;
+import jef.video.GfxManager;
+import jef.video.TileMap;
+import jef.video.Vh_convert_color_proms;
+import jef.video.Vh_refresh;
+import jef.video.Vh_start;
+import jef.video.Vh_stop;
+import jef.video.VideoConstants;
+import jef.video.VideoEmulator;
 
 /**
  * Helper class for porting MAME /vidhrdw/* classes to CottAGE
