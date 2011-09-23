@@ -7,7 +7,7 @@ import jef.machine.Machine;
 import jef.util.Throttle;
 import cottage.CottageDriver;
 
-public class NUIMsPacman implements Runnable, MsPacman {
+public class NUIMsPacman implements MsPacman {
 	private static String VERSION = "0.01a";
 	private int[] pixel;
 	private Machine m;

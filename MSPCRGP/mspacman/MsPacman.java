@@ -1,6 +1,6 @@
 package mspacman;
 
-public interface MsPacman {
+public interface MsPacman extends Runnable {
 	public int[] getPixels();
 	
 	public void keyPressed(int keyCode);
