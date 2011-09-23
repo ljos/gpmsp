@@ -132,7 +132,6 @@ package cottage.drivers;
 
 import java.net.URL;
 
-import jef.cpu.Cpu;
 import jef.cpu.Z80;
 import jef.cpuboard.CpuDriver;
 import jef.machine.Machine;
@@ -160,7 +159,6 @@ import jef.video.Vh_convert_color_proms;
 import jef.video.Vh_refresh;
 import jef.video.Vh_start;
 import jef.video.Vh_stop;
-
 import cottage.mame.Driver;
 import cottage.mame.MAMEConstants;
 import cottage.mame.MAMEDriver;

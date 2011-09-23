@@ -32,7 +32,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 package jef.sound;
 
-import sun.audio.*;
+import sun.audio.AudioData;
+import sun.audio.AudioPlayer;
+import sun.audio.ContinuousAudioDataStream;
 
 /**
  * @author Erik Duijs

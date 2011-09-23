@@ -33,10 +33,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 package jef.machine;
 
 
-import jef.map.*;
-import jef.cpuboard.*;
-import jef.video.*;
-import jef.sound.*;
+import jef.cpuboard.CpuDriver;
+import jef.map.InputPort;
+import jef.map.NoFunction;
+import jef.map.VoidFunction;
+import jef.sound.SoundChipEmulator;
+import jef.video.Eof_callback;
+import jef.video.GfxDecodeInfo;
+import jef.video.Vh_convert_color_proms;
+import jef.video.Vh_refresh;
+import jef.video.Vh_start;
+import jef.video.Vh_stop;
+import jef.video.VideoEmulator;
 
 /**
  * @author Erik Duijs
