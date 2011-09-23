@@ -1,7 +1,6 @@
 package jef.video;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
 
 public class Console {
 	public static String TXT[];

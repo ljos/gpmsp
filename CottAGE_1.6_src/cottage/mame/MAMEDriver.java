@@ -2,33 +2,21 @@ package cottage.mame;
 
 import java.net.URL;
 
-import jef.cpu.Cpu;
-import jef.cpu.I8080;
-import jef.cpu.M6809;
-import jef.cpu.Z80;
+import jef.util.RomLoader;
+import cottage.mame.Driver;
+import jef.cpu.*;
 import jef.cpuboard.CpuDriver;
+import jef.map.*;
 import jef.machine.Machine;
 import jef.machine.MachineDriver;
-import jef.map.IOReadPort;
-import jef.map.IOWritePort;
-import jef.map.InitHandler;
-import jef.map.InputPort;
-import jef.map.InterruptHandler;
-import jef.map.MemoryReadAddress;
-import jef.map.MemoryWriteAddress;
-import jef.map.NoFunction;
-import jef.map.ReadHandler;
-import jef.map.VoidFunction;
-import jef.map.WriteHandler;
-import jef.sound.SoundChipEmulator;
-import jef.util.RomLoader;
 import jef.video.Eof_callback;
-import jef.video.GfxDecodeInfo;
 import jef.video.GfxLayout;
+import jef.video.GfxDecodeInfo;
+import jef.video.Vh_start;
 import jef.video.Vh_convert_color_proms;
 import jef.video.Vh_refresh;
-import jef.video.Vh_start;
 import jef.video.VideoEmulator;
+import jef.sound.SoundChipEmulator;
 
 /**
  * Helper class for porting MAME drivers to CottAGE.

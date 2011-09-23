@@ -37,14 +37,9 @@ package jef.util;
  * 
  * Utility class to load ROMS into memory
  */
-import java.io.DataInputStream;
-import java.io.EOFException;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.util.zip.*;
 
 public final class RomLoader {
 

@@ -33,10 +33,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 package jef.cpuboard;
 
 import jef.cpu.Cpu;
-import jef.map.InterruptHandler;
 import jef.map.ReadHandler;
 import jef.map.ReadMap;
 import jef.map.WriteHandler;
+import jef.map.InterruptHandler;
 import jef.map.WriteMap;
 
 /**
