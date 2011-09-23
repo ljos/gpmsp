@@ -33,10 +33,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 package jef.sound;
 
 import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
-import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.LineUnavailableException;
 
 /**
  * @author Erik Duijs

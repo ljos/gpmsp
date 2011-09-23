@@ -1,7 +1,6 @@
 package cottage.mame;
 
 import java.net.URL;
-
 import jef.machine.Machine;
 
 /**

@@ -35,10 +35,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 package jef.sound.chip;
 
-import jef.map.ReadHandler;
-import jef.map.WriteHandler;
 import jef.sound.SoundChip;
 import jef.sound.SoundChipEmulator;
+import jef.map.ReadHandler;
+import jef.map.WriteHandler;
 
 /**
  * @author Erik Duijs
