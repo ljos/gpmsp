@@ -140,9 +140,7 @@ import jef.map.IOReadPort;
 import jef.map.IOWritePort;
 import jef.map.InputPort;
 import jef.map.InterruptHandler;
-import jef.map.MemoryReadAddress;
 import jef.map.MemoryReadAddressMap;
-import jef.map.MemoryWriteAddress;
 import jef.map.MemoryWriteAddressMap;
 import jef.map.ReadHandler;
 import jef.map.ReadMap;
@@ -292,50 +290,6 @@ public class Pacman extends MAMEDriver implements Driver, MAMEConstants {
 		return mwa;
 	}
 
-	private ReadMap theglob_readmem() {
-		MemoryReadAddress mra = new MemoryReadAddress(REGION_CPU1);
-		mra.set( 0x0000, 0x3fff, MRA_BANK1 );
-		mra.setMR( 0x4000, 0x47ff, MRA_RAM );	/* video and color RAM */
-		mra.setMR( 0x4800, 0x4fff, MRA_RAM );	/* including sprite codes at 4ff0-4fff */
-		mra.set( 0x5000, 0x503f, input_port_0_r );	/* IN0 */
-		mra.set( 0x5040, 0x507f, input_port_1_r );	/* IN1 */
-		mra.set( 0x5080, 0x50bf, input_port_2_r );	/* DSW1 */
-		mra.set( 0x50c0, 0x50ff, input_port_3_r );	/* DSW2 */
-		return mra;
-	}
-
-	private ReadMap vanvan_readmem() {
-		MemoryReadAddress mra = new MemoryReadAddress(REGION_CPU1);
-		mra.setMR( 0x0000, 0x3fff, MRA_ROM );
-		mra.setMR( 0x4000, 0x47ff, MRA_RAM );	/* video and color RAM */
-		mra.setMR( 0x4800, 0x4fff, MRA_RAM );	/* including sprite codes at 4ff0-4fff */
-		mra.set( 0x5000, 0x5000, input_port_0_r );	/* IN0 */
-		mra.set( 0x5040, 0x5040, input_port_1_r );	/* IN1 */
-		mra.set( 0x5080, 0x5080, input_port_2_r );	/* DSW1 */
-		mra.set( 0x50c0, 0x50c0, input_port_3_r );	/* DSW2 */
-		mra.setMR( 0x8000, 0x8fff, MRA_ROM );
-		return mra;
-	}
-
-
-	private WriteMap vanvan_writemem() {
-		MemoryWriteAddress mwa = new MemoryWriteAddress(REGION_CPU1);
-		mwa.setMW( 0x0000, 0x3fff, MWA_ROM );
-		mwa.set( 0x4000, 0x43ff, videoram_w );
-		mwa.set( 0x4400, 0x47ff, colorram_w );
-		mwa.setMW( 0x4800, 0x4fef, MWA_RAM );
-		mwa.setMW( 0x4ff0, 0x4fff, MWA_RAM );
-		mwa.set( 0x5000, 0x5000, interrupt_enable_w );
-		mwa.setMW( 0x5005, 0x5006, MWA_NOP );	/* always written together with 5001 */
-		mwa.setMW( 0x5060, 0x506f, MWA_RAM );
-		mwa.setMW( 0x5080, 0x5080, MWA_NOP );	/* ??? toggled before reading 5000 */
-		mwa.setMW( 0x8000, 0x8fff, MWA_ROM );
-		mwa.setMW( 0xb800, 0xb87f, MWA_NOP );	/* probably a leftover from development: the Sanritsu version */
-											/* writes the color lookup table here, while the Karateko version */
-											/* writes garbage. */
-		return mwa;
-	}
-
 /*************************************
  *
  *	Main CPU port handlers
@@ -347,29 +301,9 @@ public class Pacman extends MAMEDriver implements Driver, MAMEConstants {
 		return ior;
 	}
 
-	private IOReadPort theglob_readport() {
-		IOReadPort ior = new IOReadPort();
-		ior.set( 0x00, 0xff, theglob_decrypt_rom );	/* Switch protection logic */
-		return ior;
-	}
-
 	private IOWritePort writeport() {
 		IOWritePort	iow = new IOWritePort();
 		iow.set( 0x00, 0x00, interrupt_vector_w );	/* Pac-Man only */
-		return iow;
-	}
-
-	private IOWritePort vanvan_writeport() {
-		IOWritePort	iow = new IOWritePort();
-		//iow.set( 0x01, 0x01, SN76496_0_w );
-		//iow.set( 0x02, 0x02, SN76496_1_w );
-		return iow;
-	}
-
-	private IOWritePort dremshpr_writeport() {
-		IOWritePort	iow = new IOWritePort();
-		iow.set( 0x06, 0x06, AY8910_write_port_0_w );
-		iow.set( 0x07, 0x07, AY8910_control_port_0_w );
 		return iow;
 	}
 
@@ -484,117 +418,6 @@ public class Pacman extends MAMEDriver implements Driver, MAMEConstants {
 										pacman_interrupt, 1 );
 
 		soundChip[0] = namco;
-
-		int[] visibleArea = { 0*8, 36*8-1, 0*8, 28*8-1 };
-
-		return new MachineDriver
-		(
-			cpuDriver,
-
-			60, 2500,
-			1,
-			NOP,
-
-			//video;
-			36*8, 28*8, visibleArea,
-			gfxdecodeinfo(),
-			16, 4*32,
-			pacman_vh_convert_color_prom,
-
-			VIDEO_TYPE_RASTER | VIDEO_SUPPORTS_DIRTY,
-
-			noCallback,
-			pacman_vh_start,
-			generic_vh_stop,
-			pengo_vh_screenrefresh,
-
-			soundChip
-		);
-	}
-
-	public MachineDriver machine_driver_theglob() {
-		CpuDriver[] cpuDriver = new CpuDriver[1];
-		SoundChipEmulator[] soundChip = new SoundChipEmulator[1];
-
-		cpuDriver[0] = new CpuDriver( new Z80(),
-										18432000/6,	/* 3.072 Mhz */
-										theglob_readmem(), writemem(), theglob_readport(), writeport(),
-										pacman_interrupt, 1 );
-
-		soundChip[0] = namco;
-
-		int[] visibleArea = { 0*8, 36*8-1, 0*8, 28*8-1 };
-
-		return new MachineDriver
-		(
-			cpuDriver,
-
-			60, 2500,
-			1,
-			theglob_init_machine,
-
-			//video;
-			36*8, 28*8, visibleArea,
-			gfxdecodeinfo(),
-			16, 4*32,
-			pacman_vh_convert_color_prom,
-
-			VIDEO_TYPE_RASTER | VIDEO_SUPPORTS_DIRTY,
-
-			noCallback,
-			pacman_vh_start,
-			generic_vh_stop,
-			pengo_vh_screenrefresh,
-
-			soundChip
-		);
-	}
-
-	public MachineDriver machine_driver_vanvan() {
-		CpuDriver[] cpuDriver = new CpuDriver[1];
-
-		cpuDriver[0] = new CpuDriver( new Z80(),
-										18432000/6,	/* 3.072 Mhz */
-										vanvan_readmem(), vanvan_writemem(), readport(), vanvan_writeport(),
-										nmi_interrupt, 1 );
-
-
-		int[] visibleArea = { 0*8, 36*8-1, 0*8, 28*8-1 };
-
-		return new MachineDriver
-		(
-			cpuDriver,
-
-			60, 2500,
-			1,
-			NOP,
-
-			//video;
-			36*8, 28*8, visibleArea,
-			gfxdecodeinfo(),
-			16, 4*32,
-			pacman_vh_convert_color_prom,
-
-			VIDEO_TYPE_RASTER | VIDEO_SUPPORTS_DIRTY,
-
-			noCallback,
-			pacman_vh_start,
-			generic_vh_stop,
-			pengo_vh_screenrefresh,
-
-			noSound
-		);
-	}
-	public MachineDriver machine_driver_dremshpr() {
-		CpuDriver[] cpuDriver = new CpuDriver[1];
-		SoundChipEmulator[] soundChip = new SoundChipEmulator[1];
-
-		cpuDriver[0] = new CpuDriver( new Z80(),
-										18432000/6,	/* 3.072 Mhz */
-										readmem(), writemem(), readport(), dremshpr_writeport(),
-										nmi_interrupt, 1 );
-
-		soundChip[0] = ay8910;
 
 		int[] visibleArea = { 0*8, 36*8-1, 0*8, 28*8-1 };
 
