@@ -1,4 +1,4 @@
-package cottage;
+package mspacman;
 
 import java.awt.AWTEvent;
 import java.awt.Graphics;
@@ -8,8 +8,9 @@ import java.net.URL;
 import jef.machine.Machine;
 import jef.util.Throttle;
 import jef.video.GfxProducer;
+import cottage.CottageDriver;
 
-public class Cottage extends GfxProducer {
+public class GUIMsPacman extends GfxProducer implements MsPacman {
 
 	/**
 	 * 
@@ -23,7 +24,7 @@ public class Cottage extends GfxProducer {
 	public static int pixel[];
 
 	/** TXT stuff **/
-	public static Cottage main;
+	public static GUIMsPacman main;
 
 	URL base_URL;
 
@@ -176,6 +177,53 @@ public class Cottage extends GfxProducer {
 			}
 			t.throttle();
 		}
+	}
+
+	public int[] getPixels() {
+		return pixel;
+	}
+
+	public void keyPressed(int keyCode) {
+		m.keyPress(keyCode);
+	}
+
+	public void keyReleased(int keyCode) {
+		m.keyRelease(keyCode);
+	}
+
+	public long getScore() {
+		return getScore(0x43ed, ((cottage.machine.Pacman) m).md.getREGION_CPU());
+	}
+
+	private long getScore(int offset, int[] mem) {
+		final int ZERO_CHAR = 0x00;
+		final int BLANK_CHAR = 0x40;
+
+		long score = 0;
+
+		// calculate the score
+		for (int i = 0; i < 7; i++) {
+			int c = mem[offset + i];
+			if (c == 0x00 || c == BLANK_CHAR)
+				c = ZERO_CHAR;
+			c -= ZERO_CHAR;
+			score += (c * Math.pow(10, i));
+		}
+
+		return (score > 9999999) ? 0 : score;
+	}
+	
+	public boolean gameOver() {
+		return ((cottage.machine.Pacman)m).md.getREGION_CPU()[0x403B] == 67;
+	}
+
+	public void stop(boolean stop) {
+		this.stop = stop;
+	}
+	
+	@Override
+	public boolean isGameOver() {
+		return ((cottage.machine.Pacman) m).md.getREGION_CPU()[0x403B] == 67;
 	}
 
 	@Override
