@@ -1,7 +1,6 @@
 package jef.video;
 
 import jef.machine.MachineDriver;
-import jef.video.BitMap;
 
 public class BasicVideoEmulator implements VideoEmulator,
 											Eof_callback,

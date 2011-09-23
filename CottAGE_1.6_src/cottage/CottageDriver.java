@@ -1,8 +1,9 @@
 package cottage;
 
 import java.net.URL;
+
 import jef.machine.Machine;
-import cottage.drivers.*;
+import cottage.drivers.Pacman;
 import cottage.mame.Driver;
 
 public class CottageDriver {
