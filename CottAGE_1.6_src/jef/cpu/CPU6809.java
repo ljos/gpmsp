@@ -265,33 +265,6 @@ public void exec(int cycles)
 
     ir = cb.read8opc(pc++);
 
-	/* TAKE OUT FROM HERE!!! */
-
-/*
-    //if (lastPc == 0x6307) traceinstructions = 999999;
-    //if (lastPc == 0x6436) traceinstructions = 999999;
-    //if (lastPc == 0x62dd) traceinstructions = 999999;
-    //if (lastPc == 0x6000) traceinstructions = 999999;
-    //if (lastPc == 0x6436) traceinstructions = 999999;
-    //if (lastPc == 0x61f1) traceinstructions = 999999;
-    if (lastPc == 0x70a0) traceinstructions = 999999;
-
-
-    if (traceinstructions > 0)  {
-    	System.out.print(Integer.toHexString(lastPc)+","+Integer.toHexString(ir)+"-"+Integer.toHexString(cb.read8(pc))+","+Integer.toHexString(cb.read8(pc+1)));
-    	System.out.print(" : S=" + Integer.toHexString(s));
-    	System.out.print(" : A=" + Integer.toHexString(a));
-    	System.out.print(" : B=" + Integer.toHexString(b));
-    	System.out.print(" : X=" + Integer.toHexString(x));
-    	System.out.print(" : Y=" + Integer.toHexString(y));
-    	System.out.print(" : DP=" + Integer.toHexString(dp));
-    	System.out.print(" : U=" + Integer.toHexString(u));
-     	System.out.println(" : Cycles=" + tCycle);
-   		traceinstructions--;
-	}*/
-
-	/* TAKE oUT UNTIL HERE!!! */
-
     tCycle -= decode(); // instrCycle set here
     execSingleInstr(ir & 0xff);
   }
