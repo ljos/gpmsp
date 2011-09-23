@@ -161,7 +161,7 @@ public class BasicMachine implements Machine {
 		System.out.println("Machine initializing...");
 		md.init.exec();
 		System.out.println("Machine initialized successfully.");
-		System.out.println(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory());
+		System.out.println("Memory: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
 
 	}
 
