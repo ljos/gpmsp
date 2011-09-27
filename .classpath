@@ -3,5 +3,8 @@
 	<classpathentry kind="src" output="bin/" path="CottAGE_1.6_src"/>
 	<classpathentry kind="src" path="MSPCRGP"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="clojure.jar" sourcepath="clojure-src.jar"/>
+	<classpathentry kind="lib" path="clojure-contrib.jar" sourcepath="clojure-contrib-src.jar"/>
+	<classpathentry kind="lib" path="classes"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
