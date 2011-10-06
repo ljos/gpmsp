@@ -1,8 +1,5 @@
 package mspacman.bot;
 
-import java.io.StringReader;
-
-import clojure.lang.IFn;
 import mspacman.MsPacman;
 
 public abstract class AbstrMsPacmanBot implements Runnable {

@@ -182,6 +182,11 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 	public int[] getPixels() {
 		return pixel;
 	}
+	
+	@Override
+	public int getPixel(int x, int y) {
+		return (x>=0 && x<224 && y>=0 && y<288) ? pixel[x + y * 224] : -1;
+	}
 
 	public void keyPressed(int keyCode) {
 		m.keyPress(keyCode);

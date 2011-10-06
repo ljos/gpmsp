@@ -57,6 +57,11 @@ public class NUIMsPacman implements MsPacman {
 	public int[] getPixels() {
 		return pixel;
 	}
+	
+	@Override
+	public int getPixel(int x, int y) {
+		return (x>=0 && x<224 && y>=0 && y<288) ? pixel[x + y * 224] : -1;
+	}
 
 	@Override
 	public void keyPressed(int keyCode) {
