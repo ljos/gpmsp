@@ -1,6 +1,6 @@
 package mspacman.bot;
 
-import mspacmanr.NUIMsPacman;
+import mspacman.NUIMsPacman;
 
 public class NUIMsPacmanBot extends AbstrMsPacmanBot {
 	

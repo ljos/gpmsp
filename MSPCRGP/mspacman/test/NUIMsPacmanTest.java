@@ -2,7 +2,7 @@ package mspacman.test;
 
 import java.awt.event.KeyEvent;
 
-import mspacmanr.NUIMsPacman;
+import mspacman.NUIMsPacman;
 
 public class NUIMsPacmanTest {
 	public static void main(String args[]) throws InterruptedException {

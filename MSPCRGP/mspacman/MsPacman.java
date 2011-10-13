@@ -1,4 +1,4 @@
-package mspacmanr;
+package mspacman;
 
 public interface MsPacman extends Runnable {
 	public int[] getPixels();
