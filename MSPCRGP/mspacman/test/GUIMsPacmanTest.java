@@ -4,7 +4,7 @@ import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
 
-import mspacman.GUIMsPacman;
+import mspacmanr.GUIMsPacman;
 
 public class GUIMsPacmanTest {
 
