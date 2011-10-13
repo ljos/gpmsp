@@ -1,6 +1,6 @@
 package mspacman.bot;
 
-import mspacman.MsPacman;
+import mspacmanr.MsPacman;
 
 public abstract class AbstrMsPacmanBot implements Runnable {
 
