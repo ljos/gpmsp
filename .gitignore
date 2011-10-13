@@ -1,3 +1,6 @@
-*.class
-
-bin/java.policy.applet
+pom.xml
+*jar
+/lib/
+/classes/
+.lein-failures
+.lein-deps-sum
