@@ -1,4 +1,4 @@
-package mspacmanr;
+package mspacman;
 
 import java.awt.AWTEvent;
 import java.awt.Graphics;

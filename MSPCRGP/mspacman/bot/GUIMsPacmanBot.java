@@ -4,7 +4,7 @@ import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
 
-import mspacmanr.GUIMsPacman;
+import mspacman.GUIMsPacman;
 
 public class GUIMsPacmanBot extends AbstrMsPacmanBot {
 	
