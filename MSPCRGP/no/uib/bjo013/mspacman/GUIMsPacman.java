@@ -1,4 +1,4 @@
-package mspacman;
+package no.uib.bjo013.mspacman;
 
 import java.awt.AWTEvent;
 import java.awt.Graphics;

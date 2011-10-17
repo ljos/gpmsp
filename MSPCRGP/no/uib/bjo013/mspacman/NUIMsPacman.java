@@ -1,4 +1,4 @@
-package mspacman;
+package no.uib.bjo013.mspacman;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -6,11 +6,12 @@ import java.net.URL;
 import jef.machine.Machine;
 import jef.util.Throttle;
 import cottage.CottageDriver;
+import cottage.machine.Pacman;
 
 public class NUIMsPacman implements MsPacman {
 	private static String VERSION = "0.01a";
 	private int[] pixel;
-	private Machine m;
+	private Pacman m;
 	private Throttle t;
 	private boolean stop = false;
 
@@ -38,7 +39,7 @@ public class NUIMsPacman implements MsPacman {
 
 		CottageDriver d = new CottageDriver();
 
-		m = d.getMachine(base_URL, driver);
+		m = (Pacman)d.getMachine(base_URL, driver);
 		m.setSound(sound);
 
 		pixel = new int[m.refresh(true).getPixels().length];
@@ -75,7 +76,7 @@ public class NUIMsPacman implements MsPacman {
 
 	@Override
 	public long getScore() {
-		return getScore(0x43ed, ((cottage.machine.Pacman) m).md.getREGION_CPU());
+		return getScore(0x43ed, m.md.getREGION_CPU());
 		// score = 0x43f7, highscore = 0x43ed
 	}
 
@@ -103,6 +104,6 @@ public class NUIMsPacman implements MsPacman {
 
 	@Override
 	public boolean isGameOver() {
-		return ((cottage.machine.Pacman) m).md.getREGION_CPU()[0x403B] == 67;
+		return ((Pacman) m).md.getREGION_CPU()[0x403B] == 67;
 	}
 }

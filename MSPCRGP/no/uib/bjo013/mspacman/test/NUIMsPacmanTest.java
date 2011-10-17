@@ -1,8 +1,9 @@
-package mspacman.test;
+package no.uib.bjo013.mspacman.test;
 
 import java.awt.event.KeyEvent;
 
-import mspacman.NUIMsPacman;
+import no.uib.bjo013.mspacman.NUIMsPacman;
+
 
 public class NUIMsPacmanTest {
 	public static void main(String args[]) throws InterruptedException {

@@ -1,4 +1,4 @@
-package mspacman;
+package no.uib.bjo013.mspacman;
 
 public interface MsPacman extends Runnable {
 	public int[] getPixels();
