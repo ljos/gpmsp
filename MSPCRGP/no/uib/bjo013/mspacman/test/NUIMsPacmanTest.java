@@ -11,7 +11,7 @@ public class NUIMsPacmanTest {
 		Thread t = new Thread(g);
 		t.start();
 		Thread.sleep(6000);
-		g.keyPressed(KeyEvent.VK_5);
+		g.keyPressed(KeyEvent.VK_5); 	
 		System.out.println("####5#####");
 		Thread.sleep(500);
 		g.keyReleased(KeyEvent.VK_5);
