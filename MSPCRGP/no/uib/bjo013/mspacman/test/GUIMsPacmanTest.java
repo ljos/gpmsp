@@ -1,10 +1,11 @@
-package mspacman.test;
+package no.uib.bjo013.mspacman.test;
 
 import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
 
-import mspacman.GUIMsPacman;
+import no.uib.bjo013.mspacman.GUIMsPacman;
+
 
 public class GUIMsPacmanTest {
 

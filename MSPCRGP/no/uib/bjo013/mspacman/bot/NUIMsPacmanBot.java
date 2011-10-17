@@ -1,6 +1,6 @@
-package mspacman.bot;
+package no.uib.bjo013.mspacman.bot;
 
-import mspacman.NUIMsPacman;
+import no.uib.bjo013.mspacman.NUIMsPacman;
 
 public class NUIMsPacmanBot extends AbstrMsPacmanBot {
 	
