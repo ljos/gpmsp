@@ -40,9 +40,9 @@
                  y))
 
 (defmacro msp-loop [& code]
-  `(for [x (range 224)
-         y (range 288)]
-     ~code))
+  `(doseq [~'x (range 224)
+           ~'y (range 288)]
+     ~@code))
 
 (defn move-left []
   (-> msp (.keyPressed KeyEvent/VK_LEFT)))
