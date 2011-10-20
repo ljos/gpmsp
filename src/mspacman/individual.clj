@@ -1,4 +1,4 @@
-(ns nspacman.individual)
+(ns mspacman.individual)
 
 (import '(no.uib.bjo013.mspacman MsPacman NUIMsPacman))
 (import java.awt.event.KeyEvent)
@@ -32,7 +32,8 @@
                      (< expr+)
                      (or expr+)
                      (and expr+)
-                     ))
+                     (msp-sleep)
+                     nil))
 
 (def ATOM-LIST '(true
                  false
@@ -43,6 +44,9 @@
   `(doseq [~'x (range 224)
            ~'y (range 288)]
      ~@code))
+
+(defn msp-sleep []
+  (Thread/sleep 100))
 
 (defn move-left []
   (-> msp (.keyPressed KeyEvent/VK_LEFT)))
