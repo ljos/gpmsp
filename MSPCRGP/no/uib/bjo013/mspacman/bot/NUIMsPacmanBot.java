@@ -1,5 +1,7 @@
 package no.uib.bjo013.mspacman.bot;
 
+import java.util.concurrent.CountDownLatch;
+
 import no.uib.bjo013.mspacman.NUIMsPacman;
 
 public class NUIMsPacmanBot extends AbstrMsPacmanBot {

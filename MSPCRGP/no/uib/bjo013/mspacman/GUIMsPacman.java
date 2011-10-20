@@ -4,6 +4,7 @@ import java.awt.AWTEvent;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.net.URL;
+import java.util.concurrent.CountDownLatch;
 
 import jef.machine.Machine;
 import jef.util.Throttle;
@@ -43,6 +44,16 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 	/** reference to the driver **/
 	Machine m;
 	Throttle t;
+	
+	private final CountDownLatch signal;
+	
+	public GUIMsPacman(CountDownLatch signal) {
+		this.signal = signal;
+	}
+	
+	public GUIMsPacman() {
+		this.signal = new CountDownLatch(1);
+	}
 
 	@Override
 	protected void processKeyEvent(KeyEvent e) {
