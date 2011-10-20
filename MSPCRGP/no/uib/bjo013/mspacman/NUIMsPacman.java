@@ -2,6 +2,7 @@ package no.uib.bjo013.mspacman;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.CountDownLatch;
 
 import jef.machine.Machine;
 import jef.util.Throttle;
@@ -14,6 +15,16 @@ public class NUIMsPacman implements MsPacman {
 	private Pacman m;
 	private Throttle t;
 	private boolean stop = false;
+	
+	private final CountDownLatch signal;
+	
+	public NUIMsPacman(CountDownLatch signal) {
+		this.signal = signal;
+	}
+	
+	public NUIMsPacman() {
+		this.signal = new CountDownLatch(1);
+	}
 
 	@Override
 	public void run() {
@@ -45,9 +56,12 @@ public class NUIMsPacman implements MsPacman {
 		pixel = new int[m.refresh(true).getPixels().length];
 
 		pixel = m.refresh(true).getPixels();
-
+		
+		
 		t = new Throttle(m.getProperty(Machine.FPS));
 
+		
+		
 		while (!stop) {
 			pixel = m.refresh(true).getPixels();
 			t.throttle();

@@ -1,23 +1,22 @@
 (ns nspacman.individual)
 
+(import '(no.uib.bjo013.mspacman MsPacman NUIMsPacman))
 (import java.awt.event.KeyEvent)
 
-(defmacro fitness [tries code]
-  `(let [~'msp (new NUIMsPacman)
-         t#  (new Thread msp)]
-     (-> t# .start)
-     (Thread/sleep 6000)
-     (loop [n# ~tries]
-       (if (< n# 1)
-         nil
-         (while (not (-> ~'msp .isGameOver))
-           (eval ~code))
-         (recur (dec n#))))
-     (let [fitness-score# (-> ~'msp .getScore)]
-       (-> ~'msp .stop Boolean/TRUE)
-       fitness-score#)))
-
-
+(defn fitness [tries code]
+  (eval `(let [~'msp (new NUIMsPacman)
+               t#  (new Thread ~'msp)]
+           (-> t# .start)
+           (Thread/sleep 6000)
+           (loop [n# ~tries]
+             (if (< n# 1)
+               nil
+               (while (not (-> ~'msp .isGameOver))
+                 ~code)
+               (recur (dec n#))))
+           (let [fitness-score# (-> ~'msp .getScore)]
+             (-> ~'msp .stop Boolean/TRUE)
+             fitness-score#))))
 
 (def FUNCTION-LIST '((move-left)
                      (move-right)
@@ -60,5 +59,5 @@
 (defn get-pixel [^int i ^int j]
   (-> msp (.getPixel i j)))
 
-(defn get-pixels []
-  (-> msp .getPixels))
+((defn get-pixels []
+   (-> msp .getPixels))

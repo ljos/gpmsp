@@ -1,6 +1,5 @@
 (ns mspacman.gpmsp)
 
-(import '(no.uib.bjo013.mspacman MsPacman NUIMsPacman))
 (import java.awt.event.KeyEvent)
 (import java.lang.Boolean)
 
@@ -9,8 +8,6 @@
   :mspacman
   :fitness
   :finishing-time)
-
-
 
 (defn create-random-population []
   (dotimes [@population-size n]
