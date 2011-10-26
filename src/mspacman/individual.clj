@@ -49,25 +49,39 @@
      ~@code))
 
 (defn msp> [& keys]
-  (apply > (remove #(not (instance? Number %1)) keys)))
+  (let [l (remove #(not (instance? Number %1)) keys)]
+    (if (empty? l)
+      true
+      (apply > l))))
 
 (defn msp< [& keys]
-  (apply < (remove #(not (instance? Number %1)) keys)))
+  (let [l (remove #(not (instance? Number %1)) keys)]
+    (if (empty? l)
+      true
+      (apply > l)))) (apply < (remove #(not (instance? Number %1)) keys)))
 
 (defn msp-sleep []
   (Thread/sleep 100))
 
 (defn move-left []
-  (-> msp (.keyPressed KeyEvent/VK_LEFT)))
+  (-> msp (.keyPressed KeyEvent/VK_LEFT))
+  (Thread/sleep 100)
+  (-> msp (.keyReleased KeyEvent/VK_LEFT)))
 
 (defn move-right []
-  (-> msp (.keyPressed KeyEvent/VK_RIGHT)))
+  (-> msp (.keyPressed KeyEvent/VK_RIGHT))
+  (Thread/sleep 100)
+  (-> msp (.keyReleased KeyEvent/VK_RIGHT)))
 
 (defn move-up []
-  (-> msp (.keyPressed KeyEvent/VK_UP)))
+  (-> msp (.keyPressed KeyEvent/VK_UP))
+  (Thread/sleep 100)
+  (-> msp (.keyReleased KeyEvent/VK_UP)))
 
 (defn move-down []
-  (-> msp (.keyPressed KeyEvent/VK_DOWN)))
+  (-> msp (.keyPressed KeyEvent/VK_DOWN))
+  (Thread/sleep 100)
+  (-> msp (.keyReleased KeyEvent/VK_DOWN)))
 
 (defn get-pixel [^int i ^int j]
   (-> msp (.getPixel  (mod i 224) (mod j 288))))
