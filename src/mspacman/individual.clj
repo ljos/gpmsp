@@ -10,7 +10,7 @@
            (Thread/sleep 6000)
            (loop [n# ~tries]
              (if (< n# 1)
-               nil
+               ()
                (while (not (-> ~'msp .isGameOver))
                  ~code)
                (recur (dec n#))))
@@ -23,27 +23,36 @@
                      (move-up)
                      (move-down)
                      (do expr+)
+                     (get-pixel x y)
                      (get-pixel int int)
                      (get-pixels)
                      (if expr expr expr?)
-                     (msp-loop expr)
+                     (msp-loop x y expr+)
+                     (rand-int 288)
                      (= expr+)
-                     (> expr+)
-                     (< expr+)
+                     (msp> expr+)
+                     (msp< expr+)
                      (or expr+)
                      (and expr+)
                      (msp-sleep)
-                     nil))
+                     int
+                     ()))
 
-(def ATOM-LIST '(true
-                 false
-                 x
+(def x 0)
+(def y 0)
+(def ATOM-LIST '(x
                  y))
 
-(defmacro msp-loop [& code]
+(defmacro msp-loop [&code]
   `(doseq [~'x (range 224)
            ~'y (range 288)]
      ~@code))
+
+(defn msp> [& keys]
+  (apply > (remove #(not (instance? Number %1)) keys)))
+
+(defn msp< [& keys]
+  (apply < (remove #(not (instance? Number %1)) keys)))
 
 (defn msp-sleep []
   (Thread/sleep 100))
@@ -61,7 +70,7 @@
   (-> msp (.keyPressed KeyEvent/VK_DOWN)))
 
 (defn get-pixel [^int i ^int j]
-  (-> msp (.getPixel i j)))
+  (-> msp (.getPixel  (mod i 224) (mod j 288))))
 
-((defn get-pixels []
-   (-> msp .getPixels))
+(defn get-pixels []
+  (-> msp .getPixels))
