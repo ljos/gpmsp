@@ -4,3 +4,9 @@ pom.xml
 /classes/
 .lein-failures
 .lein-deps-sum
+
+src/clojure/tools/.DS_Store
+
+src/clojure/.DS_Store
+
+src/.DS_Store
