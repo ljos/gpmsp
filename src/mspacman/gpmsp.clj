@@ -29,13 +29,14 @@
                    acc
                    (let [term (first terms)
                          exp (case term
-                               (expr expr+) (expand (rand-nth mspacman.individual/FUNCTION-LIST)
+                               (expr expr+) (expand (rand-nth indv/FUNCTION-LIST)
                                                     (dec depth))
                                expr? (if (< (rand) 0.50)
-                                       (expand (rand-nth mspacman.individual/FUNCTION-LIST)
+                                       (expand (rand-nth indv/FUNCTION-LIST)
                                                (dec depth))
                                        ())
-                               int (expand term (dec depth))
+                               int (expand term
+                                           (dec depth))
                                `~term)]
                      (recur (if (and (= term 'expr+)
                                      (> expr-width 0))
