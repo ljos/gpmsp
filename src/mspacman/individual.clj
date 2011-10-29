@@ -7,6 +7,29 @@
 (import java.lang.Boolean)
 
 (defn fitness [tries code]
+  (eval `(let [~'msp (new NUIMsPacman)]
+           (do (-> (new Thread ~'msp) .start)
+               (Thread/sleep 7000)
+               (-> ~'msp (.keyPressed KeyEvent/VK_5))
+               (Thread/sleep 500)
+               (-> ~'msp (.keyReleased KeyEvent/VK_5))
+               (Thread/sleep 500)
+               (-> ~'msp (.keyPressed KeyEvent/VK_1))
+               (Thread/sleep 500)
+               (-> ~'msp (.keyReleased KeyEvent/VK_1))
+               (Thread/sleep 500)
+               (loop [n# ~tries]
+                 (if (< n# 1)
+                   ()
+                   (do (while (not (-> ~'msp .isGameOver))
+                         ~code)
+                       (recur (dec n#)))))
+               (let [fitness-score# (-> ~'msp .getScore)]
+                 (-> ~'msp  (.stop true))
+                 fitness-score#)))))
+
+(defn fitness-graphic [tries code]
+  (println code)
   (eval `(let [~'msp (doto (new GUIMsPacman)
                        (.setSize 224 (+ 288 22)))
                frame# (doto (new JFrame)
@@ -16,7 +39,7 @@
                         (-> .getContentPane (.add ~'msp java.awt.BorderLayout/CENTER))
                         (.setVisible Boolean/TRUE))]
            (do (-> (new Thread ~'msp) .start)
-               (Thread/sleep 6000)
+               (Thread/sleep 7000)
                (-> ~'msp (.keyPressed KeyEvent/VK_5))
                (println "#### pressed 5 ####")
                (Thread/sleep 500)
@@ -34,7 +57,7 @@
                  (if (< n# 1)
                    ()
                    (do (while (not (-> ~'msp .isGameOver))
-                         (do (println 'while) ~code))
+                         ~code)
                        (recur (dec n#)))))
                (let [fitness-score# (-> ~'msp .getScore)]
                  (-> ~'msp  (.stop true))
@@ -87,25 +110,21 @@
   (Thread/sleep 100))
 
 (defn move-left [msp]
-  (println 'move-left)
   (do (-> msp (.keyPressed KeyEvent/VK_LEFT))
       (Thread/sleep 10)
       (-> msp (.keyReleased KeyEvent/VK_LEFT))))
 
 (defn move-right [msp]
-  (println 'move-right)
   (do (-> msp (.keyPressed KeyEvent/VK_RIGHT))
       (Thread/sleep 10)
       (-> msp (.keyReleased KeyEvent/VK_RIGHT))))
 
 (defn move-up [msp]
-  (println 'move-up)
   (do (-> msp (.keyPressed KeyEvent/VK_UP))
       (Thread/sleep 10)
       (-> msp (.keyReleased KeyEvent/VK_UP))))
 
 (defn move-down [msp]
-  (println 'move-down)
   (do (-> msp (.keyPressed KeyEvent/VK_DOWN))
        (Thread/sleep 10)
        (-> msp (.keyReleased KeyEvent/VK_DOWN))))

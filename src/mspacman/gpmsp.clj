@@ -1,8 +1,8 @@
 (ns mspacman.gpmsp
-  (:require clojure.tools.trace)
+  (:require [clojure.tools.trace :as trace]
+            [mspacman.individual :as indv])
   (:import (java.awt.event.KeyEvent)
            (java.lang.Boolean)))
-
 
 (defstruct individual
   :program
@@ -10,11 +10,10 @@
   :fitness
   :finishing-time)
 
-(def *SIZE-OF-POPULATION* 50)
+(def *SIZE-OF-POPULATION* 5)
 (def *NUMBER-OF-GENERATIONS* 1000)
-(def *MAX-STARTING-DEPTH* 10)
-(def *MAX-WIDTH-OF-EXPR* 5)
-(def *MAX-DEPTH* 10)
+(def *MAX-STARTING-DEPTH* 50)
+(def *MAX-STARTING-WIDTH-OF-EXPR* 5)
 
 (defn expand [exprs depth]
   (cond (= exprs 'int)
@@ -25,7 +24,7 @@
         ,(cons (first exprs) 
                (loop [terms (rest exprs)
                       acc ()
-                      expr-width (rand-int *MAX-WIDTH-OF-EXPR*)]
+                      expr-width (rand-int *MAX-STARTING-WIDTH-OF-EXPR*)]
                  (if (empty? terms)
                    acc
                    (let [term (first terms)
@@ -46,12 +45,15 @@
                             (dec expr-width))))))))
 
 (defn create-random-individual []
-  (expand '(do expr+) *MAX-DEPTH*))
+  (expand '(do expr+) *MAX-STARTING-DEPTH*))
 
 (defn create-random-population []
   (apply pcalls (repeat *SIZE-OF-POPULATION* #(create-random-individual))))
 
+(defn find-depth [tree]
+  (reduce #(if (> %1 %2) %1 %2) (flatten (find-depth2 tree 0))))
 
-(defn -main [& args]
-  ())
-
+(defn- find-depth2 [tree n]
+  (if-not (seq? tree)
+    n
+    (map #(find-depth2 %1 (inc n)) tree)))
