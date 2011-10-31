@@ -129,8 +129,9 @@
        (Thread/sleep 10)
        (-> msp (.keyReleased KeyEvent/VK_DOWN))))
 
-(defn get-pixel [msp ^long i ^long j]
-  (-> msp (.getPixel  (mod i 224) (mod j 288))))
+(defn get-pixel [msp i j]
+  (-> msp (.getPixel  (if (number? i) (mod i 224) (rand-int 224))
+                      (if (number? j) (mod j 288) (rand-int 288)))))
 
 (defn get-pixels [msp]
   (-> msp .getPixels))
