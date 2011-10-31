@@ -1,19 +1,23 @@
 (ns mspacman.gpmsp
   (:require [clojure.tools.trace :as trace]
-            [mspacman.individual :as indv])
+            [mspacman.individual :as indv]
+            [clojure.zip :as zip])
   (:import (java.awt.event.KeyEvent)
            (java.lang.Boolean)))
 
 (defstruct individual
   :program
-  :mspacman
   :fitness
   :finishing-time)
 
 (def *SIZE-OF-POPULATION* 5)
-(def *NUMBER-OF-GENERATIONS* 1000)
-(def *MAX-STARTING-DEPTH* 50)
+(def *NUMBER-OF-GENERATIONS* 5)
+(def *MAX-STARTING-DEPTH* 10)
 (def *MAX-STARTING-WIDTH-OF-EXPR* 5)
+(def *MUTATION-RATE* 0.02)
+(def *MUTATION-DEPTH* 5)
+(def *EXPR?-RATE* 0.3)
+(def *FITNESS-RUNS* 1)
 
 (defn expand [exprs depth]
   (cond (= exprs 'int)
@@ -31,7 +35,7 @@
                          exp (case term
                                (expr expr+) (expand (rand-nth indv/FUNCTION-LIST)
                                                     (dec depth))
-                               expr? (if (< (rand) 0.50)
+                               expr? (if (< (rand) *EXPR?-RATE*)
                                        (expand (rand-nth indv/FUNCTION-LIST)
                                                (dec depth))
                                        ())
@@ -51,10 +55,27 @@
 (defn create-random-population []
   (apply pcalls (repeat *SIZE-OF-POPULATION* #(create-random-individual))))
 
-(defn find-depth [tree]
-  (reduce #(if (> %1 %2) %1 %2) (flatten (find-depth2 tree 0))))
+(defn mutate [tree]
+  (loop [loc (zip/seq-zip tree)]
+    (cond (zip/end? loc)
+          ,(zip/root loc)
+          (and (not (symbol? (zip/node loc)))
+               (not (nil? (zip/node loc)))
+               (> *MUTATION-RATE* (rand)))
+          ,(zip/root (zip/replace loc
+                                  (expand (rand-nth indv/FUNCTION-LIST)
+                                          *MUTATION-DEPTH*)))
+          :else
+          ,(recur (zip/next loc)))))
 
-(defn- find-depth2 [tree n]
-  (if-not (seq? tree)
-    n
-    (map #(find-depth2 %1 (inc n)) tree)))
+(defn -main [& args]
+  (loop [generation (sort-by :fitness
+                             >
+                             (pmap #(struct individual %1 (indv/fitness *FITNESS-RUNS* %1) 0)
+                                   (create-random-population)))
+         n *NUMBER-OF-GENERATIONS*]
+    (recur (pmap #(let [mutated (assoc %1 :program (mutate (get %1 :program)))]
+                    (assoc mutated :fitness
+                           (indv/fitness (get mutated :program))))
+                 '(NEED NEW GENERATION HERE!))
+           (dec n))))
