@@ -10,14 +10,14 @@
   :fitness
   :finishing-time)
 
-(def *SIZE-OF-POPULATION* 5)
+(def *SIZE-OF-POPULATION* 50)
 (def *NUMBER-OF-GENERATIONS* 5)
 (def *MAX-STARTING-DEPTH* 10)
 (def *MAX-STARTING-WIDTH-OF-EXPR* 5)
 (def *MUTATION-RATE* 0.02)
 (def *MUTATION-DEPTH* 5)
 (def *EXPR?-RATE* 0.3)
-(def *FITNESS-RUNS* 1)
+(def *FITNESS-RUNS* 10)
 
 (defn expand [exprs depth]
   (cond (= exprs 'int)
