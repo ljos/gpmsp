@@ -102,8 +102,8 @@ public class Cottage extends GfxProducer {
 	public void main(int w, int h) {
 		String driver = "";
 
-		System.out.println("CottAGE version " + VERSION + " using JEF version "
-				+ jef.Version.VERSION + ".");
+	//	System.out.println("CottAGE version " + VERSION + " using JEF version "
+	//			+ jef.Version.VERSION + ".");
 
 		try {
 			base_URL = new URL(String.format("file://localhost/%s/.mspacman/", 

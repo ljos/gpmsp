@@ -44,7 +44,7 @@ public class Pacman extends BasicMachine implements Machine {
 
 		@Override
 		public void exec() {
-			System.out.println("Decrypting roms...");
+//			System.out.println("Decrypting roms...");
 			m.theglob_decrypt_rom_8(mem);
 			m.theglob_decrypt_rom_9(mem);
 			m.theglob_decrypt_rom_A(mem);

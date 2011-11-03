@@ -281,7 +281,7 @@ public class MAMEVideo implements VideoEmulator,Vh_convert_color_proms,Eof_callb
 		public void palette_init() {
 			int i;
 
-			System.out.println("Machine_drv_total_colors " + Machine_drv_total_colors);
+	//		System.out.println("Machine_drv_total_colors " + Machine_drv_total_colors);
 
 			for (i = 0;i < Machine_drv_total_colors;i++)
 			{

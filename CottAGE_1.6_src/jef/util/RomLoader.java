@@ -271,7 +271,7 @@ public final class RomLoader {
 
 	try {
 		for(i=0; i<this.romlist_index; i++) {
-			System.out.print("Loading " + this.romlist_names[i] + "(" + Integer.toHexString(this.romlist_crc[i]) + ")...");
+	//		System.out.print("Loading " + this.romlist_names[i] + "(" + Integer.toHexString(this.romlist_crc[i]) + ")...");
 			in = new DataInputStream(new FileInputStream(this.romlist_names[i]));
 			try {
 				ofs = this.romlist_storeat[i];
@@ -286,7 +286,7 @@ public final class RomLoader {
 			}
 			in.close();
 			in = null;
-			System.out.println("Ok!");
+	//		System.out.println("Ok!");
 		}
 	} catch (IOException e) {
 		System.out.println("");
@@ -343,7 +343,7 @@ public final class RomLoader {
 			if ((load_count != this.romlist_index) && (!bParent)) {
 				for(i=0; i<this.romlist_index; i++) {
 					if (this.romlist_loaded[i] == false) {
-						System.out.println(this.romlist_names[i] + "(" + Integer.toHexString(this.romlist_crc[i]) + ") not found !");
+	//					System.out.println(this.romlist_names[i] + "(" + Integer.toHexString(this.romlist_crc[i]) + ") not found !");
 						try {
 							jef.video.Console.TXT[jef.video.Console.cTXT]=this.romlist_names[i] + "(" + Integer.toHexString(this.romlist_crc[i]) + ") not found !";
 							jef.video.Console.update();
@@ -362,10 +362,11 @@ public final class RomLoader {
 			//if ((!this.romlist_loaded[i]) && (ze.getCrc() == (long)this.romlist_crc[i]) ) {
 			if ((!this.romlist_loaded[i]) && ((this.romlist_crc[i]==0) || (Long.toHexString(ze.getCrc()).equals(Integer.toHexString(this.romlist_crc[i])))) ) {
 			//if ((!this.romlist_loaded[i]) && (ze.getName().equals(this.romlist_names[i]))) {
-				if (this.romlist_crc[i] == 0)
-					System.out.print("Loading " + this.romlist_names[i] + "(NO GOOD DUMP KNOWN)...");
-				else
-					System.out.print("Loading " + this.romlist_names[i] + "(" + Integer.toHexString(this.romlist_crc[i]) + ")...");
+				if (this.romlist_crc[i] == 0){
+//					System.out.print("Loading " + this.romlist_names[i] + "(NO GOOD DUMP KNOWN)...");
+				} else {
+//					System.out.print("Loading " + this.romlist_names[i] + "(" + Integer.toHexString(this.romlist_crc[i]) + ")...");
+				}
 				try {
 					jef.video.Console.TXT[jef.video.Console.cTXT]="Loading " + this.romlist_names[i] + "...";
 					jef.video.Console.update();
@@ -399,7 +400,7 @@ public final class RomLoader {
 				this.romlist_loaded[i] = true;
 				load_count++;
 
-				System.out.println("Ok!");
+	//			System.out.println("Ok!");
 				try {
 					jef.video.Console.TXT[jef.video.Console.cTXT]+="Ok!";
 					jef.video.Console.update();
