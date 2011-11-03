@@ -119,7 +119,8 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 
 		try {
 			base_URL = new URL(
-					"file://localhost/Users/bjarte/Documents/workspace/mspacman/bin/");
+					String.format("file://localhost/%s/.mspacman/", 
+							System.getProperty("user.home")));
 		} catch (Exception e) {
 		}
 		try {

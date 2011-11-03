@@ -34,7 +34,8 @@ public class NUIMsPacman implements MsPacman {
 		URL base_URL = null;
 		try {
 			base_URL = new URL(
-					"file://localhost/Users/bjarte/Documents/workspace/mspacman/bin/");
+					String.format("file://localhost/%s/.mspacman/", 
+							System.getProperty("user.home")));
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
