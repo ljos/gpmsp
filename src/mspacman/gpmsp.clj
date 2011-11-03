@@ -1,11 +1,9 @@
 (ns mspacman.gpmsp
   (:require [clojure.tools.trace :as trace]
             [mspacman.individual :as indv]
-            [clojure.zip :as zip])
-  (:import (java.awt.event.KeyEvent)
-           (java.lang.Boolean)
-           (java.net.InetAddress)))
+            [clojure.zip :as zip]))
 
+(import java.net.InetAddress)
 (use 'mspacman.individual)
 
 (defstruct individual
