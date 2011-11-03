@@ -106,8 +106,8 @@ public class Cottage extends GfxProducer {
 				+ jef.Version.VERSION + ".");
 
 		try {
-			base_URL = new URL(
-					"file://localhost/Users/bjarte/Documents/workspace/mspacman/bin/");
+			base_URL = new URL(String.format("file://localhost/%s/.mspacman/", 
+					System.getProperty("user.home")));
 		} catch (Exception e) {
 		}
 		try {
