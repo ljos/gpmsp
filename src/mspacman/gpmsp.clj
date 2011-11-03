@@ -12,7 +12,7 @@
   :fitness
   :finishing-time)
 
-(def *SIZE-OF-POPULATION* 40)
+(def *SIZE-OF-POPULATION* 20)
 (def *NUMBER-OF-GENERATIONS* 5)
 (def *MAX-STARTING-DEPTH* 10)
 (def *MAX-STARTING-WIDTH-OF-EXPR* 5)
