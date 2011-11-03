@@ -2,23 +2,24 @@
   (:require [clojure.tools.trace :as trace]
             [mspacman.individual :as indv]
             [clojure.zip :as zip])
-  (:use mspacman.individual)
   (:import (java.awt.event.KeyEvent)
            (java.lang.Boolean)))
+
+(use 'mspacman.individual)
 
 (defstruct individual
   :program
   :fitness
   :finishing-time)
 
-(def *SIZE-OF-POPULATION* 50)
+(def *SIZE-OF-POPULATION* 40)
 (def *NUMBER-OF-GENERATIONS* 5)
 (def *MAX-STARTING-DEPTH* 10)
 (def *MAX-STARTING-WIDTH-OF-EXPR* 5)
 (def *MUTATION-RATE* 0.02)
 (def *MUTATION-DEPTH* 5)
 (def *EXPR?-RATE* 0.3)
-(def *FITNESS-RUNS* 10)
+(def *FITNESS-RUNS* 3)
 
 (defn expand [exprs depth]
   (cond (= exprs 'int)
@@ -69,7 +70,8 @@
           :else
           ,(recur (zip/next loc)))))
 
-(defn gp-run [& args]
+(defn gp-run []
+  (use 'mspacman.individual)
   (println 'started)
   (loop [generation (sort-by :fitness
                              >

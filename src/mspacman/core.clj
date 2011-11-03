@@ -1,13 +1,11 @@
 (ns mspacman.core
-  (:require [mspacman.gpmsp :as gp])
-  (:use mspacman.individual))
+  (:require [mspacman.gpmsp :as gp]))
 
 (import '(no.uib.bjo013.mspacman MsPacman GUIMsPacman NUIMsPacman))
 (import javax.swing.JFrame)
 (import java.awt.BorderLayout)
 (import java.lang.Boolean)
 (import java.awt.event.KeyEvent)
-
 
 (defn start-GUIMsPacman []
   (let [msp (doto (new GUIMsPacman)
