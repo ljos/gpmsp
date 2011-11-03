@@ -1,5 +1,6 @@
 (ns mspacman.core
-  (:require [mspacman.gpmsp :as gp]))
+  (:require [mspacman.gpmsp :as gp])
+  (:use mspacman.individual))
 
 (import '(no.uib.bjo013.mspacman MsPacman GUIMsPacman NUIMsPacman))
 (import javax.swing.JFrame)
