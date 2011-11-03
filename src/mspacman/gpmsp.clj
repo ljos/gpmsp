@@ -3,7 +3,8 @@
             [mspacman.individual :as indv]
             [clojure.zip :as zip])
   (:import (java.awt.event.KeyEvent)
-           (java.lang.Boolean)))
+           (java.lang.Boolean)
+           (java.net.InetAddress)))
 
 (use 'mspacman.individual)
 
@@ -81,7 +82,10 @@
     (if (>= n *NUMBER-OF-GENERATIONS*)
       (println 'finished)
       (do (println 'generation n)
-          (spit (format "%s/generations/generation_%s.txt" (System/getProperty "user.home") n)
+          (spit (format "%s/generations/%s_generation_%s.txt"
+                        (System/getProperty "user.home")
+                        (.getHostName (InetAddress/getLocalHost))
+                        n)
                 (str generation))
           (println (map #(get %1 :fitness) generation))
           (let [F (reduce + (map #(get %1 :fitness) generation))]
