@@ -69,13 +69,29 @@
           ,(recur (zip/next loc)))))
 
 (defn -main [& args]
+  (println 'started)
   (loop [generation (sort-by :fitness
                              >
                              (pmap #(struct individual %1 (indv/fitness *FITNESS-RUNS* %1) 0)
                                    (create-random-population)))
-         n *NUMBER-OF-GENERATIONS*]
-    (recur (pmap #(let [mutated (assoc %1 :program (mutate (get %1 :program)))]
-                    (assoc mutated :fitness
-                           (indv/fitness (get mutated :program))))
-                 '(NEED NEW GENERATION HERE!))
-           (dec n))))
+         n 0]
+    (if (>= n *NUMBER-OF-GENERATIONS*)
+      (println 'finished)
+      (do (println 'generation n)
+          (spit (format "%s/generations/generation_%s.txt" (System/getProperty "user.home") n)
+                (str generation))
+          (println (map #(get %1 :fitness) generation))
+          (let [F (reduce + (map #(get %1 :fitness) generation))]
+            (recur (sort-by :fitness >
+                            (pmap #(let [mutated (assoc %1 :program (mutate (get %1 :program)))]
+                                     (assoc mutated :fitness
+                                            (indv/fitness *FITNESS-RUNS* (get mutated :program))))
+                                  (take *SIZE-OF-POPULATION*
+                                        (repeatedly #(let [r (rand)]
+                                                       (loop [pop generation
+                                                              slice 0]
+                                                 (let [score (+ slice (/ (get (first pop) :fitness) F))]
+                                                   (if (<= r score)
+                                                     (first pop)
+                                                     (recur (rest pop) score)))))))))
+                   (inc n)))))))
