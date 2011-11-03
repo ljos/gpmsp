@@ -69,7 +69,7 @@
           :else
           ,(recur (zip/next loc)))))
 
-(defn -main [& args]
+(defn gp-run [& args]
   (println 'started)
   (loop [generation (sort-by :fitness
                              >

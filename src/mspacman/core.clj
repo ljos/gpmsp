@@ -1,4 +1,5 @@
-(ns mspacman.core)
+(ns mspacman.core
+  (:require [mspacman.gpmsp :as gp]))
 
 (import '(no.uib.bjo013.mspacman MsPacman GUIMsPacman NUIMsPacman))
 (import javax.swing.JFrame)
@@ -54,4 +55,4 @@
     (println (-> t .isAlive))))
 
 (defn -main [& args]
-  (start-NUIMsPacman-test))
+  (gp/gp-run))
