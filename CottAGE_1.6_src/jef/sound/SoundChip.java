@@ -80,7 +80,7 @@ public abstract class SoundChip implements SoundChipEmulator {
 		}
 
 
-		System.out.println("SoundChip " + this.toString() + " initialized.");
+	//	System.out.println("SoundChip " + this.toString() + " initialized.");
 	}
 
 /**
