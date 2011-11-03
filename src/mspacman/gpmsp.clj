@@ -2,6 +2,7 @@
   (:require [clojure.tools.trace :as trace]
             [mspacman.individual :as indv]
             [clojure.zip :as zip])
+  (:use mspacman.individual)
   (:import (java.awt.event.KeyEvent)
            (java.lang.Boolean)))
 
