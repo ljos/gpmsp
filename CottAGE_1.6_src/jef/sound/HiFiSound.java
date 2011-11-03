@@ -112,7 +112,7 @@ public final class HiFiSound/* extends Thread*/ {
         //DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
 
         if (!AudioSystem.isLineSupported(info)) {
-            System.err.println("Unsupported audio: " + format);
+       //     System.err.println("Unsupported audio: " + format);
             return;
         }
 
