@@ -11,22 +11,23 @@
 (defn fitness [tries code]
   (int
    (/ (reduce +
-              (pmap #(eval `(binding [~'msp (new NUIMsPacman)]
-                              (do (-> (new Thread ~'msp) .start)
-                                  (Thread/sleep 7000)
-                                  (-> ~'msp (.keyPressed KeyEvent/VK_5))
-                                  (Thread/sleep 500)
-                                  (-> ~'msp (.keyReleased KeyEvent/VK_5))
-                                  (Thread/sleep 500)
-                                  (-> ~'msp (.keyPressed KeyEvent/VK_1))
-                                  (Thread/sleep 500)
-                                  (-> ~'msp (.keyReleased KeyEvent/VK_1))
-                                  (Thread/sleep 500)
-                                  (while (not (-> ~'msp .isGameOver))
-                                    ~%1)
-                                  (let [fitness-score# (-> ~'msp .getScore)]
-                                    (-> ~'msp  (.stop true))
-                                    fitness-score#))))
+              (pmap (fn [c#]
+                      (eval `(binding [~'msp (new NUIMsPacman)]
+                               (do (-> (new Thread ~'msp) .start)
+                                   (Thread/sleep 7000)
+                                   (-> ~'msp (.keyPressed KeyEvent/VK_5))
+                                   (Thread/sleep 500)
+                                   (-> ~'msp (.keyReleased KeyEvent/VK_5))
+                                   (Thread/sleep 500)
+                                   (-> ~'msp (.keyPressed KeyEvent/VK_1))
+                                   (Thread/sleep 500)
+                                   (-> ~'msp (.keyReleased KeyEvent/VK_1))
+                                   (Thread/sleep 500)
+                                   (while (not (-> ~'msp .isGameOver))
+                                     ~c#)
+                                   (let [fitness-score# (-> ~'msp .getScore)]
+                                     (-> ~'msp  (.stop true))
+                                     fitness-score#)))))
                     (repeat tries code)))
       tries)))
 
