@@ -69,6 +69,7 @@
 
 (defn gp-run []
   (println 'started)
+  (use 'mspacman.individual)
   (loop [generation (sort-by :fitness
                              >
                              (pmap #(struct individual %1 (fitness FITNESS-RUNS %1) 0)
