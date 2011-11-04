@@ -72,7 +72,7 @@
   (use 'mspacman.individual)
   (loop [generation (sort-by :fitness
                              >
-                             (doall (map #(struct individual %1 (fitness FITNESS-RUNS %1) 0)
+                             (doall (map #(struct individual %1 (fitness-graphic FITNESS-RUNS %1) 0)
                                     (create-random-population))))
          n 0]
     (if (>= n NUMBER-OF-GENERATIONS)
@@ -89,7 +89,7 @@
                             (doall
                              (map #(let [mutated (assoc %1 :program (mutate (get %1 :program)))]
                                       (assoc mutated :fitness
-                                             (fitness FITNESS-RUNS (get mutated :program))))
+                                             (fitness-graphic FITNESS-RUNS (get mutated :program))))
                                    (take SIZE-OF-POPULATION
                                          (repeatedly #(let [r (rand)]
                                                         (loop [pop generation

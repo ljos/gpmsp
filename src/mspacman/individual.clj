@@ -32,39 +32,39 @@
       tries)))
 
 (defn fitness-graphic [tries code]
-  (println code)
-  (eval `(let [~'msp (doto (new GUIMsPacman)
-                       (.setSize 224 (+ 288 22)))
-               frame# (doto (new JFrame)
-                        (.setDefaultCloseOperation javax.swing.JFrame/EXIT_ON_CLOSE)
-                        (.setSize 224 (+ 288 22))
-                        (.setLocation 300 0)
-                        (-> .getContentPane (.add ~'msp java.awt.BorderLayout/CENTER))
-                        (.setVisible Boolean/TRUE))]
-           (do (-> (new Thread ~'msp) .start)
-               (Thread/sleep 7000)
-               (-> ~'msp (.keyPressed KeyEvent/VK_5))
-               (println "#### pressed 5 ####")
-               (Thread/sleep 500)
-               (-> ~'msp (.keyReleased KeyEvent/VK_5))
-               (println "#### released 5")
-               (Thread/sleep 500)
-               (-> ~'msp (.keyPressed KeyEvent/VK_1))
-               (println "#### pressed 1 ####")
-               (Thread/sleep 500)
-               (-> ~'msp (.keyReleased KeyEvent/VK_1))
-               (println "#### released 1")
-               (Thread/sleep 500)
-               (loop [n# ~tries]
-                 (println n#)
-                 (if (< n# 1)
-                   ()
-                   (do (while (not (-> ~'msp .isGameOver))
-                         ~code)
-                       (recur (dec n#)))))
-               (let [fitness-score# (-> ~'msp .getScore)]
-                 (-> ~'msp  (.stop true))
-                 fitness-score#)))))
+  (int
+   (/
+    (reduce +
+            (doall
+             (pmap (fn [c#]
+                     (eval `(binding [~'msp (doto (new GUIMsPacman)
+                                              (.setSize 224 (+ 288 22)))]
+                              (let [frame# (doto (new JFrame)
+                                             (.setDefaultCloseOperation javax.swing.JFrame/EXIT_ON_CLOSE)
+                                             (.setSize 224 (+ 288 22))
+                                             (.setLocation 100 0)
+                                             (-> .getContentPane (.add ~'msp java.awt.BorderLayout/CENTER))
+                                             (.setVisible Boolean/TRUE))
+                                    t# (new Thread ~'msp)]
+                                (do (-> t# .start)
+                                    (Thread/sleep 7000)
+                                    (-> ~'msp (.keyPressed KeyEvent/VK_5))
+                                    (Thread/sleep 500)
+                                    (-> ~'msp (.keyReleased KeyEvent/VK_5))
+                                    (Thread/sleep 500)
+                                    (-> ~'msp (.keyPressed KeyEvent/VK_1))
+                                    (Thread/sleep 500)
+                                    (-> ~'msp (.keyReleased KeyEvent/VK_1))
+                                    (Thread/sleep 500)
+                                    (while (not (-> ~'msp .isGameOver))
+                                      ~c#)
+                                    (let [fitness-score# (-> ~'msp .getScore)]
+                                      (-> ~'msp  (.stop true))
+                                      (-> frame# .dispose)
+                                      
+                                      fitness-score#))))))
+                   (repeat tries code))))
+    tries)))
 
 (def FUNCTION-LIST '((move-left)
                      (move-right)
