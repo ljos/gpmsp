@@ -10,6 +10,7 @@ import cottage.CottageDriver;
 import cottage.machine.Pacman;
 
 public class NUIMsPacman implements MsPacman {
+	private static String VERSION = "0.01a";
 	private int[] pixel;
 	private Pacman m;
 	private Throttle t;
@@ -28,6 +29,7 @@ public class NUIMsPacman implements MsPacman {
 	@Override
 	public void run() {
 		String driver = "";
+		System.out.println("Version " + VERSION);
 
 		URL base_URL = null;
 		try {

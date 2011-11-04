@@ -107,7 +107,7 @@ public final class HiFiSound/* extends Thread*/ {
                 samfreq,
                 true);
 
-   //     System.out.println("frameSize " + format.getFrameSize());
+        System.out.println("frameSize " + format.getFrameSize());
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, format, LINE_BUF_SIZE);
         //DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
 
@@ -126,7 +126,7 @@ public final class HiFiSound/* extends Thread*/ {
 
         m_line.start();
 
-   //     System.out.println("Sound initialized successfully.");
+        System.out.println("Sound initialized successfully.");
 
         running = true;
     }
