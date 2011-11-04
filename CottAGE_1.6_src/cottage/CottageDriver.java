@@ -70,7 +70,7 @@ public class CottageDriver {
 
 		Driver d = null;
 
-	//	System.out.print("Trying to select driver '" + driver_name + "'...");
+		System.out.print("Trying to select driver '" + driver_name + "'...");
 
 		/* Sort games before dichotomic search */
 		sortGames();
@@ -93,7 +93,7 @@ public class CottageDriver {
 			for(;;);
 		}
 
-//		System.out.println("Ok!");
+		System.out.println("Ok!");
 
 		return d.getMachine(base_URL, driver_name);
 	}

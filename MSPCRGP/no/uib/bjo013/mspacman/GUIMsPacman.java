@@ -18,6 +18,9 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 	 */
 	private static final long serialVersionUID = 8867847222040282809L;
 
+	public static final String VERSION = "1.0 beta";
+	public static final String RELEASE_DATE = "20-10-2005";
+
 	/** pixel buffer **/
 	public static int pixel[];
 
@@ -110,6 +113,9 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 	@Override
 	public void main(int w, int h) {
 		String driver = "";
+
+		System.out.println("CottAGE version " + VERSION + " using JEF version "
+				+ jef.Version.VERSION + ".");
 
 		try {
 			base_URL = new URL(

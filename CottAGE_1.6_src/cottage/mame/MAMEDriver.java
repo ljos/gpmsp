@@ -530,8 +530,8 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 				sce[i] = soundChips[i];
 
 			if (!bInfo) {
-	//			System.out.println("cpus :" + cpuDriver.length);
-	//			System.out.println("sndchips :" + sce.length);
+				System.out.println("cpus :" + cpuDriver.length);
+				System.out.println("sndchips :" + sce.length);
 			}
 
 			md =
@@ -740,9 +740,9 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 		String man,
 		String nam) {
 		if (!bInfo) {
-//			System.out.println("Starting...");
-//			System.out.println(nam);
-//			System.out.println(Integer.toString(year) + " - " + man);
+			System.out.println("Starting...");
+			System.out.println(nam);
+			System.out.println(Integer.toString(year) + " - " + man);
 			md.ROT = rot;
 			md.input = inp;
 			md.ve = this.videoEmulator;
@@ -768,9 +768,9 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 		String man,
 		String nam) {
 		if (!bInfo) {
-	//		System.out.println("Starting...");
-	//		System.out.println(nam);
-	//		System.out.println(Integer.toString(year) + " - " + man);
+			System.out.println("Starting...");
+			System.out.println(nam);
+			System.out.println(Integer.toString(year) + " - " + man);
 			md.ROT = rot;
 			md.input = inp;
 			md.ve = this.videoEmulator;
@@ -935,9 +935,9 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 			romLoader.setParentZip(parent);
 			romLoader.loadZip(base_URL);
 
-	//		System.out.println("Starting...");
-	//		System.out.println(nam);
-	//		System.out.println(year + " - " + man);
+			System.out.println("Starting...");
+			System.out.println(nam);
+			System.out.println(year + " - " + man);
 			md.ROT = rot;
 
 			InputPort[] in = new InputPort[inp_count];
