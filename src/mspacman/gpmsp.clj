@@ -73,7 +73,7 @@
   (loop [generation (sort-by :fitness
                              >
                              (doall (map #(struct individual %1 (fitness FITNESS-RUNS %1) 0)
-                                   (create-random-population))))
+                                    (create-random-population))))
          n 0]
     (if (>= n NUMBER-OF-GENERATIONS)
       (println 'finished)
@@ -86,18 +86,21 @@
           (println (map #(get %1 :fitness) generation))
           (let [F (reduce + (map #(get %1 :fitness) generation))]
             (recur (sort-by :fitness >
-                            (doall (map #(let [mutated (assoc %1 :program (mutate (get %1 :program)))]
-                                            (assoc mutated :fitness
-                                                   (fitness FITNESS-RUNS (get mutated :program))))
-                                         (take SIZE-OF-POPULATION
-                                               (repeatedly #(let [r (rand)]
-                                                              (loop [pop generation
-                                                                     slice 0]
-                                                                (let [score (+ slice (/ (get (first pop)
-                                                                                             :fitness) F))]
-                                                                  (if (<= r score)
-                                                                    (first pop)
-                                                                    (recur (rest pop) score))))))))))
+                            (doall
+                             (map #(let [mutated (assoc %1 :program (mutate (get %1 :program)))]
+                                      (assoc mutated :fitness
+                                             (fitness FITNESS-RUNS (get mutated :program))))
+                                   (take SIZE-OF-POPULATION
+                                         (repeatedly #(let [r (rand)]
+                                                        (loop [pop generation
+                                                               slice 0]
+                                                          (let [score (+ slice
+                                                                         (/ (get (first pop)
+                                                                                 :fitness)
+                                                                            F))]
+                                                            (if (<= r score)
+                                                              (first pop)
+                                                              (recur (rest pop) score))))))))))
                    (inc n)))))))
 
 
