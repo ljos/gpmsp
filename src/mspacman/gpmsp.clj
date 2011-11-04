@@ -16,7 +16,7 @@
 (def MUTATION-RATE 0.02)
 (def MUTATION-DEPTH 5)
 (def EXPR?-RATE 0.3)
-(def FITNESS-RUNS 2)
+(def FITNESS-RUNS 8)
 
 (defn expand [exprs depth]
   (cond (= exprs 'int)
@@ -72,8 +72,8 @@
   (use 'mspacman.individual)
   (loop [generation (sort-by :fitness
                              >
-                             (pmap #(struct individual %1 (fitness FITNESS-RUNS %1) 0)
-                                   (create-random-population)))
+                             (doall (map #(struct individual %1 (fitness FITNESS-RUNS %1) 0)
+                                   (create-random-population))))
          n 0]
     (if (>= n NUMBER-OF-GENERATIONS)
       (println 'finished)
@@ -86,7 +86,7 @@
           (println (map #(get %1 :fitness) generation))
           (let [F (reduce + (map #(get %1 :fitness) generation))]
             (recur (sort-by :fitness >
-                            (doall (pmap #(let [mutated (assoc %1 :program (mutate (get %1 :program)))]
+                            (doall (map #(let [mutated (assoc %1 :program (mutate (get %1 :program)))]
                                             (assoc mutated :fitness
                                                    (fitness FITNESS-RUNS (get mutated :program))))
                                          (take SIZE-OF-POPULATION
