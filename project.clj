@@ -3,9 +3,10 @@
   :dependencies [[org.clojure/clojure "1.3.0"]]
   :java-source-path [["CottAGE_1.6_src/"]
                      ["MSPCRGP/"]]
-  :java-opts ["-server"
-              "-d64"
-              "-Xmx2048M"
-              "-Xms2048M"
-              "-XX:MaxPermSize=256M"]
+  :java-opts ["-Xmx2G"
+              "-Xms2G"
+              "-Xmn1G"
+              "-XX:MaxPermSize=256M"
+              "-XX:ThreadStackSize=512k"
+              "-XX:+UseConcMarkSweepGC"]
   :main mspacman.core)
