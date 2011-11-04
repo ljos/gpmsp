@@ -104,7 +104,7 @@
 
 (defn gp-test []
   (println 'started)
-  (loop [generation '({:program (do (move-left)) :fitness 120 :finishing-time 0})
+  (loop [generation (read-string (slurp "testcase.clj"))
          n 0]
     (println generation)
     (if (>= n NUMBER-OF-GENERATIONS)
