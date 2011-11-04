@@ -71,14 +71,15 @@
                      (move-up)
                      (move-down)
                      (do expr+)
-                    ; (get-pixel x y)
                      (get-pixel int int)
                      (get-pixels)
                      (if expr expr expr?)
-                     (rand-int 288)
+                     (rand-int 10000)
                      (= expr+)
                      (msp> expr+)
                      (msp< expr+)
+                     (msp+ expr+)
+                     (msp- expr+)
                      (or expr+)
                      (and expr+)
                      (msp-sleep)
@@ -102,6 +103,18 @@
     (if (empty? l)
       true
       (apply > l))))
+
+(defn msp+ [& keys]
+  (let [l (remove #(not (instance? Number %1)) keys)]
+    (if (empty? l)
+      0
+      (apply + l))))
+
+(defn msp- [& keys]
+  (let [l (remove #(not (instance? Number %1)) keys)]
+    (if (empty? l)
+      0
+      (apply - l))))
 
 (defn msp-sleep []
   (Thread/sleep 100))
