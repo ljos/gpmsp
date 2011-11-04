@@ -1,7 +1,5 @@
 (ns mspacman.gpmsp
-  (:require [clojure.tools.trace :as trace]
-            [mspacman.individual :as indv]
-            [clojure.zip :as zip]))
+  (:require [clojure.zip :as zip]))
 
 (import java.net.InetAddress)
 (use 'mspacman.individual)
@@ -13,7 +11,7 @@
 
 (def SIZE-OF-POPULATION 40)
 (def NUMBER-OF-GENERATIONS 100)
-(def MAX-STARTING-DEPTH 10)
+(def MAX-STARTING-DEPTH 40)
 (def MAX-STARTING-WIDTH-OF-EXPR 5)
 (def MUTATION-RATE 0.02)
 (def MUTATION-DEPTH 5)
@@ -34,10 +32,10 @@
                    acc
                    (let [term (first terms)
                          exp (case term
-                               (expr expr+) (expand (rand-nth indv/FUNCTION-LIST)
+                               (expr expr+) (expand (rand-nth FUNCTION-LIST)
                                                     (dec depth))
                                expr? (if (< (rand) EXPR?-RATE)
-                                       (expand (rand-nth indv/FUNCTION-LIST)
+                                       (expand (rand-nth FUNCTION-LIST)
                                                (dec depth))
                                        ())
                                int (expand term
@@ -64,17 +62,16 @@
                (not (nil? (zip/node loc)))
                (> MUTATION-RATE (rand)))
           ,(zip/root (zip/replace loc
-                                  (expand (rand-nth indv/FUNCTION-LIST)
+                                  (expand (rand-nth FUNCTION-LIST)
                                           MUTATION-DEPTH)))
           :else
           ,(recur (zip/next loc)))))
 
 (defn gp-run []
-  (use 'mspacman.individual)
   (println 'started)
   (loop [generation (sort-by :fitness
                              >
-                             (pmap #(struct individual %1 (indv/fitness FITNESS-RUNS %1) 0)
+                             (pmap #(struct individual %1 (fitness FITNESS-RUNS %1) 0)
                                    (create-random-population)))
          n 0]
     (if (>= n NUMBER-OF-GENERATIONS)
@@ -90,7 +87,7 @@
             (recur (sort-by :fitness >
                             (pmap #(let [mutated (assoc %1 :program (mutate (get %1 :program)))]
                                      (assoc mutated :fitness
-                                            (indv/fitness FITNESS-RUNS (get mutated :program))))
+                                            (fitness FITNESS-RUNS (get mutated :program))))
                                   (take SIZE-OF-POPULATION
                                         (repeatedly #(let [r (rand)]
                                                        (loop [pop generation
