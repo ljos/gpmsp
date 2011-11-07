@@ -29,7 +29,7 @@ public class NUIMsPacman implements MsPacman {
 	public void run() {
 		String driver = "";
 		
-		System.out.println("NUIMsPacman");
+		System.out.println("pacman started " + Thread.currentThread().getId());
 
 		URL base_URL = null;
 		try {
@@ -67,6 +67,7 @@ public class NUIMsPacman implements MsPacman {
 			pixel = m.refresh(true).getPixels();
 			t.throttle();
 		}
+		System.out.println("pacman stopped " + Thread.currentThread().getId());
 	}
 
 	@Override
