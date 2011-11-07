@@ -76,7 +76,7 @@
                      (get-pixel int int)
                      (get-pixels)
                      (if expr expr expr?)
-                     (rand-int 10000)
+                     (msp-rand-int)
                      (= expr+)
                      (msp> expr+)
                      (msp< expr+)
@@ -92,6 +92,9 @@
 (def y 0)
 (def ATOM-LIST '(x
                  y))
+
+(defn msp-rand-int []
+  (rand-int 10000))
 
 (defn msp> [& keys]
   (let [l (remove #(not (instance? Number %1)) keys)]
