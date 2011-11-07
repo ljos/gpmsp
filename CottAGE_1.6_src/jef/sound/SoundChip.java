@@ -78,9 +78,6 @@ public abstract class SoundChip implements SoundChipEmulator {
 			this.lofi = new LoFiSound();
 			lofi.init(linBuffer, muBuffer);
 		}
-
-
-		System.out.println("SoundChip " + this.toString() + " initialized.");
 	}
 
 /**

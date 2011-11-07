@@ -28,7 +28,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-*/
+ */
 
 package jef.sound;
 
@@ -41,30 +41,28 @@ import javax.sound.sampled.SourceDataLine;
 /**
  * @author Erik Duijs
  * 
- * HiFiSound.java
+ *         HiFiSound.java
  * 
- * Only supported using JRE 1.3 or newer.
+ *         Only supported using JRE 1.3 or newer.
  */
 
-public final class HiFiSound/* extends Thread*/ {
+public final class HiFiSound/* extends Thread */{
 
-    protected SourceDataLine m_line;
+	protected SourceDataLine m_line;
 
-    int samfreq;
-    int LINE_BUF_SIZE;
-    int WRITE_BUF_SIZE;
+	int samfreq;
+	int LINE_BUF_SIZE;
+	int WRITE_BUF_SIZE;
 
-    boolean running;
+	boolean running;
 
-    SoundChipEmulator sc;
+	SoundChipEmulator sc;
 
-/**
- * Constructor.
- */
-	public HiFiSound(	SoundChipEmulator sc,
-						int LINE_BUFSIZE,
-						int write_buf_size,
-						int SAMPLE_FREQUENCY) {
+	/**
+	 * Constructor.
+	 */
+	public HiFiSound(SoundChipEmulator sc, int LINE_BUFSIZE,
+			int write_buf_size, int SAMPLE_FREQUENCY) {
 
 		this.sc = sc;
 		this.LINE_BUF_SIZE = LINE_BUFSIZE;
@@ -72,9 +70,9 @@ public final class HiFiSound/* extends Thread*/ {
 		this.samfreq = SAMPLE_FREQUENCY;
 	}
 
-/**
- * Shut down sound system.
- */
+	/**
+	 * Shut down sound system.
+	 */
 	public void terminate() {
 		if (m_line != null) {
 			m_line.stop();
@@ -84,65 +82,52 @@ public final class HiFiSound/* extends Thread*/ {
 		}
 	}
 
-/**
- * This should fix the hanging sound problem.
- */
+	/**
+	 * This should fix the hanging sound problem.
+	 */
 	@Override
 	public void finalize() {
 		terminate();
 		try {
 			super.finalize();
-		} catch (Throwable e) {}
+		} catch (Throwable e) {
+		}
 	}
 
-/**
- * Initialize.
- */
-    public void init() {
-        AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
-                samfreq,
-                16,
-                1,
-                2,
-                samfreq,
-                true);
+	/**
+	 * Initialize.
+	 */
+	public void init() {
+		AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED,
+				samfreq, 16, 1, 2, samfreq, true);
 
-        System.out.println("frameSize " + format.getFrameSize());
-        DataLine.Info info = new DataLine.Info(SourceDataLine.class, format, LINE_BUF_SIZE);
-        //DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
+		DataLine.Info info = new DataLine.Info(SourceDataLine.class, format,
+				LINE_BUF_SIZE);
 
-        if (!AudioSystem.isLineSupported(info)) {
-            System.err.println("Unsupported audio: " + format);
-            return;
-        }
+		if (!AudioSystem.isLineSupported(info)) {
+			return;
+		}
 
-        try {
-            m_line = (SourceDataLine) AudioSystem.getLine(info);
-            m_line.open(format);
-        } catch (LineUnavailableException lue) {
-            System.err.println("Unavailable data line");
-            return;
-        }
+		try {
+			m_line = (SourceDataLine) AudioSystem.getLine(info);
+			m_line.open(format);
+		} catch (LineUnavailableException lue) {
+			System.err.println("Unavailable data line");
+			return;
+		}
 
-        m_line.start();
+		m_line.start();
 
-        System.out.println("Sound initialized successfully.");
+		running = true;
+	}
 
-        running = true;
-    }
-
-/**
+	/**
  * 
  */
-public void update() {
-	//sc.writeBuffer();
-	//if (m_line.available() == m_line.getBufferSize()) System.out.println("Buffer underrun!");
-	//System.out.print(m_line.available() + " ... ");
-	sc.writeBuffer();
-	if (m_line.available() > (m_line.getBufferSize() - WRITE_BUF_SIZE * 16)) {
-		m_line.write(sc.getByteStream(), 0, WRITE_BUF_SIZE * 2);
+	public void update() {
+		sc.writeBuffer();
+		if (m_line.available() > (m_line.getBufferSize() - WRITE_BUF_SIZE * 16)) {
+			m_line.write(sc.getByteStream(), 0, WRITE_BUF_SIZE * 2);
+		}
 	}
-		//System.out.println(m_line.available());
-	
-}
 }

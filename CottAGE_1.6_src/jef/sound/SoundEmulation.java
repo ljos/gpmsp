@@ -73,16 +73,6 @@ public class SoundEmulation
 							|| System.getProperty("java.version").startsWith("1.1")
 							|| System.getProperty("java.version").startsWith("1.2"));
 		
-
-		if (useJavaxSound) {
-			System.out.println("javax.sound support detected.");
-		} else {
-			System.out.println("sun.audio sound implementation selected.");
-			System.out.println("Upgrade your JRE for better sound quality.");
-		}
-
-		System.out.println("SoundChip emulators found:" + this.sc.length);
-
 		for (int i = 0; i < this.sc.length; i++) {
 			this.sc[i].init(useJavaxSound, samplingRate, bufferLength, fps);
 		}
