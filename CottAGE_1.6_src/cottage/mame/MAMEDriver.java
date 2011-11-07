@@ -118,7 +118,6 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 	protected class Soundlatch_r implements ReadHandler {
 		@Override
 		public int read(int offset) {
-			//System.out.println("Soundlatch_r :" + soundLatch);
 			return soundLatch;
 		}
 	}
@@ -133,13 +132,11 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 	private class Soundlatch_w implements WriteHandler {
 		@Override
 		public void write(int address, int data) {
-			//System.out.println("Soundlatch_w :" + data);
 			soundLatch = data;
 		}
 		
 	}
 	protected void soundlatch_w(int offset, int data) {
-        //System.out.println("Soundlatch_w :" + data);
 		this.soundLatch = data;
 	}
 
@@ -740,9 +737,6 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 		String man,
 		String nam) {
 		if (!bInfo) {
-			System.out.println("Starting...");
-			System.out.println(nam);
-			System.out.println(Integer.toString(year) + " - " + man);
 			md.ROT = rot;
 			md.input = inp;
 			md.ve = this.videoEmulator;
@@ -768,9 +762,6 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 		String man,
 		String nam) {
 		if (!bInfo) {
-			System.out.println("Starting...");
-			System.out.println(nam);
-			System.out.println(Integer.toString(year) + " - " + man);
 			md.ROT = rot;
 			md.input = inp;
 			md.ve = this.videoEmulator;
@@ -935,9 +926,6 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 			romLoader.setParentZip(parent);
 			romLoader.loadZip(base_URL);
 
-			System.out.println("Starting...");
-			System.out.println(nam);
-			System.out.println(year + " - " + man);
 			md.ROT = rot;
 
 			InputPort[] in = new InputPort[inp_count];

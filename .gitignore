@@ -7,3 +7,5 @@ pom.xml
 
 *.DS_Store
 *~
+
+bin/java.policy.applet

@@ -132,7 +132,6 @@ public class BasicMachine implements Machine {
 		// ----------------------------------------
 		se = new SoundEmulation();
 		if (md.soundChips != null) {
-			System.out.println("Sound initializing...");
 			se.init(
 				md.soundChips,
 				jef.util.Config.SOUND_SAMPLING_FREQ,
@@ -143,26 +142,18 @@ public class BasicMachine implements Machine {
 		// ----------------------------------------
 		// Initialize Video emulation
 		// ----------------------------------------
-		System.out.println("Video initializing...");
 		md.ve.init(md);
 		if (md.initProms != null) {
-			System.out.println("Generating palette...");
 			md.initProms.palette_init();
 		}
 		if (md.vh_start != null) {
-			System.out.println("Starting video emulation...");
 			md.vh_start.vh_start();
 		}
-		System.out.println("Video initialized successfully.");
 
 		// ----------------------------------------
 		// Initialize Machine
 		// ----------------------------------------
-		System.out.println("Machine initializing...");
 		md.init.exec();
-		System.out.println("Machine initialized successfully.");
-		System.out.println("Memory: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()));
-
 	}
 
 	/**
