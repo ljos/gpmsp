@@ -9,30 +9,28 @@
 (def ^:dynamic msp nil)
 
 (defn fitness [tries code]
-  (int
-   (/ (reduce +
-              (map (fn [c#]
-                     (eval `(binding [~'msp (new NUIMsPacman)]
-                              (do (-> (new Thread ~'msp) .start)
-                                  (Thread/sleep 7000)
-                                  (-> ~'msp (.keyPressed KeyEvent/VK_5))
-                                  (Thread/sleep 500)
-                                  (-> ~'msp (.keyReleased KeyEvent/VK_5))
-                                  (Thread/sleep 500)
-                                  (-> ~'msp (.keyPressed KeyEvent/VK_1))
-                                  (Thread/sleep 500)
-                                  (-> ~'msp (.keyReleased KeyEvent/VK_1))
-                                  (Thread/sleep 500)
-                                  (while (not (-> ~'msp .isGameOver))
-                                    ~c#)
-                                  (let [fitness-score# (-> ~'msp .getScore)]
-                                     (-> ~'msp  (.stop true))
-                                     fitness-score#)))))
-                   (repeat tries code)))
-      tries)))
-
-(def ^:dynamic *v* (ref 0))
-
+  (loop [score 0
+         t 0]
+    (if (= t tries)
+      (int (/ score tries))
+      (recur (+ score
+                (eval `(binding [~'msp (new NUIMsPacman)]
+                         (do (-> (new Thread ~'msp) .start)
+                             (Thread/sleep 7000)
+                             (-> ~'msp (.keyPressed KeyEvent/VK_5))
+                             (Thread/sleep 500)
+                             (-> ~'msp (.keyReleased KeyEvent/VK_5))
+                             (Thread/sleep 500)
+                             (-> ~'msp (.keyPressed KeyEvent/VK_1))
+                             (Thread/sleep 500)
+                             (-> ~'msp (.keyReleased KeyEvent/VK_1))
+                             (Thread/sleep 500)
+                             (while (not (-> ~'msp .isGameOver))
+                               ~code)
+                             (let [fitness-score# (-> ~'msp .getScore)]
+                               (-> ~'msp  (.stop true))
+                               fitness-score#)))))
+             (dec t)))))
 
 (defn fitness-graphic [tries code]
   (int
