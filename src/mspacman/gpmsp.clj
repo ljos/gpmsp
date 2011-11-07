@@ -90,7 +90,7 @@
   (use 'mspacman.individual)
   (loop [generation (sort-by :fitness
                              >
-                             (pmap #(struct individual %1 (fitness FITNESS-RUNS %1) 0)
+                             (pmap #(struct individual %1 (ind/fitness FITNESS-RUNS %1) 0)
                                    (create-random-population)))
          n 0]
     (if (>= n NUMBER-OF-GENERATIONS)
@@ -104,7 +104,7 @@
           (println (map #(get %1 :fitness) generation))
           (recur (sort-by :fitness
                           >
-                          (pmap  #(struct individual %1 (fitness FITNESS-RUNS %1) 0)
+                          (pmap  #(struct individual %1 (ind/fitness FITNESS-RUNS %1) 0)
                                  (map #(mutate (get %1 :program))
                                       (fitness-proportionate-selection generation))))
                  (inc n))))))
