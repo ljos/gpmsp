@@ -11,7 +11,7 @@ public class GUIMsPacmanTest {
 
 	public static void main(String[] args) throws Exception {
 
-		GUIMsPacman[] cs = new GUIMsPacman[28];
+		GUIMsPacman[] cs = new GUIMsPacman[21];
 		for (int i = 0; i < cs.length; ++i) {
 			GUIMsPacman c = new GUIMsPacman();
 			c.setSize(224, 288 + 22); // I think the + 22 is because of the top bar.
