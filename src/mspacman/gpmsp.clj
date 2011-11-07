@@ -2,7 +2,6 @@
   (:require [clojure.zip :as zip]))
 
 (import java.net.InetAddress)
-(use 'mspacman.individual)
 
 (defstruct individual
   :program
@@ -11,12 +10,12 @@
 
 (def SIZE-OF-POPULATION 40)
 (def NUMBER-OF-GENERATIONS 100)
-(def MAX-STARTING-DEPTH 20)
+(def MAX-STARTING-DEPTH 10)
 (def MAX-STARTING-WIDTH-OF-EXPR 5)
 (def MUTATION-RATE 0.02)
 (def MUTATION-DEPTH 5)
 (def EXPR?-RATE 0.3)
-(def FITNESS-RUNS 8)
+(def FITNESS-RUNS 2)
 
 (defn expand [exprs depth]
   (cond (= exprs 'int)
@@ -52,7 +51,23 @@
   (expand '(do expr+) MAX-STARTING-DEPTH))
 
 (defn create-random-population []
-  (apply pcalls (repeat SIZE-OF-POPULATION #(create-random-individual))))
+  (take SIZE-OF-POPULATION (repeatedly #(create-random-individual))))
+
+(defn fitness-proportionate-selection [population]
+  (let [F (reduce + (map #(get %1 :fitness) population))]
+    (loop [acc ()]
+      (let [r (rand)]
+        (if (= (count acc) SIZE-OF-POPULATION)
+          acc
+          (recur (conj acc
+                       (loop [pop population
+                              slice (/ (get (first population) :fitness) F)]
+                         (if (<= r slice)
+                           (first pop)
+                           (recur (rest pop)
+                                  (+ slice
+                                     (/ (get (second pop) :fitness)
+                                        F))))))))))))
 
 (defn mutate [tree]
   (loop [loc (zip/seq-zip tree)]
@@ -63,17 +78,17 @@
                (> MUTATION-RATE (rand)))
           ,(zip/root (zip/replace loc
                                   (expand (rand-nth FUNCTION-LIST)
-                                          MUTATION-DEPTH)))
+                                         MUTATION-DEPTH)))
           :else
-          ,(recur (zip/next loc)))))
+          (recur (zip/next loc)))))
 
 (defn gp-run []
   (println 'started)
   (use 'mspacman.individual)
   (loop [generation (sort-by :fitness
                              >
-                             (doall (map #(struct individual %1 (fitness FITNESS-RUNS %1) 0)
-                                    (create-random-population))))
+                             (pmap #(struct individual %1 (fitness FITNESS-RUNS %1) 0)
+                                   (create-random-population)))
          n 0]
     (if (>= n NUMBER-OF-GENERATIONS)
       (println 'finished)
@@ -84,53 +99,9 @@
                         n)
                 (str generation))
           (println (map #(get %1 :fitness) generation))
-          (let [F (reduce + (map #(get %1 :fitness) generation))]
-            (recur (sort-by :fitness >
-                            (doall
-                             (map #(let [mutated (assoc %1 :program (mutate (get %1 :program)))]
-                                      (assoc mutated :fitness
-                                             (fitness FITNESS-RUNS (get mutated :program))))
-                                   (take SIZE-OF-POPULATION
-                                         (repeatedly #(let [r (rand)]
-                                                        (loop [pop generation
-                                                               slice 0]
-                                                          (let [score (+ slice
-                                                                         (/ (get (first pop)
-                                                                                 :fitness)
-                                                                            F))]
-                                                            (if (<= r score)
-                                                              (first pop)
-                                                              (recur (rest pop) score))))))))))
-                   (inc n)))))))
-
-
-
-
-(defn gp-test []
-  (println 'started)
-  (loop [generation (read-string (slurp "testcase.clj"))
-         n 0]
-    (println generation)
-    (if (>= n NUMBER-OF-GENERATIONS)
-      (println 'finished)
-      (do (println 'generation n)
-          (spit (format "%s/generations/%s_generation_%s.txt"
-                        (System/getProperty "user.home")
-                        (.getHostName (InetAddress/getLocalHost))
-                        n)
-                (str generation))
-          (println (map #(get %1 :fitness) generation))
-          (let [F (reduce + (map #(get %1 :fitness) generation))]
-            (recur (sort-by :fitness >
-                            (doall (pmap #(let [mutated (assoc %1 :program (mutate (get %1 :program)))]
-                                      (assoc mutated :fitness
-                                             (fitness FITNESS-RUNS (get mutated :program))))
-                                   (take SIZE-OF-POPULATION
-                                         (repeatedly #(let [r (rand)]
-                                                        (loop [pop generation
-                                                               slice 0]
-                                                          (let [score (+ slice (/ (get (first pop) :fitness) F))]
-                                                            (if (<= r score)
-                                                              (first pop)
-                                                              (recur (rest pop) score))))))))))
-                   (inc n)))))))
+          (recur (sort-by :fitness
+                          >
+                          (pmap  #(struct individual %1 (fitness FITNESS-RUNS %1) 0)
+                                 (map #(mutate (get %1 :program))
+                                      (fitness-proportionate-selection generation))))
+                 (inc n))))))
