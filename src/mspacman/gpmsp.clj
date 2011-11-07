@@ -1,7 +1,10 @@
 (ns mspacman.gpmsp
-  (:require [clojure.zip :as zip]))
+  (:require [clojure.zip :as zip]
+            [mspacman.individual :as ind]))
+
 
 (import java.net.InetAddress)
+
 
 (defstruct individual
   :program
@@ -31,10 +34,10 @@
                    acc
                    (let [term (first terms)
                          exp (case term
-                               (expr expr+) (expand (rand-nth FUNCTION-LIST)
+                               (expr expr+) (expand (rand-nth ind/FUNCTION-LIST)
                                                     (dec depth))
                                expr? (if (< (rand) EXPR?-RATE)
-                                       (expand (rand-nth FUNCTION-LIST)
+                                       (expand (rand-nth ind/FUNCTION-LIST)
                                                (dec depth))
                                        ())
                                int (expand term
@@ -77,7 +80,7 @@
                (not (nil? (zip/node loc)))
                (> MUTATION-RATE (rand)))
           ,(zip/root (zip/replace loc
-                                  (expand (rand-nth FUNCTION-LIST)
+                                  (expand (rand-nth ind/FUNCTION-LIST)
                                          MUTATION-DEPTH)))
           :else
           (recur (zip/next loc)))))
