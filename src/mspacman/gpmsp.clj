@@ -73,7 +73,7 @@
                                         F))))))))))))
 
 (defn mutate [tree]
-  (loop [loc (zip/seq-zip tree)]
+  (loop [loc (zip/next (zip/seq-zip tree))]
     (cond (zip/end? loc)
           ,(zip/root loc)
           (and (not (symbol? (zip/node loc)))
