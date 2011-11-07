@@ -10,8 +10,8 @@
 
 (defn fitness [tries code]
   (loop [score 0
-         t 0]
-    (if (= t tries)
+         t tries]
+    (if (= t 0)
       (int (/ score tries))
       (recur (+ score
                 (eval `(binding [~'msp (new NUIMsPacman)]

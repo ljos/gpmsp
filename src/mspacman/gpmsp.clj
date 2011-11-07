@@ -18,7 +18,7 @@
 (def MUTATION-RATE 0.02)
 (def MUTATION-DEPTH 5)
 (def EXPR?-RATE 0.3)
-(def FITNESS-RUNS 2)
+(def FITNESS-RUNS 1)
 
 (defn expand [exprs depth]
   (cond (= exprs 'int)
