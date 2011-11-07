@@ -28,6 +28,8 @@
                              (while (not (-> ~'msp .isGameOver))
                                ~code)
                              (let [fitness-score# (-> ~'msp .getScore)]
+                               (println fitness-score#)
+                               (Thread/sleep 50)
                                (-> ~'msp  (.stop true))
                                fitness-score#)))))
              (dec t)))))
