@@ -212,8 +212,9 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 		// calculate the score
 		for (int i = 0; i < 7; i++) {
 			int c = mem[offset + i];
-			if (c == 0x00 || c == BLANK_CHAR)
+			if (c == 0x00 || c == BLANK_CHAR) {
 				c = ZERO_CHAR;
+			}
 			c -= ZERO_CHAR;
 			score += (c * Math.pow(10, i));
 		}

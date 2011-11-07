@@ -29,8 +29,7 @@
                                ~code)
                              (let [fitness-score# (-> ~'msp .getScore)]
                                (println fitness-score#)
-                               (Thread/sleep 50)
-                               (-> ~'msp  (.stop true))
+                               (-> ~'msp  (.stop Boolean/TRUE))
                                fitness-score#)))))
              (dec t)))))
 
