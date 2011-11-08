@@ -15,16 +15,16 @@ public class NUIMsPacmanTest {
 		signal.await();
 		g.keyPressed(KeyEvent.VK_5); 	
 		System.out.println("####5#####");
-		Thread.sleep(500);
+		Thread.sleep(50);
 		g.keyReleased(KeyEvent.VK_5);
 		System.out.println("@@@@release 5@@@@");
-		Thread.sleep(500);
+		Thread.sleep(50);
 		System.out.println("@@@@@1@@@@@");
 		g.keyPressed(KeyEvent.VK_1);
-		Thread.sleep(100);
+		Thread.sleep(50);
 		g.keyReleased(KeyEvent.VK_1);
 		System.out.println("@@@@@release 1@@@@");
-		Thread.sleep(200);
+		Thread.sleep(500);
 		System.out.println("@@@@@LEFT@@@@@@@");
 		g.keyPressed(KeyEvent.VK_LEFT);
 		for (int i = 0; i < 30; ++i) {
