@@ -4,7 +4,7 @@
 (import javax.swing.JFrame)
 (import java.awt.BorderLayout)
 (import java.awt.event.KeyEvent)
-(import java.lang.Boolean)
+(import java.util.concurrent.CountDownLatch)
 
 (def ^:dynamic msp nil)
 
@@ -14,59 +14,58 @@
     (if (= t 0)
       (int (/ score tries))
       (recur (+ score
-                (eval `(binding [~'msp (new NUIMsPacman)]
-                         (do (-> (new Thread ~'msp) .start)
-                             (Thread/sleep 7000)
-                             (-> ~'msp (.keyPressed KeyEvent/VK_5))
-                             (Thread/sleep 500)
-                             (-> ~'msp (.keyReleased KeyEvent/VK_5))
-                             (Thread/sleep 500)
-                             (-> ~'msp (.keyPressed KeyEvent/VK_1))
-                             (Thread/sleep 500)
-                             (-> ~'msp (.keyReleased KeyEvent/VK_1))
-                             (Thread/sleep 500)
-                             (while (not (-> ~'msp .isGameOver))
-                               ~code)
-                             (let [fitness-score# (-> ~'msp .getScore)]
-                               (println fitness-score#)
-                               (-> ~'msp  (.stop Boolean/TRUE))
-                               fitness-score#)))))
+                (eval `(let [signal# (new CountDownLatch 1)]
+                         (binding [~'msp (new NUIMsPacman signal#)]
+                           (do (-> (new Thread ~'msp) .start)
+                               (-> signal# .await)
+                               (-> ~'msp (.keyPressed KeyEvent/VK_5))
+                               (Thread/sleep 500)
+                               (-> ~'msp (.keyReleased KeyEvent/VK_5))
+                               (Thread/sleep 500)
+                               (-> ~'msp (.keyPressed KeyEvent/VK_1))
+                               (Thread/sleep 500)
+                               (-> ~'msp (.keyReleased KeyEvent/VK_1))
+                               (Thread/sleep 500)
+                               (while (not (-> ~'msp .isGameOver))
+                                 ~code)
+                               (let [fitness-score# (-> ~'msp .getScore)]
+                                 (println fitness-score#)
+                                 (-> ~'msp  (.stop true))
+                                 fitness-score#))))))
              (dec t)))))
 
 (defn fitness-graphic [tries code]
-  (int
-   (/
-    (reduce +
-            (doall
-             (pmap (fn [c#]
-                     (eval `(binding [~'msp (doto (new GUIMsPacman)
-                                              (.setSize 224 (+ 288 22)))]
-                              (let [frame# (doto (new JFrame)
-                                             (.setDefaultCloseOperation javax.swing.JFrame/EXIT_ON_CLOSE)
-                                             (.setSize 224 (+ 288 22))
-                                             (.setLocation 100 0)
-                                             (-> .getContentPane (.add ~'msp java.awt.BorderLayout/CENTER))
-                                             (.setVisible Boolean/TRUE))
-                                    t# (new Thread ~'msp)]
-                                (do (-> t# .start)
-                                    (Thread/sleep 7000)
-                                    (-> ~'msp (.keyPressed KeyEvent/VK_5))
-                                    (Thread/sleep 500)
-                                    (-> ~'msp (.keyReleased KeyEvent/VK_5))
-                                    (Thread/sleep 500)
-                                    (-> ~'msp (.keyPressed KeyEvent/VK_1))
-                                    (Thread/sleep 500)
-                                    (-> ~'msp (.keyReleased KeyEvent/VK_1))
-                                    (Thread/sleep 500)
-                                    (while (not (-> ~'msp .isGameOver))
-                                      ~c#)
-                                    (let [fitness-score# (-> ~'msp .getScore)]
-                                      (-> ~'msp  (.stop true))
-                                      (-> frame# .dispose)
-                                      
-                                      fitness-score#))))))
-                   (repeat tries code))))
-    tries)))
+ (loop [score 0
+         t tries]
+    (if (= t 0)
+      (int (/ score tries))
+      (recur (+ score
+                (eval `(binding [~'msp (doto (new GUIMsPacman)
+                                         (.setSize 224 (+ 288 22)))]
+                         (let [frame# (doto (new JFrame)
+                                        (.setDefaultCloseOperation javax.swing.JFrame/EXIT_ON_CLOSE)
+                                        (.setSize 224 (+ 288 22))
+                                        (.setLocation 100 0)
+                                        (-> .getContentPane (.add ~'msp java.awt.BorderLayout/CENTER))
+                                        (.setVisible Boolean/TRUE))
+                         t# (new Thread ~'msp)]
+                           (do (-> t# .start)
+                               (Thread/sleep 7000)
+                               (-> ~'msp (.keyPressed KeyEvent/VK_5))
+                               (Thread/sleep 500)
+                               (-> ~'msp (.keyReleased KeyEvent/VK_5))
+                               (Thread/sleep 500)
+                               (-> ~'msp (.keyPressed KeyEvent/VK_1))
+                               (Thread/sleep 500)
+                               (-> ~'msp (.keyReleased KeyEvent/VK_1))
+                               (Thread/sleep 500)
+                               (while (not (-> ~'msp .isGameOver))
+                                 ~code)
+                               (let [fitness-score# (-> ~'msp .getScore)]
+                                 (-> ~'msp  (.stop true))
+                                 (-> frame# .dispose)
+                                 fitness-score#))))))
+             (dec t)))))
 
 (def FUNCTION-LIST '((move-left)
                      (move-right)

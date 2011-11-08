@@ -20,17 +20,9 @@ public class NUIMsPacman implements MsPacman {
 	public NUIMsPacman(CountDownLatch signal) {
 		this.signal = signal;
 	}
-	
-	public NUIMsPacman() {
-		this.signal = new CountDownLatch(1);
-	}
 
 	@Override
-	public void run() {
-		String driver = "";
-		
-		System.out.println("pacman started " + Thread.currentThread().getId());
-
+	public void run() {		
 		URL base_URL = null;
 		try {
 			base_URL = new URL(
@@ -40,7 +32,7 @@ public class NUIMsPacman implements MsPacman {
 			e.printStackTrace();
 		}
 
-		driver = "mspacman";
+		String driver = "mspacman";
 		boolean sound = false;
 
 		int sLineBuf = 4096;
@@ -61,13 +53,23 @@ public class NUIMsPacman implements MsPacman {
 		
 		t = new Throttle(m.getProperty(Machine.FPS));
 
+		int i = 3;
+		while (i > 0) {
+			pixel = m.refresh(true).getPixels();
+			t.throttle();
+			if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x43F8] == 0) {
+				--i;
+			} else if (i < 3) {
+				++i;
+			}
+		}	
 		
+		signal.countDown();	
 		
 		while (!stop) {
 			pixel = m.refresh(true).getPixels();
 			t.throttle();
 		}
-		System.out.println("pacman stopped " + Thread.currentThread().getId());
 	}
 
 	@Override

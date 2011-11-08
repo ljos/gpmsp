@@ -10,7 +10,6 @@ import no.uib.bjo013.mspacman.GUIMsPacman;
 public class GUIMsPacmanTest {
 
 	public static void main(String[] args) throws Exception {
-
 		GUIMsPacman[] cs = new GUIMsPacman[21];
 		for (int i = 0; i < cs.length; ++i) {
 			GUIMsPacman c = new GUIMsPacman();

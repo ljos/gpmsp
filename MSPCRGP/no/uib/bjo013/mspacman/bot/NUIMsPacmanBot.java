@@ -12,7 +12,7 @@ public class NUIMsPacmanBot extends AbstrMsPacmanBot {
 
 	@Override
 	public void run() {
-		game = new NUIMsPacman();
+		game = new NUIMsPacman(new CountDownLatch(1));
 		gamethread = new Thread(game);
 		gamethread.start();
 		
