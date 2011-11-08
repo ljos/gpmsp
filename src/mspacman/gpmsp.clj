@@ -101,7 +101,9 @@
                         (.getHostName (InetAddress/getLocalHost))
                         n)
                 (str generation))
-          (println (map #(get %1 :fitness) generation))
+          (println (map #(get %1 :fitness) generation)
+                   "average:"
+                   (int (/ (reduce + (map #(get %1 :fitness) generation)) SIZE-OF-POPULATION)))
           (recur (sort-by :fitness
                           >
                           (pmap  #(struct individual %1 (ind/fitness FITNESS-RUNS %1) 0)
