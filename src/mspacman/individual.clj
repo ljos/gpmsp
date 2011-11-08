@@ -19,17 +19,16 @@
                            (do (-> (new Thread ~'msp) .start)
                                (-> signal# .await)
                                (-> ~'msp (.keyPressed KeyEvent/VK_5))
-                               (Thread/sleep 30)
+                               (Thread/sleep 100)
                                (-> ~'msp (.keyReleased KeyEvent/VK_5))
-                               (Thread/sleep 30)
+                               (Thread/sleep 100)
                                (-> ~'msp (.keyPressed KeyEvent/VK_1))
-                               (Thread/sleep 30)
+                               (Thread/sleep 100)
                                (-> ~'msp (.keyReleased KeyEvent/VK_1))
                                (Thread/sleep 500)
                                (while (not (-> ~'msp .isGameOver))
                                  ~code)
                                (let [fitness-score# (-> ~'msp .getScore)]
-                                 (println fitness-score#)
                                  (-> ~'msp  (.stop true))
                                  fitness-score#))))))
              (dec t)))))
@@ -52,11 +51,11 @@
                            (do (-> t# .start)
                                (Thread/sleep 7000)
                                (-> ~'msp (.keyPressed KeyEvent/VK_5))
-                               (Thread/sleep 30)
+                               (Thread/sleep 100)
                                (-> ~'msp (.keyReleased KeyEvent/VK_5))
-                               (Thread/sleep 30)
+                               (Thread/sleep 100
                                (-> ~'msp (.keyPressed KeyEvent/VK_1))
-                               (Thread/sleep 30)
+                               (Thread/sleep 100)
                                (-> ~'msp (.keyReleased KeyEvent/VK_1))
                                (Thread/sleep 500)
                                (while (not (-> ~'msp .isGameOver))
@@ -125,22 +124,22 @@
 
 (defn move-left []
   (do (-> msp (.keyPressed KeyEvent/VK_LEFT))
-      (Thread/sleep 10)
+      (Thread/sleep 50)
       (-> msp (.keyReleased KeyEvent/VK_LEFT))))
 
 (defn move-right []
   (do (-> msp (.keyPressed KeyEvent/VK_RIGHT))
-      (Thread/sleep 10)
+      (Thread/sleep 50)
       (-> msp (.keyReleased KeyEvent/VK_RIGHT))))
 
 (defn move-up []
   (do (-> msp (.keyPressed KeyEvent/VK_UP))
-      (Thread/sleep 10)
+      (Thread/sleep 50)
       (-> msp (.keyReleased KeyEvent/VK_UP))))
 
 (defn move-down []
   (do (-> msp (.keyPressed KeyEvent/VK_DOWN))
-       (Thread/sleep 10)
+       (Thread/sleep 50)
        (-> msp (.keyReleased KeyEvent/VK_DOWN))))
 
 (defn get-pixel [i j]
