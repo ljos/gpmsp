@@ -1,16 +1,18 @@
 package no.uib.bjo013.mspacman.test;
 
 import java.awt.event.KeyEvent;
+import java.util.concurrent.CountDownLatch;
 
 import no.uib.bjo013.mspacman.NUIMsPacman;
 
 
 public class NUIMsPacmanTest {
 	public static void main(String args[]) throws InterruptedException {
-		NUIMsPacman g = new NUIMsPacman();
+		CountDownLatch signal = new CountDownLatch(1);
+		NUIMsPacman g = new NUIMsPacman(signal);
 		Thread t = new Thread(g);
 		t.start();
-		Thread.sleep(6000);
+		signal.await();
 		g.keyPressed(KeyEvent.VK_5); 	
 		System.out.println("####5#####");
 		Thread.sleep(500);

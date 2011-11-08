@@ -4,7 +4,6 @@ import java.awt.AWTEvent;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.net.URL;
-import java.util.concurrent.CountDownLatch;
 
 import jef.machine.Machine;
 import jef.util.Throttle;
@@ -41,16 +40,6 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 	/** reference to the driver **/
 	Machine m;
 	Throttle t;
-	
-	private final CountDownLatch signal;
-	
-	public GUIMsPacman(CountDownLatch signal) {
-		this.signal = signal;
-	}
-	
-	public GUIMsPacman() {
-		this.signal = new CountDownLatch(1);
-	}
 
 	@Override
 	protected void processKeyEvent(KeyEvent e) {
@@ -110,6 +99,7 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 	@Override
 	public void main(int w, int h) {
 		String driver = "";
+		
 		try {
 			base_URL = new URL(
 					String.format("file://localhost/%s/.mspacman/", 
@@ -171,8 +161,7 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 
 		requestFocus();
 
-		t = new Throttle(m.getProperty(Machine.FPS));
-
+		t = new Throttle(m.getProperty(Machine.FPS));	
 
 		while (!stop) {
 			if (!paused) {
@@ -220,10 +209,6 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 		}
 
 		return (score > 9999999) ? 0 : score;
-	}
-	
-	public boolean gameOver() {
-		return ((cottage.machine.Pacman)m).md.getREGION_CPU()[0x403B] == 67;
 	}
 
 	public void stop(boolean stop) {
