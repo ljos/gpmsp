@@ -53,7 +53,7 @@
                                (-> ~'msp (.keyPressed KeyEvent/VK_5))
                                (Thread/sleep 100)
                                (-> ~'msp (.keyReleased KeyEvent/VK_5))
-                               (Thread/sleep 100
+                               (Thread/sleep 100)
                                (-> ~'msp (.keyPressed KeyEvent/VK_1))
                                (Thread/sleep 100)
                                (-> ~'msp (.keyReleased KeyEvent/VK_1))
