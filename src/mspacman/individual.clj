@@ -72,6 +72,8 @@
                      (move-down)
                      (do expr+)
                      (get-pixel int int)
+                     (get-pixelxy)
+                     (find-colour int)
                      (get-pixels)
                      (if expr expr expr?)
                      (msp-rand-int)
@@ -84,10 +86,12 @@
                      (and expr+)
                      (msp-sleep)
                      int
+                     @x
+                     @y
                      ()))
 
-(def x 0)
-(def y 0)
+(def x (ref 0))
+(def y (ref 0))
 (def ATOM-LIST '(x
                  y))
 
@@ -95,26 +99,30 @@
   (rand-int 10000))
 
 (defn msp> [& keys]
-  (let [l (remove #(not (instance? Number %1)) keys)]
+  (let [l (remove #(not (instance? Number %1))
+                  keys)]
     (if (empty? l)
       true
       (apply > l))))
 
 
 (defn msp< [& keys]
-  (let [l (remove #(not (instance? Number %1)) keys)]
+  (let [l (remove #(not (instance? Number %1))
+                  keys)]
     (if (empty? l)
       true
       (apply > l))))
 
 (defn msp+ [& keys]
-  (let [l (remove #(not (instance? Number %1)) keys)]
+  (let [l (remove #(not (instance? Number %1))
+                  keys)]
     (if (empty? l)
       0
       (apply + l))))
 
 (defn msp- [& keys]
-  (let [l (remove #(not (instance? Number %1)) keys)]
+  (let [l (remove #(not (instance? Number %1))
+                  keys)]
     (if (empty? l)
       0
       (apply - l))))
@@ -143,8 +151,29 @@
        (-> msp (.keyReleased KeyEvent/VK_DOWN))))
 
 (defn get-pixel [i j]
-  (-> msp (.getPixel  (if (number? i) (mod (int i) 224) (rand-int 224))
-                      (if (number? j) (mod (int j) 288) (rand-int 288)))))
+  (-> msp (.getPixel  (if (number? i)
+                        (mod (int i) 224)
+                        (rand-int 224))
+                      (if (number? j)
+                        (mod (int j) 288)
+                        (rand-int 288)))))
+
+(defn get-pixelxy []
+  (get-pixel @x @y))
 
 (defn get-pixels []
   (-> msp .getPixels))
+
+(defn find-colour [c]
+  (loop [i 0]
+    (if (> i 224)
+      (do (loop [j 0]
+            (cond (> j 288)
+                  ,(dosync (ref-set x -1)
+                           (ref-set y -1))
+                  (= (get-pixel i j) c)
+                  ,(dosync (ref-set x i)
+                           (ref-set y j))
+                  :else
+                  ,(recur (inc j))))
+         (recur (inc i))))))
