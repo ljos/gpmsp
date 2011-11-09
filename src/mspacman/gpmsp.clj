@@ -11,7 +11,7 @@
   :fitness
   :finishing-time)
 
-(def SIZE-OF-POPULATION 20)
+(def SIZE-OF-POPULATION 25)
 (def NUMBER-OF-GENERATIONS 100)
 (def MAX-STARTING-DEPTH 10)
 (def MAX-STARTING-WIDTH-OF-EXPR 5)
@@ -96,7 +96,7 @@
     (if (>= n NUMBER-OF-GENERATIONS)
       (println 'finished)
       (do (println 'generation n)
-          (spit (format "%s/generations/%s_generation_%s.txt"
+          (spit (format "%s/generations/%s_generation_%tL.txt"
                         (System/getProperty "user.home")
                         (.getHostName (InetAddress/getLocalHost))
                         n)
