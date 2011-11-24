@@ -20,35 +20,38 @@
 (def EXPR?-RATE 0.3)
 (def FITNESS-RUNS 5)
 
-(defn expand [exprs depth]
-  (cond (= exprs 'int)
+(defn atomize [term]
+  (cond (= term 'int)
         ,(rand-int 1000)
-        (or (empty? exprs) (< depth 1))
-        ,()
+        (symbol? term)
+        ,`~term
         :else
-        ,(cons (first exprs) 
-               (loop [terms (rest exprs)
-                      acc ()
-                      expr-width (rand-int MAX-STARTING-WIDTH-OF-EXPR)]
-                 (if (empty? terms)
-                   acc
-                   (let [term (first terms)
-                         exp (case term
-                               (expr expr+) (expand (rand-nth ind/FUNCTION-LIST)
-                                                    (dec depth))
-                               expr? (if (< (rand) EXPR?-RATE)
-                                       (expand (rand-nth ind/FUNCTION-LIST)
+        ,term))
+
+(defn expand [exprs depth]
+  (if (or (symbol? exprs) (empty? exprs) (< depth 1))
+    (atomize (rand-nth ind/ATOM-LIST))
+    (cons (first exprs) 
+          (loop [terms (rest exprs)
+                 acc ()
+                 expr-width (rand-int MAX-STARTING-WIDTH-OF-EXPR)]
+            (if (empty? terms)
+              acc
+              (let [term (first terms)
+                    exp (case term
+                          (expr expr+) (expand (rand-nth ind/FUNCTION-LIST)
                                                (dec depth))
-                                       ())
-                               int (expand term
-                                           (dec depth))
-                               `~term)]
-                     (recur (if (and (= term 'expr+)
-                                     (> expr-width 0))
-                              terms
-                              (rest terms))
-                            (cons exp acc)
-                            (dec expr-width))))))))
+                          expr? (if (< (rand) EXPR?-RATE)
+                                  (expand (rand-nth ind/FUNCTION-LIST)
+                                          (dec depth))
+                                  ())
+                          (atomize term))]
+                (recur (if (and (= term 'expr+)
+                                (> expr-width 0))
+                         terms
+                         (rest terms))
+                       (cons exp acc)
+                       (dec expr-width))))))))
 
 (defn create-random-individual []
   (expand '(do expr+) MAX-STARTING-DEPTH))

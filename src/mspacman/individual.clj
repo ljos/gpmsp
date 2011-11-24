@@ -66,34 +66,33 @@
                                  fitness-score#))))))
              (dec t)))))
 
-(def FUNCTION-LIST '((move-left)
-                     (move-right)
-                     (move-up)
-                     (move-down)
-                     (do expr+)
-                     (get-pixel int int)
-                     (get-pixelxy)
-                     (find-colour int)
-                     (get-pixels)
-                     (if expr expr expr?)
-                     (msp-rand-int)
-                     (= expr+)
-                     (msp> expr+)
-                     (msp< expr+)
-                     (msp+ expr+)
-                     (msp- expr+)
-                     (or expr+)
-                     (and expr+)
-                     (msp-sleep)
-                     int
-                     @x
-                     @y
-                     ()))
+(def ATOM-LIST '(int
+                 ()))
+
+(def FUNCTION-LIST (concat
+                    '((move-left)
+                      (move-right)
+                      (move-up)
+                      (move-down)
+                      (do expr+)
+                      (get-pixel int int)
+                      (get-pixelxy)
+                      (find-colour int)
+                      (get-pixels)
+                      (if expr expr expr?)
+                      (msp-rand-int)
+                      (= expr+)
+                      (msp> expr+)
+                      (msp< expr+)
+                      (msp+ expr+)
+                      (msp- expr+)
+                      (or expr+)
+                      (and expr+)
+                      (msp-sleep))
+                    ATOM-LIST))
 
 (def x (ref 0))
 (def y (ref 0))
-(def ATOM-LIST '(x
-                 y))
 
 (defn msp-rand-int []
   (rand-int 10000))
