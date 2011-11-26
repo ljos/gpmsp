@@ -75,18 +75,28 @@
                                      (/ (get (second pop) :fitness)
                                         F))))))))))))
 
-(defn mutate [tree]
-  (loop [loc (zip/next (zip/seq-zip tree))]
+(defn count-nodes[tree]
+  (loop [loc tree
+         n 0]
     (cond (zip/end? loc)
-          ,(zip/root loc)
+          ,n
           (and (not (symbol? (zip/node loc)))
-               (not (nil? (zip/node loc)))
-               (> MUTATION-RATE (rand)))
-          ,(zip/root (zip/replace loc
-                                  (expand (rand-nth ind/FUNCTION-LIST)
-                                         MUTATION-DEPTH)))
+               (not (nil? (zip/node loc))))
+          ,(recur (zip/next loc) (+ n 1))
           :else
-          (recur (zip/next loc)))))
+          (recur (zip/next loc) n))))
+
+(defn mutation [tree]
+  (loop [loc (zip/seq-zip tree)
+         r (rand-int (count-nodes loc))]
+    (if (= r 0)
+      (zip/root (zip/replace loc
+                             (expand (rand-nth ind/FUNCTION-LIST)
+                                     MUTATION-DEPTH)))
+      (recur (zip/next loc) (- r 1)))))
+
+(defn reproduction [l]
+  ())
 
 (defn gp-run []
   (println 'started)
@@ -110,6 +120,7 @@
           (recur (sort-by :fitness
                           >
                           (pmap  #(struct individual %1 (ind/fitness FITNESS-RUNS %1) 0)
-                                 (map #(mutate (get %1 :program))
+                                 (map #(if (< (rand) MUTATION-RATE)
+                                         (mutation (get %1 :program)))
                                       (fitness-proportionate-selection generation))))
                  (inc n))))))
