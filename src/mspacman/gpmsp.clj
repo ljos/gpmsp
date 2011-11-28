@@ -30,7 +30,9 @@
         ,term))
 
 (defn expand [exprs depth]
-  (if (or (symbol? exprs) (empty? exprs) (< depth 1))
+  (if (or (symbol? exprs)
+          (empty? exprs)
+          (< depth 1))
     (atomize (rand-nth ind/ATOM-LIST))
     (cons (first exprs) 
           (loop [terms (rest exprs)
