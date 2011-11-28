@@ -1,5 +1,6 @@
 (ns mspacman.gpmsp
   (:require [clojure.zip :as zip]
+            [clojure.data.zip :as dzip]
             [mspacman.individual :as ind]))
 
 
@@ -75,25 +76,24 @@
                                      (/ (get (second pop) :fitness)
                                         F))))))))))))
 
-(defn count-nodes[tree]
-  (loop [loc tree
-         n 0]
-    (cond (zip/end? loc)
-          ,n
-          (and (not (symbol? (zip/node loc)))
-               (not (nil? (zip/node loc))))
-          ,(recur (zip/next loc) (+ n 1))
-          :else
-          (recur (zip/next loc) n))))
-
 (defn mutation [tree]
-  (loop [loc (zip/seq-zip tree)
-         r (rand-int (count-nodes loc))]
-    (if (= r 0)
-      (zip/root (zip/replace loc
-                             (expand (rand-nth ind/FUNCTION-LIST)
-                                     MUTATION-DEPTH)))
-      (recur (zip/next loc) (- r 1)))))
+  "Using reservoir sampling to take a uniformly and randomly chosen element from the code tree"
+  (zip/root
+   (zip/replace
+    (loop [loc (zip/seq-zip tree)
+           val (zip/next loc)
+           n 1]
+      (cond (zip/end? loc)
+            ,val
+            (or (dzip/leftmost? loc) (nil? (zip/node loc)))
+            ,(recur (zip/next loc) val n)
+            :else
+            ,(recur (zip/next loc)
+                    (if (= 0 (mod (rand-int n) n))
+                      loc val)
+                    (inc n))))
+    (expand (rand-nth ind/FUNCTION-LIST)
+            MUTATION-DEPTH))))
 
 (defn reproduction [l]
   ())
