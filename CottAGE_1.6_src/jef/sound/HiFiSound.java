@@ -112,7 +112,7 @@ public final class HiFiSound/* extends Thread */{
 			m_line = (SourceDataLine) AudioSystem.getLine(info);
 			m_line.open(format);
 		} catch (LineUnavailableException lue) {
-			System.err.println("Unavailable data line");
+		//	System.err.println("Unavailable data line");
 			return;
 		}
 
