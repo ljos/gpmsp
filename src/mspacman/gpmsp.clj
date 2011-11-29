@@ -3,16 +3,14 @@
             [clojure.data.zip :as dzip]
             [mspacman.individual :as ind]))
 
-
 (import java.net.InetAddress)
-
 
 (defstruct individual
   :program
   :fitness
   :finishing-time)
 
-(def SIZE-OF-POPULATION 50)
+(def SIZE-OF-POPULATION 1)
 (def NUMBER-OF-GENERATIONS 100)
 (def MAX-STARTING-DEPTH 10)
 (def MAX-STARTING-WIDTH-OF-EXPR 5)

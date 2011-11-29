@@ -11,27 +11,30 @@
 (defn fitness [tries code]
   (loop [score 0
          t tries]
-    (if (= t 0)
-      (int (/ score tries))
-      (recur (+ score
-                (eval `(let [signal# (new CountDownLatch 1)]
-                         (binding [~'msp (new NUIMsPacman signal#)]
-                           (do (-> (new Thread ~'msp) .start)
-                               (-> signal# .await)
-                               (-> ~'msp (.keyPressed KeyEvent/VK_5))
-                               (Thread/sleep 100)
-                               (-> ~'msp (.keyReleased KeyEvent/VK_5))
-                               (Thread/sleep 100)
-                               (-> ~'msp (.keyPressed KeyEvent/VK_1))
-                               (Thread/sleep 100)
-                               (-> ~'msp (.keyReleased KeyEvent/VK_1))
-                               (Thread/sleep 500)
-                               (while (not (-> ~'msp .isGameOver))
-                                 ~code)
-                               (let [fitness-score# (-> ~'msp .getScore)]
-                                 (-> ~'msp  (.stop true))
-                                 fitness-score#))))))
-             (dec t)))))
+    (cond (= t 0)
+          ,(int (/ score tries))
+          (= score 120)
+          ,score
+          :else
+          ,(recur (+ score
+                    (eval `(let [signal# (new CountDownLatch 1)]
+                             (binding [~'msp (new NUIMsPacman signal#)]
+                               (do (-> (new Thread ~'msp) .start)
+                                   (-> signal# .await)
+                                   (-> ~'msp (.keyPressed KeyEvent/VK_5))
+                                   (Thread/sleep 100)
+                                   (-> ~'msp (.keyReleased KeyEvent/VK_5))
+                                   (Thread/sleep 100)
+                                   (-> ~'msp (.keyPressed KeyEvent/VK_1))
+                                   (Thread/sleep 100)
+                                   (-> ~'msp (.keyReleased KeyEvent/VK_1))
+                                   (Thread/sleep 500)
+                                   (while (not (-> ~'msp .isGameOver))
+                                     ~code)
+                                   (let [fitness-score# (-> ~'msp .getScore)]
+                                     (-> ~'msp  (.stop true))
+                                     fitness-score#))))))
+                 (dec t)))))
 
 (defn fitness-graphic [tries code]
  (loop [score 0
