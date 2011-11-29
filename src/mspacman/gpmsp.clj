@@ -1,5 +1,6 @@
 (ns mspacman.gpmsp
   (:require [clojure.zip :as zip]
+            [clojure.string :as string]
             [clojure.data.zip :as dzip]
             [mspacman.individual :as ind]))
 
@@ -95,8 +96,10 @@
     (expand (rand-nth ind/FUNCTION-LIST)
             MUTATION-DEPTH))))
 
-(defn reproduction [l]
-  ())
+(defn reproduction [i]
+  (if (< (rand) MUTATION-RATE)
+    (mutation (get i :program))
+    (get i :program)))
 
 (defn gp-run []
   (println 'started)
@@ -111,7 +114,7 @@
       (do (println 'generation n)
           (spit (format "%s/generations/%s_generation_%tL.txt"
                         (System/getProperty "user.home")
-                        (.getHostName (InetAddress/getLocalHost))
+                        (string/lower-case (.getHostName (InetAddress/getLocalHost)))
                         n)
                 (str generation))
           (println (map #(get %1 :fitness) generation)
@@ -120,8 +123,6 @@
           (recur (sort-by :fitness
                           >
                           (pmap  #(struct individual %1 (ind/fitness FITNESS-RUNS %1) 0)
-                                 (map #(if (< (rand) MUTATION-RATE)
-                                         (mutation (get %1 :program))
-                                         (get %1 :program))
+                                 (map reproduction
                                       (fitness-proportionate-selection generation))))
                  (inc n))))))
