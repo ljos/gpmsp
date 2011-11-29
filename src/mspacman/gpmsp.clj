@@ -121,6 +121,7 @@
                           >
                           (pmap  #(struct individual %1 (ind/fitness FITNESS-RUNS %1) 0)
                                  (map #(if (< (rand) MUTATION-RATE)
-                                         (mutation (get %1 :program)))
+                                         (mutation (get %1 :program))
+                                         (get %1 :program))
                                       (fitness-proportionate-selection generation))))
                  (inc n))))))
