@@ -12,14 +12,14 @@
   :fitness
   :finishing-time)
 
-(def SIZE-OF-POPULATION 50)
+(def SIZE-OF-POPULATION 5)
 (def NUMBER-OF-GENERATIONS 100)
 (def MAX-STARTING-DEPTH 10)
 (def MAX-STARTING-WIDTH-OF-EXPR 5)
-(def MUTATION-RATE 0.20)
+(def MUTATION-RATE 1.00)
 (def MUTATION-DEPTH 5)
-(def EXPR?-RATE 0.3)
-(def FITNESS-RUNS 5)
+(def EXPR?-RATE 0.80)
+(def FITNESS-RUNS 1)
 
 (defn atomize [term]
   (cond (= term 'int)
@@ -83,7 +83,7 @@
   (zip/root
    (zip/replace
     (loop [loc (zip/seq-zip tree)
-           val (zip/next loc)
+           val nil
            n 1]
       (cond (zip/end? loc)
             ,val
