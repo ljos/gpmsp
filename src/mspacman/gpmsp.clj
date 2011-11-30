@@ -101,11 +101,14 @@
 (defn recombination [population]
   (let [r (rand)]
     (cond (< r REPRODUCTION-RATE)
-          ,(reproduction (repeatedly 2 (fitness-proportionate-selection population)))
+          ,(reproduction (repeatedly 2 #(get (fitness-proportionate-selection population)
+                                             :program)))
           (< r (+ REPRODUCTION-RATE MUTATION-RATE))
-          ,(mutation (fitness-proportionate-selection population))
+          ,(mutation (get (fitness-proportionate-selection population)
+                          :program))
           :else
-          (fitness-proportionate-selection population))))
+          (get (fitness-proportionate-selection population)
+               :program))))
 
 (defn gp-run []
   (println 'started)
