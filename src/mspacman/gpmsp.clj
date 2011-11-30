@@ -16,6 +16,7 @@
 (def MAX-STARTING-DEPTH 10)
 (def MAX-STARTING-WIDTH-OF-EXPR 5)
 (def MUTATION-RATE 0.30)
+(def REPRODUCTION-RATE 0.70)
 (def MUTATION-DEPTH 5)
 (def EXPR?-RATE 0.80)
 (def FITNESS-RUNS 5)
@@ -62,50 +63,54 @@
   (take SIZE-OF-POPULATION (repeatedly #(create-random-individual))))
 
 (defn fitness-proportionate-selection [population]
-  (let [F (reduce + (map #(get %1 :fitness) population))]
-    (loop [acc ()]
-      (let [r (rand)]
-        (if (= (count acc) SIZE-OF-POPULATION)
-          acc
-          (recur (conj acc
-                       (loop [pop population
-                              slice (/ (get (first population) :fitness) F)]
-                         (if (<= r slice)
-                           (first pop)
-                           (recur (rest pop)
-                                  (+ slice
-                                     (/ (get (second pop) :fitness)
-                                        F))))))))))))
+  (let [F (reduce + (map #(get %1 :fitness) population))
+        r (rand)]
+    (loop [pop population
+           slice (/ (get (first population) :fitness) F)]
+      (if (<= r slice)
+        (first pop)
+        (recur (rest pop)
+               (+ slice (/ (get (second pop) :fitness) F)))))))
+
+(defn select-random-node [tree]
+  (loop [loc (zip/seq-zip tree)
+         val nil
+         n 1]
+    (cond (zip/end? loc)
+          ,val
+          (or (dzip/leftmost? loc) (nil? (zip/node loc)))
+          ,(recur (zip/next loc) val n)
+          :else
+          ,(recur (zip/next loc)
+                  (if (= 0 (mod (rand-int n) n))
+                    loc val)
+                  (inc n)))))
+
+(defn reproduction [parents]
+  (zip/root
+   (zip/replace (select-random-node (first parents))
+                (zip/node (select-random-node (second parents))))))
 
 (defn mutation [tree]
   "Using reservoir sampling to take a uniformly and randomly chosen element from the code tree"
   (zip/root
-   (zip/replace
-    (loop [loc (zip/seq-zip tree)
-           val nil
-           n 1]
-      (cond (zip/end? loc)
-            ,val
-            (or (dzip/leftmost? loc) (nil? (zip/node loc)))
-            ,(recur (zip/next loc) val n)
-            :else
-            ,(recur (zip/next loc)
-                    (if (= 0 (mod (rand-int n) n))
-                      loc val)
-                    (inc n))))
-    (expand (rand-nth ind/FUNCTION-LIST)
-            MUTATION-DEPTH))))
+   (zip/replace (select-random-node tree)
+                (expand (rand-nth ind/FUNCTION-LIST)
+                        MUTATION-DEPTH))))
 
-(defn reproduction [i]
-  (if (< (rand) MUTATION-RATE)
-    (mutation (get i :program))
-    (get i :program)))
+(defn recombination [population]
+  (let [r (rand)]
+    (cond (< r REPRODUCTION-RATE)
+          ,(reproduction (repeatedly 2 (fitness-proportionate-selection population)))
+          (< r (+ REPRODUCTION-RATE MUTATION-RATE))
+          ,(mutation (fitness-proportionate-selection population))
+          :else
+          (fitness-proportionate-selection population))))
 
 (defn gp-run []
   (println 'started)
   (use 'mspacman.individual)
-  (loop [generation (sort-by :fitness
-                             >
+  (loop [generation (sort-by :fitness >
                              (pmap #(struct individual %1 (ind/fitness FITNESS-RUNS %1) 0)
                                    (create-random-population)))
          n 0]
@@ -120,9 +125,7 @@
           (println (map #(get %1 :fitness) generation)
                    "average:"
                    (int (/ (reduce + (map #(get %1 :fitness) generation)) SIZE-OF-POPULATION)))
-          (recur (sort-by :fitness
-                          >
+          (recur (sort-by :fitness >
                           (pmap  #(struct individual %1 (ind/fitness FITNESS-RUNS %1) 0)
-                                 (map reproduction
-                                      (fitness-proportionate-selection generation))))
+                                 (repeatedly SIZE-OF-POPULATION #(recombination generation))))
                  (inc n))))))
