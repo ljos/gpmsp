@@ -53,7 +53,7 @@
                                         (.setVisible Boolean/TRUE))
                          t# (new Thread ~'msp)]
                            (do (-> t# .start)
-                               (Thread/sleep 7000)
+                               (Thread/sleep 1000)
                                (-> ~'msp (.keyPressed KeyEvent/VK_5))
                                (Thread/sleep 100)
                                (-> ~'msp (.keyReleased KeyEvent/VK_5))

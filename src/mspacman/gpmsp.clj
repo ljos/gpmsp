@@ -15,8 +15,8 @@
 (def NUMBER-OF-GENERATIONS 100)
 (def MAX-STARTING-DEPTH 10)
 (def MAX-STARTING-WIDTH-OF-EXPR 5)
-(def MUTATION-RATE 0.05)
-(def REPRODUCTION-RATE 0.90)
+(def MUTATION-RATE 0.30)
+(def REPRODUCTION-RATE 0.00)
 (def MUTATION-DEPTH 5)
 (def EXPR?-RATE 0.80)
 (def FITNESS-RUNS 5)
@@ -119,7 +119,7 @@
                :program))))
 
 (defn gp-run []
-  "Does a gp run."
+  "Does a gp-run"
   (println 'started)
   (use 'mspacman.individual)
   (loop [generation (sort-by :fitness >
