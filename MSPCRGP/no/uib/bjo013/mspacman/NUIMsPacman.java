@@ -52,6 +52,7 @@ public class NUIMsPacman implements MsPacman {
 		
 		
 		t = new Throttle(m.getProperty(Machine.FPS));
+		t.enable(false);
 
 		int i = 3;
 		while (i > 0) {
