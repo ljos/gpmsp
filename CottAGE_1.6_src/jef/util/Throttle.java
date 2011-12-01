@@ -269,7 +269,11 @@ public class Throttle {
 	 */
 	private void recalcTiming() {
 		tempT = System.currentTimeMillis();
-		fps = 1000 / ((tempT - t) / FRAMES_UNTIL_THROTTLE_RECALC);
+		try {
+			fps = 1000 / ((tempT - t) / FRAMES_UNTIL_THROTTLE_RECALC);
+		} catch(ArithmeticException e) {
+			
+		}
 		t = tempT;
 		
 		recalcCount = recalcCount + 1;
