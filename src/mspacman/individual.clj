@@ -9,6 +9,7 @@
 (def ^:dynamic msp nil)
 
 (defn fitness [tries code]
+  "Tests fitness of MsPacman bot."
   (loop [score 0
          t tries]
     (cond (= t 0)
