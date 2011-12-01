@@ -22,6 +22,7 @@
 (def FITNESS-RUNS 5)
 
 (defn atomize [term]
+  "Makes a leaf node"
   (cond (= term 'int)
         ,(rand-int 1000)
         (symbol? term)
@@ -30,6 +31,7 @@
         ,term))
 
 (defn expand [exprs depth]
+  "Expands an expression; creates a code tree for an individual."
   (if (or (symbol? exprs)
           (empty? exprs)
           (< depth 1))
@@ -57,12 +59,15 @@
                        (dec expr-width))))))))
 
 (defn create-random-individual []
+  "Creates a random code tree for an individual with a set depth."
   (expand '(do expr+) MAX-STARTING-DEPTH))
 
 (defn create-random-population []
+  "Creates code trees for a whole population."
   (take SIZE-OF-POPULATION (repeatedly #(create-random-individual))))
 
 (defn fitness-proportionate-selection [population]
+  "Select an individual from pop via fitness proportionate selection"
   (let [F (reduce + (map #(get %1 :fitness) population))
         r (rand)]
     (loop [pop population
@@ -73,6 +78,7 @@
                (+ slice (/ (get (second pop) :fitness) F)))))))
 
 (defn select-random-node [tree]
+  "selects a random node in a tree."
   (loop [loc (zip/seq-zip tree)
          val nil
          n 1]
@@ -87,6 +93,7 @@
                   (inc n)))))
 
 (defn reproduction [parents]
+  "Takes two parents and creates a new individual from them."
   (zip/root
    (zip/replace (select-random-node (first parents))
                 (zip/node (select-random-node (second parents))))))
@@ -99,6 +106,7 @@
                         MUTATION-DEPTH))))
 
 (defn recombination [population]
+  "Takes a population and creates a new individual through recombination."
   (let [r (rand)]
     (cond (< r REPRODUCTION-RATE)
           ,(reproduction (repeatedly 2 #(get (fitness-proportionate-selection population)
@@ -111,6 +119,7 @@
                :program))))
 
 (defn gp-run []
+  "Does a gp run."
   (println 'started)
   (use 'mspacman.individual)
   (loop [generation (sort-by :fitness >
