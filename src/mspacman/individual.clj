@@ -14,7 +14,7 @@
          t tries]
     (cond (= t 0)
           ,(int (/ score tries))
-          (= score 120)
+          (and (= tries 3) (= (/ score tries) 120))
           ,score
           :else
           ,(recur (+ score
@@ -53,7 +53,7 @@
                                         (.setVisible Boolean/TRUE))
                          t# (new Thread ~'msp)]
                            (do (-> t# .start)
-                               (Thread/sleep 1000)
+                               (Thread/sleep 7000)
                                (-> ~'msp (.keyPressed KeyEvent/VK_5))
                                (Thread/sleep 100)
                                (-> ~'msp (.keyReleased KeyEvent/VK_5))
@@ -130,7 +130,7 @@
       (apply - l))))
 
 (defn msp-sleep []
-  (Thread/sleep 100))
+  (Thread/sleep 10))
 
 (defn move-left []
   (do (-> msp (.keyPressed KeyEvent/VK_LEFT))
@@ -159,6 +159,9 @@
                       (if (number? j)
                         (mod (int j) 288)
                         (rand-int 288)))))
+
+(defn get-pixels []
+  (-> msp .getPixels))
 
 (defn get-pixelxy []
   (get-pixel @x @y))

@@ -162,7 +162,7 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 		requestFocus();
 
 		t = new Throttle(m.getProperty(Machine.FPS));
-		t.enable(false);
+		t.enable(true);
 
 		while (!stop) {
 			if (!paused) {
