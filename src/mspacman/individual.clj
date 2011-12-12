@@ -70,15 +70,34 @@
                                  fitness-score#))))))
              (dec t)))))
 
-(def ATOM-LIST '((move-left)
-                 (move-right)
-                 (move-up)
-                 (move-down)
-                 (get-pixelxy)
-                 (msp-rand-int)
-                 (msp-sleep)
-                 int
-                 ()))
+(def INT-LIST '(mspacman
+                   blinky
+                   pinky
+                   inky
+                   sue
+                   pills
+                   walkway
+                   wall1
+                   wall2
+                   wall3
+                   wall4
+                   wall5
+                   wall6
+                   wall7
+                   wall8
+                   (x)
+                   (y)
+                   (get-pixelxy)
+                   (msp-rand-int)))
+
+(def ATOM-LIST (concat
+                '((move-left)
+                  (move-right)
+                  (move-up)
+                  (move-down)
+                  (msp-sleep)
+                  ())
+                INT-LIST))
 
 (def FUNCTION-LIST (concat
                     '((do expr+)
@@ -94,8 +113,27 @@
                       (and expr+))
                     ATOM-LIST))
 
-(def x (ref 0))
-(def y (ref 0))
+(def x1 (ref 0))
+(defn x [] @x1)
+
+(def y1 (ref 0))
+(defn y [] @y1)
+
+(def mspacman 16776960)
+(def blinky 16711680)
+(def pinky 16759006)
+(def inky  65502)
+(def sue 16758855)
+(def pills 14606046)
+(def walkway 0)
+(def wall1  14587719)
+(def wall2 16759006)
+(def wall3 4700382)
+(def wall4 2171358)
+(def wall5 65280)
+(def wall6 4700311)
+(def wall7 16758935)
+(def wall8 14606046)
 
 (defn msp-rand-int []
   (rand-int 10000))
@@ -171,11 +209,11 @@
     (if (> i 224)
       (do (loop [j 0]
             (cond (> j 288)
-                  ,(dosync (ref-set x -1)
-                           (ref-set y -1))
+                  ,(dosync (ref-set x1 -1)
+                           (ref-set y1 -1))
                   (= (get-pixel i j) c)
-                  ,(dosync (ref-set x i)
-                           (ref-set y j))
+                  ,(dosync (ref-set x1 i)
+                           (ref-set y1 j))
                   :else
                   ,(recur (inc j))))
          (recur (inc i))))))
