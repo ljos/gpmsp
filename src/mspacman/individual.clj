@@ -101,7 +101,6 @@
 
 (def FUNCTION-LIST (concat
                     '((do expr+)
-                      (get-pixel int int)
                       (find-colour int)
                       (if expr expr expr?)
                       (= expr+)
@@ -190,6 +189,7 @@
        (Thread/sleep 50)
        (-> msp (.keyReleased KeyEvent/VK_DOWN))))
 
+
 (defn get-pixel [i j]
   (-> msp (.getPixel  (if (number? i)
                         (mod (int i) 224)
@@ -205,15 +205,24 @@
   (get-pixel @x1 @y1))
 
 (defn find-colour [c]
-  (loop [i 0]
-    (if (> i 224)
-      (do (loop [j 0]
-            (cond (> j 288)
-                  ,(dosync (ref-set x1 -1)
-                           (ref-set y1 -1))
-                  (= (get-pixel i j) c)
-                  ,(dosync (ref-set x1 i)
-                           (ref-set y1 j))
-                  :else
-                  ,(recur (inc j))))
-         (recur (inc i))))))
+  (loop [x 0
+         y 0]
+    (cond (= x 28)
+          ,(recur 0 (inc y))
+          (= y 36)
+          ,(dosync (ref-set x1 -1)
+                   (ref-set y1 -1)
+                   false)
+          (= (get-area x y) c)
+          ,(dosync (ref-set x1 x)
+                   (ref-set y1 y)
+                   true)
+          :else
+          ,(recur (inc x) y))))
+
+(defn get-area [x y]
+  (first (reduce #(if (and (not (zero? (key %1)))
+                           (> (val %1) (val %2))) %1 %2)
+                 (frequencies (for [i (range (* y 8) (+ (* y 8) 8))
+                                    j (range (* x 8) (+ (* x 8) 8))]
+                                (-> msp (.getPixel i j)))))))

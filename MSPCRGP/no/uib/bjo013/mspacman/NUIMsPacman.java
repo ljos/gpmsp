@@ -68,7 +68,7 @@ public class NUIMsPacman implements MsPacman {
 		signal.countDown();	
 		
 		while (!stop) {
-			pixel = m.refresh(true).getPixels();
+			m.refresh(true);
 			t.throttle();
 		}
 	}
