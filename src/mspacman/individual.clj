@@ -204,6 +204,13 @@
 (defn get-pixelxy []
   (get-pixel @x1 @y1))
 
+(defn get-area [x y]
+  (first (reduce #(if (and (not (zero? (key %1)))
+                           (> (val %1) (val %2))) %1 %2)
+                 (frequencies (for [i (range (* y 8) (+ (* y 8) 8))
+                                    j (range (* x 8) (+ (* x 8) 8))]
+                                (-> msp (.getPixel i j)))))))
+
 (defn find-colour [c]
   (loop [x 0
          y 0]
@@ -219,10 +226,3 @@
                    true)
           :else
           ,(recur (inc x) y))))
-
-(defn get-area [x y]
-  (first (reduce #(if (and (not (zero? (key %1)))
-                           (> (val %1) (val %2))) %1 %2)
-                 (frequencies (for [i (range (* y 8) (+ (* y 8) 8))
-                                    j (range (* x 8) (+ (* x 8) 8))]
-                                (-> msp (.getPixel i j)))))))
