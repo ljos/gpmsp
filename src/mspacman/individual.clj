@@ -202,7 +202,7 @@
   (-> msp .getPixels))
 
 (defn get-pixelxy []
-  (get-pixel @x @y))
+  (get-pixel @x1 @y1))
 
 (defn find-colour [c]
   (loop [i 0]
