@@ -536,8 +536,8 @@ public class MAMEVideo implements VideoEmulator,Vh_convert_color_proms,Eof_callb
 	}
 
 	public void palette_set_color(int c, int r, int g, int b) {
-		//System.out.println(c + " = rgb " + r + "," + g + "," + b);
 		int rgb =  r<<16 | g<<8 | b;
+	//	System.out.println(c + " = rgb " + r + "," + g + "," + b + " : " + rgb);
 		if (palette_get_color(c) != rgb) palette_set_color(c, rgb);
 	}
 	
