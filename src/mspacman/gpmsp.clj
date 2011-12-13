@@ -20,7 +20,7 @@
 (def MUTATION-DEPTH 5)
 (def RAND-INT-RATE 0.20)
 (def EXPR?-RATE 0.80)
-(def FITNESS-RUNS 10)
+(def FITNESS-RUNS 15)
 
 (defn atomize [term]
   "Makes a leaf node"
