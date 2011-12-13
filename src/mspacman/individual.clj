@@ -46,12 +46,14 @@
                 (eval `(binding [~'msp (doto (new GUIMsPacman)
                                          (.setSize 224 (+ 288 22)))]
                          (let [frame# (doto (new JFrame)
-                                        (.setDefaultCloseOperation javax.swing.JFrame/EXIT_ON_CLOSE)
+                                        (.setDefaultCloseOperation
+                                         javax.swing.JFrame/EXIT_ON_CLOSE)
                                         (.setSize 224 (+ 288 22))
                                         (.setLocation 100 0)
-                                        (-> .getContentPane (.add ~'msp java.awt.BorderLayout/CENTER))
+                                        (-> .getContentPane
+                                            (.add ~'msp java.awt.BorderLayout/CENTER))
                                         (.setVisible Boolean/TRUE))
-                         t# (new Thread ~'msp)]
+                               t# (new Thread ~'msp)]
                            (do (-> t# .start)
                                (Thread/sleep 7000)
                                (-> ~'msp (.keyPressed KeyEvent/VK_5))
@@ -71,24 +73,24 @@
              (dec t)))))
 
 (def INT-LIST '(mspacman
-                   blinky
-                   pinky
-                   inky
-                   sue
-                   pills
-                   walkway
-                   wall1
-                   wall2
-                   wall3
-                   wall4
-                   wall5
-                   wall6
-                   wall7
-                   wall8
-                   (x)
-                   (y)
-                   (get-pixelxy)
-                   (msp-rand-int)))
+                blinky
+                pinky
+                inky
+                sue
+                pills
+                walkway
+                wall1
+                wall2
+                wall3
+                wall4
+                wall5
+                wall6
+                wall7
+                wall8
+                (x)
+                (y)
+                (get-pixelxy)
+                (msp-rand-int)))
 
 (def ATOM-LIST (concat
                 '((move-left)
@@ -143,7 +145,6 @@
     (if (empty? l)
       true
       (apply > l))))
-
 
 (defn msp< [& keys]
   (let [l (remove #(not (instance? Number %1))
