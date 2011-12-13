@@ -125,7 +125,4 @@
 (deftask :check-for-user "Checks who is logged on" []
   (ssh "~/.scripts/check_for_user"))
 
-(deftask :start-gp "Start a gp run." []
-  (ssh (run "~/.scripts/check_for_user"
-            (cd "mspacman"
-                (run "lein run")))))
+
