@@ -66,7 +66,6 @@
   (take SIZE-OF-POPULATION (repeatedly #(create-random-individual))))
 
 (defn fitness-proportionate-selection [population]
-
   (let [F (reduce + (map #(get %1 :fitness) population))
         r (rand)]
     (loop [pop population
