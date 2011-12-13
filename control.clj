@@ -116,4 +116,4 @@
   (ssh "date"))
 
 (deftask :check-for-user "Checks who is logged on" []
-  (ssh "check_for_user"))
+  (ssh "~/.scripts/check_for_user"))
