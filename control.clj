@@ -3,7 +3,8 @@
     {:host "localhost" :user "root"}
     ])
 
-(defcluster :H4
+(defcluster :H4 
+  :parallel true
   :user "bjo013"
   :addresses ["mn121033"	
               "mn121034"	
@@ -31,21 +32,13 @@
               "mn121056"	
               "mn121057"	
               "mn121058"	
-              "mn121059"	
-              "mn121060"	
-              "mn121062"	
-              "mn121063"	
-              "mn121064"	
-              "mn121065"	
               "mn121069"	
-              "mn121070"	
               "mn121071"	
               "mn121072"	
               "mn121073"	
               "mn121074"	
               "mn121075"	
-              "mn121077"	
-              "mn121078"])
+              "mn121077"])
 
 (deftask :date "echo date on cluster"  []
   (ssh "date"))
