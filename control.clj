@@ -112,8 +112,20 @@
               "mnr3-190139"
               "mnr3-190140"])
 
+(defcluster :test
+  :user "bjo013"
+  :addresses ["mn121037"	
+              "mn121038"	
+              "mn121039"	
+              "mn121040"])
+
 (deftask :date "echo date on cluster"  []
   (ssh "date"))
 
 (deftask :check-for-user "Checks who is logged on" []
   (ssh "~/.scripts/check_for_user"))
+
+(deftask :start-gp "Start a gp run." []
+  (ssh (run "~/.scripts/check_for_user"
+            (cd "mspacman"
+                (run "lein run")))))
