@@ -114,3 +114,6 @@
 
 (deftask :date "echo date on cluster"  []
   (ssh "date"))
+
+(deftask :check-for-user "Checks who is logged on" []
+  (ssh "check_for_user"))
