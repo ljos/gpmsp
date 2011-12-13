@@ -4,7 +4,6 @@
     ])
 
 (defcluster :H4 
-  :parallel true
   :user "bjo013"
   :addresses ["mn121033"	
               "mn121034"	
@@ -41,15 +40,12 @@
               "mn121077"])
 
 (defcluster :H3
-  :parallel true
   :user "bjo013"
   :addresses ["mn121083"	
-              "mn121084"	
               "mn121085"	
               "mn121086"	
               "mn121087"	
               "mn121088"	
-              "mn121089"	
               "mn121090"	
               "mn121091"	
               "mn121092"
@@ -68,8 +64,7 @@
               "mn121105"	
               "mn121107"])
 
-(defcluster :RF1
-  :parallel true
+(defcluster :RFB1
   :user "bjo013"
   :addresses ["mn190142"	
               "mn190143"	
@@ -81,38 +76,14 @@
               "mn190149"	
               "mn190150"	
               "mn190151"	
-              "mn190152"	
               "mn190153"	
               "mn190154"	
               "mn190155"	
               "mn190156"	
-              "mn190157"
-              "mn190070"])
-
-(defcluster :RF3
-  :parallel true
-  :user "bjo013"
-  :addresses ["mnr3-190117"	
-              "mnr3-190118"	
-              "mnr3-190119"	
-              "mnr3-190120"	
-              "mnr3-190121"	
-              "mnr3-190122"	
-              "mnr3-190123"	
-              "mnr3-190124"	
-              "mnr3-190125"	
-              "mnr3-190126"	
-              "mnr3-190127"	
-              "mnr3-190128"	
-              "mnr3-190129"	
-              "mnr3-190130"	
-              "mnr3-190134"	
-              "mnr3-190136"	
-              "mnr3-190138"	
-              "mnr3-190139"
-              "mnr3-190140"])
+              "mn190157"])
 
 (defcluster :test
+  :parallel true
   :user "bjo013"
   :addresses ["mn121037"	
               "mn121038"	
@@ -125,6 +96,6 @@
 (deftask :check-for-user "Checks who is logged on" []
   (ssh "~/.scripts/check_for_user"))
 
-(deftast :run-gp "Runs gp on everythin" []
+(deftask :run-gp "Runs gp on the cluster" []
   (ssh (cd "mspacman"
-           (run "lein run"))))
+           (run "~/.scripts/check_for_user; screen -d -m ~/.lein/bin/lein run"))))
