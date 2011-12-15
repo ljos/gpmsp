@@ -12,7 +12,7 @@
   :finishing-time)
 
 (def SIZE-OF-POPULATION 100)
-(def NUMBER-OF-GENERATIONS 10)
+(def NUMBER-OF-GENERATIONS 1000)
 (def MAX-STARTING-DEPTH 10)
 (def MAX-STARTING-WIDTH-OF-EXPR 5)
 (def MUTATION-RATE 0.20)
@@ -66,14 +66,14 @@
   (take SIZE-OF-POPULATION (repeatedly #(create-random-individual))))
 
 (defn fitness-proportionate-selection [population]
-  (let [F (reduce + (map #(get %1 :fitness) population))
+  (let [F (reduce + (map #(:fitness %1) population))
         r (rand)]
     (loop [pop population
-           slice (/ (get (first population) :fitness) F)]
+           slice (/ (:fitness (first population)) F)]
       (if (<= r slice)
         (first pop)
         (recur (rest pop)
-               (+ slice (/ (get (second pop) :fitness) F)))))))
+               (+ slice (/ (:fitness (second pop)) F)))))))
 
 (defn select-random-node [tree]
   (loop [loc (zip/seq-zip tree)
@@ -103,14 +103,11 @@
 (defn recombination [population]
   (let [r (rand)]
     (cond (< r REPRODUCTION-RATE)
-          ,(reproduction (repeatedly 2 #(get (fitness-proportionate-selection population)
-                                             :program)))
+          ,(reproduction (repeatedly 2 #(:program (fitness-proportionate-selection population))))
           (< r (+ REPRODUCTION-RATE MUTATION-RATE))
-          ,(mutation (get (fitness-proportionate-selection population)
-                          :program))
+          ,(mutation (:program (fitness-proportionate-selection population)))
           :else
-          (get (fitness-proportionate-selection population)
-               :program))))
+          (:program (fitness-proportionate-selection population)))))
 
 (defn gp-run []
   (println 'started)
@@ -127,9 +124,9 @@
                         (string/lower-case (.getHostName (InetAddress/getLocalHost)))
                         n)
                 (str generation))
-          (println (map #(get %1 :fitness) generation)
+          (println (map #(:fitness %1) generation)
                    "average:"
-                   (int (/ (reduce + (map #(get %1 :fitness) generation)) SIZE-OF-POPULATION)))
+                   (int (/ (reduce + (map #(:fitness %1) generation)) SIZE-OF-POPULATION)))
           (recur (sort-by :fitness >
                           (pmap  #(struct individual %1 (ind/fitness FITNESS-RUNS %1) 0)
                                  (repeatedly SIZE-OF-POPULATION #(recombination generation))))
