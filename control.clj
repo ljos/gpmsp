@@ -1,7 +1,5 @@
 (defcluster :default-cluster
-  :clients [
-    {:host "localhost" :user "root"}
-    ])
+  :clients [{:host "localhost" :user "root"}])
 
 (defcluster :H4 
   :user "bjo013"

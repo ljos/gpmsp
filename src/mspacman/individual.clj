@@ -103,7 +103,8 @@
 
 (def FUNCTION-LIST (concat
                     '((do expr+)
-                      (find-colour int)
+                      (msp-find-colour expr)
+                      (msp-get-area expr expr)
                       (if expr expr expr?)
                       (= expr+)
                       (msp> expr+)
@@ -212,6 +213,15 @@
                                     j (range (* x 8) (+ (* x 8) 8))]
                                 (-> msp (.getPixel i j)))))))
 
+(defn msp-get-area [x y]
+  (let [i (if (number? x)
+            (mod (int x) 28)
+            (rand-int 28))
+        j (if (number? y)
+            (mod (int y) 36)
+            (rand-int 36))]
+    (get-area i j)))
+
 (defn find-colour [c]
   (loop [x 0
          y 0]
@@ -227,3 +237,8 @@
                    true)
           :else
           ,(recur (inc x) y))))
+
+(defn msp-find-colour [c]
+  (if (number? c)
+    (find-colour c)
+    (find-colour (rand-nth INT-LIST))))
