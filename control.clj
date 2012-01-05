@@ -81,8 +81,8 @@
               "mn190157"])
 
 (defcluster :test
-  :parallel true
   :user "bjo013"
+  :log false
   :addresses ["mn121037"	
               "mn121038"	
               "mn121039"	
