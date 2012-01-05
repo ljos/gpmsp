@@ -181,10 +181,10 @@ public class Cottage extends GfxProducer {
 	@Override
 	public void postPaint(Graphics g) {
 		if (paused) {
-			String text = "GAME PAUSED";
-			jef.video.Console.drawTextLine(g,
-					getWidth() / 2 - 6 * text.length() / 2,
-					getHeight() / 2 + 6, text);
+	//		String text = "GAME PAUSED";
+	//		jef.video.Console.drawTextLine(g,
+	//				getWidth() / 2 - 6 * text.length() / 2,
+	//				getHeight() / 2 + 6, text);
 		} else if (showFPS) {
 			StringBuffer buf = new StringBuffer();
 			String fs = Integer.toString(t.getFrameSkip());
