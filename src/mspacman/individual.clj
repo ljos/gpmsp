@@ -104,6 +104,7 @@
                     '((do expr+)
                       (msp-find-colour int)
                       (msp-get-area expr expr)
+                      (msp-get-area int int)
                       (msp-get-area-below int)
                       (msp-get-area-above int)
                       (msp-get-area-leftof int)
@@ -230,17 +231,17 @@
     false))
 
 (defn msp-get-area-leftof [character]
-  (do (find-colour character)
+  (do (msp-find-colour character)
       (msp-get-area (- @x1 1) @y1)))
 
 (defn msp-get-area-rightof [character]
-  (do (find-colour character)
+  (do (msp-find-colour character)
       (msp-get-area (+ @x1 1) @y1)))
 
 (defn msp-get-area-above [character]
-  (do (find-colour character)
+  (do (msp-find-colour character)
       (msp-get-area @x1 (- @y1 1))))
 
 (defn msp-get-area-below [character]
-  (do (find-colour character)
+  (do (msp-find-colour character)
       (msp-get-area @x1 (+ @y1 1))))

@@ -18,14 +18,14 @@
 (def MUTATION-RATE 0.20)
 (def REPRODUCTION-RATE 0.60)
 (def MUTATION-DEPTH 5)
-(def RAND-INT-RATE 0.01)
+(def RAND-INT-RATE 0.20)
 (def EXPR?-RATE 0.80)
 (def FITNESS-RUNS 5)
 
 (defn atomize [term]
   (cond (= term 'int)
         ,(if (< (rand) RAND-INT-RATE)
-           (rand-int 10000)
+           (rand-int 36)
            (rand-nth ind/INT-LIST))
         (symbol? term)
         ,`~term
