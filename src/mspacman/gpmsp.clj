@@ -1,17 +1,17 @@
 (ns mspacman.gpmsp
   (:require [clojure.zip :as zip]
             [clojure.string :as string]
-            [clojure.data.zip :as dzip]
-            [mspacman.individual :as ind]))
-
-(import java.net.InetAddress)
+            [clojure.data.zip :as dzip])
+  (:use [mspacman.individual :as ind]
+        [control.core :as con]
+        [control.commands :as con.comm])
+  (import java.net.InetAddress))
 
 (defstruct individual
   :program
-  :fitness
-  :finishing-time)
+  :fitness)
 
-(def SIZE-OF-POPULATION 100)
+(def SIZE-OF-POPULATION 5)
 (def NUMBER-OF-GENERATIONS 1000)
 (def MAX-STARTING-DEPTH 10)
 (def MAX-STARTING-WIDTH-OF-EXPR 5)
@@ -20,12 +20,12 @@
 (def MUTATION-DEPTH 5)
 (def RAND-INT-RATE 0.20)
 (def EXPR?-RATE 0.80)
-(def FITNESS-RUNS 15)
+(def FITNESS-RUNS 5)
 
 (defn atomize [term]
   (cond (= term 'int)
         ,(if (< (rand) RAND-INT-RATE)
-           (rand-int 10000)
+           (rand-int 36)
            (rand-nth ind/INT-LIST))
         (symbol? term)
         ,`~term
@@ -110,10 +110,9 @@
           (:program (fitness-proportionate-selection population)))))
 
 (defn gp-run []
-  (println 'started)
-  (use 'mspacman.individual)
+  (println "Started")
   (loop [generation (sort-by :fitness >
-                             (pmap #(struct individual %1 (ind/fitness FITNESS-RUNS %1) 0)
+                             (pmap #(struct individual %1 (ind/fitness FITNESS-RUNS %1))
                                    (create-random-population)))
          n 0]
     (if (>= n NUMBER-OF-GENERATIONS)
@@ -128,6 +127,24 @@
                    "average:"
                    (int (/ (reduce + (map #(:fitness %1) generation)) SIZE-OF-POPULATION)))
           (recur (sort-by :fitness >
-                          (pmap  #(struct individual %1 (ind/fitness FITNESS-RUNS %1) 0)
+                          (pmap  #(struct individual %1 (ind/fitness FITNESS-RUNS %1))
+                                 (repeatedly SIZE-OF-POPULATION #(recombination generation))))
+                 (inc n))))))
+
+(defn control-gp [population nb-gen]
+  (load-file "control.clj")
+  (loop [generation (pmap  #(struct individual %1 (ind/fitness FITNESS-RUNS %1))
+                           (repeatedly SIZE-OF-POPULATION
+                                       #(recombination (:population population))))
+         n (inc (:generation population))]
+    (if (>= n (+ nb-gen (:generation population)))
+      {:generation n :population generation}
+      (do (spit (format "%s/generations/%s_generation_%tL.txt"
+                        (System/getProperty "user.home")
+                        (string/lower-case (.getHostName (InetAddress/getLocalHost)))
+                        n)
+                (format "{:generation %s :population %s}" n (str generation)))
+          (recur (sort-by :fitness >
+                          (pmap  #(struct individual %1 (ind/fitness FITNESS-RUNS %1))
                                  (repeatedly SIZE-OF-POPULATION #(recombination generation))))
                  (inc n))))))
