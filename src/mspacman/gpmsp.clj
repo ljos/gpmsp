@@ -131,7 +131,7 @@
           (recur (sort-by :fitness >
                           (concat (take (* SIZE-OF-POPULATION ELITISM-RATE) generation)
                                   (pmap  #(struct individual %1 (ind/fitness FITNESS-RUNS %1))
-                                         (repeatedly (* SIZE-OF-POPULATION ELITISM-RATE)
+                                         (repeatedly (- SIZE-OF-POPULATION (* SIZE-OF-POPULATION ELITISM-RATE))
                                                      #(recombination generation)))))
                  (inc n))))))
 
