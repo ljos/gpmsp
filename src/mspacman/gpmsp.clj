@@ -12,7 +12,7 @@
   :fitness)
 
 (def SIZE-OF-POPULATION 70)
-(def TAKE-FITTEST (int (* SIZE-OF-POPULATION 0.05)))
+(def ELITISM-RATE 0.05)
 (def NUMBER-OF-GENERATIONS 1000)
 (def MAX-STARTING-DEPTH 10)
 (def MAX-STARTING-WIDTH-OF-EXPR 5)
@@ -129,9 +129,9 @@
                    "average:"
                    (int (/ (reduce + (map #(:fitness %1) generation)) SIZE-OF-POPULATION)))
           (recur (sort-by :fitness >
-                          (concat (take TAKE-FITTEST generation)
+                          (concat (take (* SIZE-OF-POPULATION ELITISM-RATE) generation)
                                   (pmap  #(struct individual %1 (ind/fitness FITNESS-RUNS %1))
-                                         (repeatedly (- SIZE-OF-POPULATION TAKE-FITTEST)
+                                         (repeatedly (* SIZE-OF-POPULATION ELITISM-RATE)
                                                      #(recombination generation)))))
                  (inc n))))))
 
