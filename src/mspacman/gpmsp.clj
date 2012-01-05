@@ -11,7 +11,7 @@
   :program
   :fitness)
 
-(def SIZE-OF-POPULATION 5)
+(def SIZE-OF-POPULATION 70)
 (def NUMBER-OF-GENERATIONS 1000)
 (def MAX-STARTING-DEPTH 10)
 (def MAX-STARTING-WIDTH-OF-EXPR 5)
@@ -20,7 +20,7 @@
 (def MUTATION-DEPTH 5)
 (def RAND-INT-RATE 0.20)
 (def EXPR?-RATE 0.80)
-(def FITNESS-RUNS 5)
+(def FITNESS-RUNS 10)
 
 (defn atomize [term]
   (cond (= term 'int)
