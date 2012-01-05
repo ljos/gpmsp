@@ -23,13 +23,13 @@
                                (do (-> (new Thread ~'msp) .start)
                                    (-> signal# .await)
                                    (-> ~'msp (.keyPressed KeyEvent/VK_5))
-                                   (Thread/sleep 100)
+                                   (Thread/sleep 200)
                                    (-> ~'msp (.keyReleased KeyEvent/VK_5))
-                                   (Thread/sleep 100)
+                                   (Thread/sleep 200)
                                    (-> ~'msp (.keyPressed KeyEvent/VK_1))
-                                   (Thread/sleep 100)
+                                   (Thread/sleep 200)
                                    (-> ~'msp (.keyReleased KeyEvent/VK_1))
-                                   (Thread/sleep 500)
+                                   (Thread/sleep 700)
                                    (while (not (-> ~'msp .isGameOver))
                                      ~code)
                                    (let [fitness-score# (-> ~'msp .getScore)]
@@ -87,10 +87,9 @@
                 wall6
                 wall7
                 wall8
-                (x)
-                (y)
-                (get-pixelxy)
-                (msp-rand-int)))
+                ;(x)
+                ;(y)
+                (msp-get-areaxy)))
 
 (def ATOM-LIST (concat
                 '((move-left)
@@ -103,22 +102,24 @@
 
 (def FUNCTION-LIST (concat
                     '((do expr+)
-                      (msp-find-colour expr)
+                      (msp-find-colour int)
                       (msp-get-area expr expr)
+                      (msp-get-area-below int)
+                      (msp-get-area-above int)
+                      (msp-get-area-leftof int)
+                      (msp-get-area-rightof int)
                       (if expr expr expr?)
                       (= expr+)
                       (msp> expr+)
                       (msp< expr+)
-                      (msp+ expr+)
-                      (msp- expr+)
                       (or expr+)
                       (and expr+))
                     ATOM-LIST))
 
-(def x1 (ref 0))
+(def ^:private x1 (ref 0))
 (defn x [] @x1)
 
-(def y1 (ref 0))
+(def ^:private y1 (ref 0))
 (defn y [] @y1)
 
 (def mspacman 16776960)
@@ -137,9 +138,6 @@
 (def wall7 16758935)
 (def wall8 14606046)
 
-(defn msp-rand-int []
-  (rand-int 10000))
-
 (defn msp> [& keys]
   (let [l (remove #(not (instance? Number %1))
                   keys)]
@@ -154,19 +152,19 @@
       true
       (apply > l))))
 
-(defn msp+ [& keys]
-  (let [l (remove #(not (instance? Number %1))
-                  keys)]
-    (if (empty? l)
-      0
-      (apply + l))))
+;; (defn msp+ [& keys]
+;;   (let [l (remove #(not (instance? Number %1))
+;;                   keys)]
+;;     (if (empty? l)
+;;       0
+;;       (apply + l))))
 
-(defn msp- [& keys]
-  (let [l (remove #(not (instance? Number %1))
-                  keys)]
-    (if (empty? l)
-      0
-      (apply - l))))
+;; (defn msp- [& keys]
+;;   (let [l (remove #(not (instance? Number %1))
+;;                   keys)]
+;;     (if (empty? l)
+;;       0
+;;       (apply - l))))
 
 (defn msp-sleep []
   (Thread/sleep 10))
@@ -191,21 +189,6 @@
        (Thread/sleep 50)
        (-> msp (.keyReleased KeyEvent/VK_DOWN))))
 
-
-(defn get-pixel [i j]
-  (-> msp (.getPixel  (if (number? i)
-                        (mod (int i) 224)
-                        (rand-int 224))
-                      (if (number? j)
-                        (mod (int j) 288)
-                        (rand-int 288)))))
-
-(defn get-pixels []
-  (-> msp .getPixels))
-
-(defn get-pixelxy []
-  (get-pixel @x1 @y1))
-
 (defn get-area [x y]
   (first (reduce #(if (and (not (zero? (key %1)))
                            (> (val %1) (val %2))) %1 %2)
@@ -216,11 +199,14 @@
 (defn msp-get-area [x y]
   (let [i (if (number? x)
             (mod (int x) 28)
-            (rand-int 28))
+            0)
         j (if (number? y)
             (mod (int y) 36)
-            (rand-int 36))]
+            0)]
     (get-area i j)))
+
+(defn msp-get-areaxy []
+  (msp-get-area @x1 @y1))
 
 (defn find-colour [c]
   (loop [x 0
@@ -241,4 +227,20 @@
 (defn msp-find-colour [c]
   (if (number? c)
     (find-colour c)
-    (find-colour (rand-nth INT-LIST))))
+    false))
+
+(defn msp-get-area-leftof [character]
+  (do (find-colour character)
+      (msp-get-area (- @x1 1) @y1)))
+
+(defn msp-get-area-rightof [character]
+  (do (find-colour character)
+      (msp-get-area (+ @x1 1) @y1)))
+
+(defn msp-get-area-above [character]
+  (do (find-colour character)
+      (msp-get-area @x1 (- @y1 1))))
+
+(defn msp-get-area-below [character]
+  (do (find-colour character)
+      (msp-get-area @x1 (+ @y1 1))))
