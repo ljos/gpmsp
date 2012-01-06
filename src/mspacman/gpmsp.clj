@@ -150,4 +150,4 @@
   (use 'control.core)
   (use 'control.commands)
   (load-file "control.clj")
-  (con/do-begin '[test a-test]))
+  (con/do-begin '[test a-test "(do (msp-sleep) (move-down) (and mspacman blinky) (move-right) (move-down))"]))
