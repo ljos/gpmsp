@@ -3,8 +3,7 @@
             [clojure.string :as string]
             [clojure.data.zip :as dzip])
   (:use [mspacman.individual :as ind]
-        [control.core :as con]
-        [control.commands :as con.comm])
+        [control.core :as con])
   (import java.net.InetAddress))
 
 (defstruct individual
@@ -145,3 +144,7 @@
 
 (defn run-gen [input]
   (run-generation (read-string input)))
+
+(defn run-control [cluster input]
+  (load-file "control.clj")
+  (con/do-begin '[cluster testds]))
