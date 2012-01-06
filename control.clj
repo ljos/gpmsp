@@ -85,6 +85,7 @@
   :parallel true
   :user "bjo013"
   :log false
+  :results true
   :addresses ["mn121037"	
               "mn121038"	
               "mn121039"	
@@ -104,5 +105,6 @@
 (deftask :kill-gp "Ends the gp run (prematurely)" []
   (ssh (run "killall java")))
 
-(deftask :a-test "" []
-  (ssh (run "~.lein/bin/lein run -m mspacman.gpmsp/testds '(do ())'")))
+(deftask :a-test "" [input]
+  (ssh (run (format "~.lein/bin/lein run -m mspacman.gpmsp/testds %s"
+                    input))))
