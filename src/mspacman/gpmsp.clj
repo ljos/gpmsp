@@ -125,6 +125,7 @@
 
 (defn gp-run []
   (println "Started")
+  (use 'mspacman.individual)
   (loop [generation (sort-by :fitness >
                              (pmap #(struct individual %1 (ind/fitness FITNESS-RUNS %1))
                                    (create-random-population)))
