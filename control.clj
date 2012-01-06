@@ -106,5 +106,6 @@
   (ssh (run "killall java")))
 
 (deftask :a-test "" [input]
-  (ssh (run (format "~.lein/bin/lein run -m mspacman.gpmsp/testds %s"
-                    input))))
+  (ssh (cd "mspacman"
+           (run (format "~/.lein/bin/lein run -m mspacman.gpmsp/testds %s"
+                        input)))))
