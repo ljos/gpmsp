@@ -147,8 +147,8 @@
 (defn run-gen [input]
   (run-generation (read-string input)))
 
-(defn run-control [cluster input]
+(defn run-control [cluster task]
   (use 'control.core)
   (use 'control.commands)
   (load-file "control.clj")
-  (con/do-begin 'test 'a-test (str '(do (msp-sleep) (move-down) (and mspacman blinky) (move-right) (move-down)))))
+  (con/do-begin '[~cluster ~task (str '(do (msp-sleep) (move-down) (and mspacman blinky) (move-right) (move-down)))]))
