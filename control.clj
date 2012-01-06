@@ -87,7 +87,8 @@
   :addresses ["mn121037"	
               "mn121038"	
               "mn121039"	
-              "mn121040"])
+              ;;"mn121040"
+              ])
 
 (deftask :date "echo date on cluster"  []
   (ssh "date"))
@@ -101,3 +102,6 @@
 
 (deftask :kill-gp "Ends the gp run (prematurely)" []
   (ssh (run "killall java")))
+
+(deftask :a-test "" []
+  (ssh (run "~.lein/bin/lein run -m mspacman.gpmsp/testds '(do ())'")))
