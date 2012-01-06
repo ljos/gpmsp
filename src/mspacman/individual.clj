@@ -69,6 +69,7 @@
                                (let [fitness-score# (-> ~'msp .getScore)]
                                  (-> ~'msp  (.stop true))
                                  (-> frame# .dispose)
+                                 (println fitness-score#)
                                  fitness-score#))))))
              (dec t)))))
 
@@ -87,8 +88,8 @@
                 wall6
                 wall7
                 wall8
-                ;(x)
-                ;(y)
+                (x)
+                (y)
                 (msp-get-areaxy)))
 
 (def ATOM-LIST (concat
@@ -111,6 +112,8 @@
                       (msp-get-area-rightof int)
                       (if expr expr expr?)
                       (= expr+)
+                      (msp- expr+)
+                      (msp+ expr+)
                       (msp> expr+)
                       (msp< expr+)
                       (or expr+)
@@ -153,19 +156,19 @@
       true
       (apply > l))))
 
-;; (defn msp+ [& keys]
-;;   (let [l (remove #(not (instance? Number %1))
-;;                   keys)]
-;;     (if (empty? l)
-;;       0
-;;       (apply + l))))
+(defn msp+ [& keys]
+  (let [l (remove #(not (instance? Number %1))
+                  keys)]
+    (if (empty? l)
+      0
+      (apply + l))))
 
-;; (defn msp- [& keys]
-;;   (let [l (remove #(not (instance? Number %1))
-;;                   keys)]
-;;     (if (empty? l)
-;;       0
-;;       (apply - l))))
+(defn msp- [& keys]
+  (let [l (remove #(not (instance? Number %1))
+                  keys)]
+    (if (empty? l)
+      0
+      (apply - l))))
 
 (defn msp-sleep []
   (Thread/sleep 10))
