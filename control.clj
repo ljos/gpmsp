@@ -97,7 +97,7 @@
 
 (deftask :run-gp "Runs gp on the cluster" []
   (ssh (cd "mspacman"
-           (run "~/.scripts/check_for_user; screen -d -m ~/.lein/bin/lein run"))))
+           (run "~/.scripts/check_for_user; screen -d -m ~/.lein/bin/lein run -m mspacman.gpmsp/run-gen '({:program (do (msp-sleep) (move-down) (and mspacman blinky) (move-right) (move-down)), :fitness 390})'"))))
 
 (deftask :kill-gp "Ends the gp run (prematurely)" []
   (ssh (run "killall java")))
