@@ -107,5 +107,5 @@
 
 (deftask :a-test "" [input]
   (ssh (cd "mspacman"
-           (run (format "~/.lein/bin/lein run -m mspacman.gpmsp/testds %s"
+           (run (format "~/.lein/bin/lein run -m mspacman.gpmsp/testds '%s'"
                         input)))))
