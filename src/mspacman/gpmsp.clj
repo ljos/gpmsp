@@ -150,4 +150,4 @@
   (use 'control.core)
   (use 'control.commands)
   (load-file "control.clj")
-  (con/do-begin '[default-cluster a-test]))
+  (con/do-begin '[test a-test]))
