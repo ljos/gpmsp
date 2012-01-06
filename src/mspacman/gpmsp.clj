@@ -2,9 +2,9 @@
   (:require [clojure.zip :as zip]
             [clojure.string :as string]
             [clojure.data.zip :as dzip])
-  (:use [mspacman.individual :as ind]
-        [control.core :as con]
-        [control.commands :as con.comm])
+  (:use [mspacman.individual :as ind])
+  (:use [control.core :as con])
+  (:use [control.commands :as con.comm])
   (import java.net.InetAddress))
 
 (defstruct individual
@@ -114,7 +114,6 @@
           (:program (fitness-proportionate-selection population)))))
 
 (defn run-generation [generation]
-  (use 'mspacman.individual)
   (let [elitism (* SIZE-OF-POPULATION ELITISM-RATE)]
     (sort-by :fitness >
              (pmap  #(struct individual %1 (ind/fitness FITNESS-RUNS %1))
@@ -147,7 +146,5 @@
   (run-generation (read-string input)))
 
 (defn run-control [cluster input]
-  (use 'control.core)
-  (use 'control.commands)
   (load-file "control.clj")
   (con/do-begin '[test a-test]))
