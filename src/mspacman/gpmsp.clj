@@ -11,17 +11,17 @@
   :program
   :fitness)
 
-(def SIZE-OF-POPULATION 1)
-(def ELITISM-RATE 0.0)
+(def SIZE-OF-POPULATION 500)
+(def ELITISM-RATE 0.05)
 (def NUMBER-OF-GENERATIONS 1000)
 (def MAX-STARTING-DEPTH 10)
 (def MAX-STARTING-WIDTH-OF-EXPR 5)
-(def MUTATION-RATE 0.20)
-(def REPRODUCTION-RATE 0.60)
+(def MUTATION-RATE 0.15)
+(def REPRODUCTION-RATE 0.65)
 (def MUTATION-DEPTH 5)
 (def RAND-INT-RATE 0.20)
 (def EXPR?-RATE 0.80)
-(def FITNESS-RUNS 1)
+(def FITNESS-RUNS 10)
 
 (defn atomize [term]
   (cond (= term 'int)
@@ -147,10 +147,12 @@
 (defn run-gen [input]
   (run-generation (read-string input)))
 
-(defn run-control [cluster task]
+(defn run-control [cluster task args]
   (use 'control.core)
   (use 'control.commands)
   (load-file "control.clj")
-  (con/do-begin (list cluster
-                      task
-                      (str '(do (msp-sleep) (move-down) (and mspacman blinky) (move-right) (move-down))))))
+  (map #(read-string (:stdout %1))
+       (filter #(zero? (:status %1))
+               (con/do-begin (list cluster
+                                   task
+                                   args)))))
