@@ -145,7 +145,7 @@
              (recur (run-generation generation)
                     (inc n))))))
   ([gen-file nb-gen]
-     (println "Started at generation " nb-gen ".")
+     (println (format "Started at generation %s." nb-gen))
      (use 'mspacman.individual)
      (loop [generation (run-generation (read-string (slurp gen-file)))
             n (inc nb-gen)]
