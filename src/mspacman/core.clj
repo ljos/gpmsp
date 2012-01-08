@@ -3,4 +3,4 @@
             [mspacman.individual :as ind]))
 
 (defn -main [& args]
-  (gp/gp-run))
+  (gp/gp-run args))
