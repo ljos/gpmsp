@@ -145,7 +145,7 @@
              (recur (run-generation generation)
                     (inc n))))))
   ([gen-file nb-gen]
-     (println "Started")
+     (println "Started at generation " nb-gen ".")
      (use 'mspacman.individual)
      (loop [generation (run-generation (read-string (slurp gen-file)))
             n (inc nb-gen)]
@@ -175,3 +175,4 @@
                (con/do-begin (list cluster
                                    task
                                    args)))))
+
