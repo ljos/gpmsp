@@ -123,26 +123,45 @@
                              (repeatedly (- SIZE-OF-POPULATION elitism)
                                          #(recombination generation)))))))
 
-(defn gp-run []
-  (println "Started")
-  (use 'mspacman.individual)
-  (loop [generation (sort-by :fitness >
-                             (pmap #(struct individual %1 (ind/fitness FITNESS-RUNS %1))
-                                   (create-random-population)))
-         n 0]
-    (if (>= n NUMBER-OF-GENERATIONS)
-      (println 'finished)
-      (do (println 'generation n)
-          (spit (format "%s/generations/%s_generation_%tL.txt"
-                        (System/getProperty "user.home")
-                        (string/lower-case (.getHostName (InetAddress/getLocalHost)))
-                        n)
-                (str generation))
-          (println (map #(:fitness %1) generation)
-                   "average:"
-                   (int (/ (reduce + (map #(:fitness %1) generation)) SIZE-OF-POPULATION)))
-          (recur (run-generation generation)
-                 (inc n))))))
+(defn gp-run
+  ([]
+     (println "Started")
+     (use 'mspacman.individual)
+     (loop [generation (sort-by :fitness >
+                                (pmap #(struct individual %1 (ind/fitness FITNESS-RUNS %1))
+                                      (create-random-population)))
+            n 0]
+       (if (>= n NUMBER-OF-GENERATIONS)
+         (println 'finished)
+         (do (println 'generation n)
+             (spit (format "%s/generations/%s_generation_%tL.txt"
+                           (System/getProperty "user.home")
+                           (string/lower-case (.getHostName (InetAddress/getLocalHost)))
+                           n)
+                   (str generation))
+             (println (map #(:fitness %1) generation)
+                      "average:"
+                      (int (/ (reduce + (map #(:fitness %1) generation)) SIZE-OF-POPULATION)))
+             (recur (run-generation generation)
+                    (inc n))))))
+  ([gen-file nb-gen]
+     (println "Started")
+     (use 'mspacman.individual)
+     (loop [generation (run-generation (read-string (slurp gen-file)))
+            n (inc nb-gen)]
+       (if (>= n NUMBER-OF-GENERATIONS)
+         (println 'finished)
+         (do (println 'generation n)
+             (spit (format "%s/generations/%s_generation_%tL.txt"
+                           (System/getProperty "user.home")
+                           (string/lower-case (.getHostName (InetAddress/getLocalHost)))
+                           n)
+                   (str generation))
+             (println (map #(:fitness %1) generation)
+                      "average:"
+                      (int (/ (reduce + (map #(:fitness %1) generation)) SIZE-OF-POPULATION)))
+             (recur (run-generation generation)
+                    (inc n)))))))
 
 (defn run-gen [input]
   (run-generation (read-string input)))
