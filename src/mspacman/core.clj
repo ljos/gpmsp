@@ -3,4 +3,7 @@
             [mspacman.individual :as ind]))
 
 (defn -main [& args]
-  (gp/gp-run args))
+  (if (empty? args)
+    (gp/gp-run)
+    (gp/gp-run (first args)
+               (second args))))
