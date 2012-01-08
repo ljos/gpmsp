@@ -148,7 +148,7 @@
      (println (format "Started at generation %s." nb-gen))
      (use 'mspacman.individual)
      (loop [generation (run-generation (read-string (slurp gen-file)))
-            n (inc nb-gen)]
+            n (inc (read-string nb-gen))]
        (if (>= n NUMBER-OF-GENERATIONS)
          (println 'finished)
          (do (println 'generation n)
