@@ -22,6 +22,8 @@
 (def RAND-INT-RATE 0.20)
 (def EXPR?-RATE 0.80)
 (def FITNESS-RUNS 20)
+(def SELECTION 'fitness-proportionate)
+(def TOURNAMENT-SIZE 5)
 
 (defn atomize [term]
   (cond (= term 'int)
@@ -76,6 +78,14 @@
         (recur (rest pop)
                (+ slice (/ (:fitness (second pop)) F)))))))
 
+(defn tournament-selection [tournament-size population]
+  (first (sort :fitness > (repeatedly tournament-size #(rand-nth population)))))
+
+(defn selection [population]
+  (case SELECTION
+    fitness-proportionate (fitness-proportionate-selection population)
+    tournament-selection (tournament-selection TOURNAMENT-SIZE population)))
+
 (defn select-random-node [tree]
   (loop [loc (zip/seq-zip tree)
          val nil
@@ -101,17 +111,14 @@
                 (expand (rand-nth ind/FUNCTION-LIST)
                         MUTATION-DEPTH))))
 
-(defn testds [inn]
-  (mutation (read-string inn)))
-
 (defn recombination [population]
   (let [r (rand)]
     (cond (< r REPRODUCTION-RATE)
-          ,(reproduction (repeatedly 2 #(:program (fitness-proportionate-selection population))))
+          ,(reproduction (repeatedly 2 #(:program (selection population))))
           (< r (+ REPRODUCTION-RATE MUTATION-RATE))
-          ,(mutation (:program (fitness-proportionate-selection population)))
+          ,(mutation (:program (selection population)))
           :else
-          (:program (fitness-proportionate-selection population)))))
+          (:program (selection population)))))
 
 (defn run-generation [generation]
   (use 'mspacman.individual)
@@ -123,15 +130,11 @@
                              (repeatedly (- SIZE-OF-POPULATION elitism)
                                          #(recombination generation)))))))
 
-(defn gp-run
-  ([]
-     (println "Started")
-     (use 'mspacman.individual)
-     (loop [generation (sort-by :fitness >
-                                (pmap #(struct individual %1 (ind/fitness FITNESS-RUNS %1))
-                                      (create-random-population)))
-            n 0]
-       (if (>= n NUMBER-OF-GENERATIONS)
+(defn- gp-go [gen]
+  (use 'mspacman.individual)
+  (loop [generation gen 
+         n 0]
+    (if (>= n NUMBER-OF-GENERATIONS)
          (println 'finished)
          (do (println 'generation n)
              (spit (format "%s/generations/%s_generation_%tL.txt"
@@ -144,24 +147,17 @@
                       (int (/ (reduce + (map #(:fitness %1) generation)) SIZE-OF-POPULATION)))
              (recur (run-generation generation)
                     (inc n))))))
+
+(defn gp-run
+  ([]
+     (println "Started")
+     (use 'mspacman.individual)
+     (gp-go (sort-by :fitness >
+                     (pmap #(struct individual %1 (ind/fitness FITNESS-RUNS %1))
+                           (create-random-population)))))
   ([gen-file nb-gen]
      (println (format "Started at generation %s." nb-gen))
-     (use 'mspacman.individual)
-     (loop [generation (run-generation (read-string (slurp gen-file)))
-            n (inc (read-string nb-gen))]
-       (if (>= n NUMBER-OF-GENERATIONS)
-         (println 'finished)
-         (do (println 'generation n)
-             (spit (format "%s/generations/%s_generation_%tL.txt"
-                           (System/getProperty "user.home")
-                           (string/lower-case (.getHostName (InetAddress/getLocalHost)))
-                           n)
-                   (str generation))
-             (println (map #(:fitness %1) generation)
-                      "average:"
-                      (int (/ (reduce + (map #(:fitness %1) generation)) SIZE-OF-POPULATION)))
-             (recur (run-generation generation)
-                    (inc n)))))))
+     (gp-go (run-generation (read-string (slurp gen-file))))))
 
 (defn run-gen [input]
   (run-generation (read-string input)))
