@@ -202,10 +202,10 @@
 
 (defn msp-get-area [x y]
   (let [i (if (number? x)
-            (mod (int x) 28)
+            (mod (int x) 36)
             0)
         j (if (number? y)
-            (mod (int y) 36)
+            (mod (int y) 28)
             0)]
     (get-area i j)))
 
@@ -215,18 +215,18 @@
 (defn find-colour [c]
   (loop [x 0
          y 0]
-    (cond (= x 28)
-          ,(recur 0 (inc y))
-          (= y 36)
+    (cond (= y 28)
+          ,(recur (inc x) 0)
+          (= x 36)
           ,(dosync (ref-set x1 -1)
                    (ref-set y1 -1)
                    false)
-          (= (get-area x y) c)
+          (= c (msp-get-area x y))
           ,(dosync (ref-set x1 x)
                    (ref-set y1 y)
                    true)
           :else
-          ,(recur (inc x) y))))
+          ,(recur x (inc y)))))
 
 (defn msp-find-colour [c]
   (if (number? c)
@@ -235,16 +235,16 @@
 
 (defn msp-get-area-leftof [character]
   (do (msp-find-colour character)
-      (msp-get-area (- @x1 1) @y1)))
+      (msp-get-area (+ @x1 1) (- @y1 1))))
 
 (defn msp-get-area-rightof [character]
   (do (msp-find-colour character)
-      (msp-get-area (+ @x1 1) @y1)))
+      (msp-get-area (+ @x1 1) (+ @y1 2))))
 
 (defn msp-get-area-above [character]
   (do (msp-find-colour character)
-      (msp-get-area @x1 (- @y1 1))))
+      (msp-get-area (- @x1 1) @y1)))
 
 (defn msp-get-area-below [character]
   (do (msp-find-colour character)
-      (msp-get-area @x1 (+ @y1 1))))
+      (msp-get-area (+ @x1 2) @y1)))
