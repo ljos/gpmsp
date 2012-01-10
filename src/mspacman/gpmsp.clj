@@ -19,7 +19,7 @@
 (def MUTATION-RATE 0.15)
 (def REPRODUCTION-RATE 0.65)
 (def MUTATION-DEPTH 5)
-(def RAND-INT-RATE 0.20)
+(def RAND-INT-RATE 0.25)
 (def EXPR?-RATE 0.80)
 (def FITNESS-RUNS 10)
 (def SELECTION 'fitness-proportionate)
