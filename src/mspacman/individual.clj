@@ -194,11 +194,25 @@
        (-> msp (.keyReleased KeyEvent/VK_DOWN))))
 
 (defn get-area [x y]
-  (first (reduce #(if (and (not (zero? (key %1)))
-                           (> (val %1) (val %2))) %1 %2)
-                 (frequencies (for [i (range (* y 8) (+ (* y 8) 8))
+  (let [col-freq (frequencies (for [i (range (* y 8) (+ (* y 8) 8))
                                     j (range (* x 8) (+ (* x 8) 8))]
-                                (-> msp (.getPixel i j)))))))
+                                (-> msp (.getPixel i j))))]
+    (cond (and (contains? col-freq mspacman) (< 10 (get col-freq mspacman)))
+          ,mspacman
+          (= {0 22, 16711680 32, 14587719 8, 14606046 2} col-freq)
+          ,0
+          :else
+          ,(loop [colours (keys col-freq)
+                  colour (first colours)]
+             (cond (empty? colours)
+                   ,colour
+                   (or (and (not (zero? (first colours)))
+                            (<= (get col-freq colour)
+                                (get col-freq (first colours))))
+                       (= colour 0))
+                   ,(recur (rest colours) (first colours))
+                   :else
+                   ,(recur (rest colours) colour))))))
 
 (defn msp-get-area [x y]
   (let [i (if (number? x)
@@ -235,11 +249,11 @@
 
 (defn msp-get-area-leftof [character]
   (do (msp-find-colour character)
-      (msp-get-area (+ @x1 1) (- @y1 1))))
+      (msp-get-area @x1 (- @y1 1))))
 
 (defn msp-get-area-rightof [character]
   (do (msp-find-colour character)
-      (msp-get-area (+ @x1 1) (+ @y1 2))))
+      (msp-get-area @x1 (+ @y1 2))))
 
 (defn msp-get-area-above [character]
   (do (msp-find-colour character)
@@ -247,4 +261,4 @@
 
 (defn msp-get-area-below [character]
   (do (msp-find-colour character)
-      (msp-get-area (+ @x1 2) @y1)))
+      (msp-get-area (+ @x1 1) @y1)))
