@@ -130,10 +130,10 @@
                              (repeatedly (- SIZE-OF-POPULATION elitism)
                                          #(recombination generation)))))))
 
-(defn- gp-go [gen]
+(defn- gp-go [gen gen-nb]
   (use 'mspacman.individual)
   (loop [generation gen 
-         n 0]
+         n gen-nb]
     (if (>= n NUMBER-OF-GENERATIONS)
          (println 'finished)
          (do (println 'generation n)
@@ -154,10 +154,10 @@
      (use 'mspacman.individual)
      (gp-go (sort-by :fitness >
                      (pmap #(struct individual %1 (ind/fitness FITNESS-RUNS %1))
-                           (create-random-population)))))
+                           (create-random-population))) 0))
   ([gen-file nb-gen]
      (println (format "Started at generation %s." nb-gen))
-     (gp-go (run-generation (read-string (slurp gen-file))))))
+     (gp-go (run-generation (read-string (slurp gen-file))) nb-gen)))
 
 (defn run-gen [input]
   (run-generation (read-string input)))
