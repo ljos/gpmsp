@@ -236,7 +236,9 @@
                       "hostname"])))
 
 (defn contrl []
-  (let [out (doall (map #(assoc @% :status (await-process %))
+  (let [out (doall (map #(let [execp @%
+                               status (await-process %)]
+                           (assoc execp :status status))
                         (map distribute machines)))]
     (shutdown-agents)
     (map #(str (:stdout %) (:stderr %) (:status %)) (remove #(not= (:status %) 0) out))))
