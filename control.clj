@@ -143,6 +143,9 @@
 (deftask :kill-gp "Ends the gp run (prematurely)" []
   (ssh (run "killall java")))
 
+(deftask :test-for-user
+  (ssh (run "~/.scripts/check_for_user")))
+
 (deftask :run-gen "" [input]
   (ssh (cd "mspacman"
            (run (format "~/.lein/bin/lein run -m mspacman.gpmsp/run-gen '%s'"
