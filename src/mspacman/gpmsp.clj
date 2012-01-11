@@ -162,15 +162,14 @@
 (defn run-gen [input]
   (run-generation (read-string input)))
 
-(defn run-control [cluster task args]
+(defn run-control [cluster task]
   (use 'control.core)
   (use 'control.commands)
   (load-file "control.clj")
   (map #(read-string (:stdout %1))
        (filter #(zero? (:status %1))
                (con/do-begin (list cluster
-                                   task
-                                   args)))))
+                                   task)))))
 
 (defn contrl []
   (loop [machines '("mn121033"	
@@ -216,7 +215,7 @@
           :addresses ~(vec (list (first machines))))
         (recur (rest machines)
                (inc n)))))
-  (map #(run-control % 'test-for-user "")
+  (map #(run-control % 'test-for-user)
        '("mn121033"	
          "mn121034"	
          "mn121035"	
