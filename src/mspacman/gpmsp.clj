@@ -173,7 +173,7 @@
 
 (defn contrl []
   (let [out (doall
-             (map #(binding [con/*enable-logging* true]
+             (pmap #(binding [con/*enable-logging* false]
                       (exec % "bjo013" (list "ssh" "-o ConnectTimeout=2"(format "bjo013@%s" %) "hostname")))
                    '("mn121033"	
                      "mn121034"	
@@ -209,5 +209,5 @@
                      "mn121075"	
                      "mn121077")))]
     (shutdown-agents)
-    (map :stdout out)))
+    (map :stdout (remove (not= (:status %) 0) out))))
 
