@@ -174,7 +174,7 @@
 (defn contrl []
   (let [out (doall
              (map #(binding [con/*enable-logging* true]
-                      (exec % "bjo013" (list "ssh" (format "bjo013@%s -o ConnectTimeout=2" %) "hostname")))
+                      (exec % "bjo013" (list "ssh" "-o ConnectTimeout=2"(format "bjo013@%s" %) "hostname")))
                    '("mn121033"	
                      "mn121034"	
                      "mn121035"	
