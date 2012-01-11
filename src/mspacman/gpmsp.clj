@@ -191,12 +191,21 @@
                "mn121104" "mn121105"	
                "mn121107"])
 
+(defn distribute [machine]
+  (binding [con/*enable-logging* true
+            magent (agent machine)
+            f (fn [ag]
+                (exec ag "bjo013"
+                      (list "ssh" "-o ConnectTimeout=2"(format "bjo013@%s" ag)
+                            "cd mspacman;" "~/.scripts/check_for_user;"
+                            "~/.lein/bin/lein run -m mspacman.gpmsp/create-random-individual"))
+                )]
+    (send-off magent f)
+    @magent))
+
 (defn contrl []
   (let [out (doall
-             (map #(binding [con/*enable-logging* true]
-                     (exec % "bjo013"
-                           (list "ssh" "-o ConnectTimeout=2"(format "bjo013@%s" %)
-                                 "cd mspacman; ~/.scripts/check_for_user; ~/.lein/bin/lein run -m mspacman.gpmsp/create-random-individual")))
+             (pmap distribute
                   machines))]
     (shutdown-agents)
     (remove #(= (:status %) 0) out)))
