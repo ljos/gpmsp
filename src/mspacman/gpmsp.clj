@@ -224,12 +224,22 @@
 
 (defn distribute [machine]
   (spawn (into-array String
-                     (list "ssh" "-o ConnectTimeout=2" (format "bjo013@%s" machine)
-                           "cd mspacman; ~/.scripts/check_for_user; sleep 10"))))
+                     ["ssh" "-o ConnectTimeout=2" (format "bjo013@%s" machine)
+                      "cd mspacman; ~/.scripts/check_for_user; sleep 10"])))
 
 (defn contrl []
   (let [out (map #(assoc % :status (await-process %))
-                 (map spawn machines))]
+                 (map distribute machines))]
     (shutdown-agents)
     out))
+
+(defn exec2 [host user cmdcol]
+  (println cmdcol)
+  (let [pagent (spawn (println (into-array String (remove nil? cmdcol))))
+        status (await-process pagent)
+        execp @pagent]
+    (log-with-tag host "stdout" (:stdout execp))
+    (log-with-tag host "stderr" (:stderr execp))
+    (log-with-tag host "exit" status)
+    (assoc execp :status status)))
 
