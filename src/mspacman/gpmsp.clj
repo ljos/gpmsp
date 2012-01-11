@@ -238,5 +238,5 @@
   (let [out (doall (map #(assoc @% :status (await-process %))
                         (map distribute machines)))]
     (shutdown-agents)
-    (remove #(not= (:status %) 0) out)))
+    (map #(str (:stdout :stderr :status)) (remove #(not= (:status %) 0) out))))
 
