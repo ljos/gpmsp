@@ -201,12 +201,12 @@
                             "~/.lein/bin/lein run -m mspacman.gpmsp/create-random-individual"))
                 )]
     (send-off magent f)
-    @magent))
+    (magent)))
 
 (defn contrl []
   (let [out (doall
              (pmap distribute
                   machines))]
     (shutdown-agents)
-    (remove #(= (:status %) 0) out)))
+    (remove #(= (:status @%) 0) out)))
 
