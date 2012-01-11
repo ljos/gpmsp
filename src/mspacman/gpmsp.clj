@@ -229,7 +229,7 @@
                            "sleep 10"))))
 
 (defn contrl []
-  (let [out (map #(assoc execp :status (await-process %))
+  (let [out (map #(assoc % :status (await-process %))
                  (map spawn machines))]
     (shutdown-agents)
     out))
