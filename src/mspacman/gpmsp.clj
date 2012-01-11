@@ -223,12 +223,14 @@
     (.waitFor process)))
 
 (defn distribute [machine]
+  (println (str "Started " machine))
   (spawn (into-array String
                      ["ssh" "-o ConnectTimeout=2" (format "bjo013@%s" machine)
-                      "cd mspacman; ~/.scripts/check_for_user; sleep 10"])))
+                      "cd mspacman; ~/.scripts/check_for_user; hostname"]))
+  (pritnln (str "Finished spawning " machine)))
 
 (defn contrl []
-  (let [out (map #(assoc % :status (await-process %))
+  (let [out (map #(do (println %) (assoc % :status (await-process %)))
                  (map distribute machines))]
     (shutdown-agents)
     out))
