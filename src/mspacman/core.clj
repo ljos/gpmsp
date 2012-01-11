@@ -3,7 +3,10 @@
             [mspacman.individual :as ind]))
 
 (defn -main [& args]
-  (if (empty? args)
-    (gp/gp-run)
-    (gp/gp-run (first args)
-               (second args))))
+  (cond (empty? args)
+        ,(gp/gp-run)
+        (= 1 (count args))
+        ,(gp/contrl)
+        :else
+        (gp/gp-run (first args)
+                   (second args))))
