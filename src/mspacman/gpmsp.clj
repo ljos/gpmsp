@@ -174,14 +174,14 @@
 (defn contrl []
   (let [out (doall (pmap #(binding [con/*enable-logging* false]
                       (exec % "bjo013" (list "date")))
-                   '( ;;"mn121033"	
-                     ;;"mn121034"	
-                     ;;"mn121035"	
-                     ;;"mn121036"	
-                     ;;"mn121037"	
-                     ;;"mn121038"	
+                   '("mn121033"	
+                     "mn121034"	
+                     "mn121035"	
+                     "mn121036"	
+                     "mn121037"	
+                     "mn121038"	
                      "mn121039"	
-                     ;;"mn121040"	
+                     "mn121040"	
                      "mn121041"	
                      "mn121042"	
                      "mn121043"	
