@@ -173,7 +173,7 @@
 
 (defn contrl []
   (pmap #(binding [con/*enable-logging* false]
-           (exec % "bjo013" (list (format "date"))))
+           (exec % "bjo013" (list "date")))
         '(;;"mn121033"	
           ;;"mn121034"	
           ;;"mn121035"	
@@ -206,5 +206,5 @@
           "mn121073"	
           "mn121074"	
           "mn121075"	
-          "mn121077"))))
+          "mn121077")))
 
