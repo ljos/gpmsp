@@ -191,18 +191,46 @@
                "mn121104" "mn121105"	
                "mn121107"])
 
+(def ^{:dynamic :private} *runtime* (Runtime/getRuntime))
+
+(defstruct ExecProcess :process :in :err :stdout :stderr :status)
+
+(defn- spawn
+  [cmdarray]
+  (let [process (.exec *runtime* cmdarray)
+        in (reader (.getInputStream process) :encoding "UTF-8")
+        err (reader (.getErrorStream process) :encoding "UTF-8")
+        execp (struct ExecProcess process in err)
+        pagent (agent execp)]
+    (send-off pagent
+              (fn [exec-process]
+                (assoc exec-process :stdout (str (:stdout exec-process)
+                                                 (join "\r\n" (doall (line-seq in)))))))
+    (send-off pagent
+              (fn [exec-process]
+                (assoc exec-process :stderr (str (:stderr exec-process)
+                                                 (join "\r\n" (doall (line-seq err)))))))
+    pagent))
+
+(defn- await-process [pagent]
+  (let [execp @pagent
+        process (:process execp)
+        in (:in execp)
+        err (:err execp)]
+    (await pagent)
+    (.close in)
+    (.close err)
+    (.waitFor process)))
+
 (defn distribute [machine]
-  (binding [con/*enable-logging* true]
-    (println 'begun)
-    (exec machine "bjarte"
-          (list "ssh" "-o ConnectTimeout=2"(format "bjo013@%s" machine)
-                "cd mspacman;" "~/.scripts/check_for_user;"
-                "sleep 10"))))
+  (spawn (into-array String
+                     (list "ssh" "-o ConnectTimeout=2"(format "bjo013@%s" machine)
+                           "cd mspacman;" "~/.scripts/check_for_user;"
+                           "sleep 10"))))
 
 (defn contrl []
-  (let [out (map await (doall
-              (map #(send-off % distribute)
-                   (map agent machines))))]
+  (let [out (map #(assoc execp :status (await-process %))
+                 (map spawn machines))]
     (shutdown-agents)
-    (map await out)))
+    out))
 
