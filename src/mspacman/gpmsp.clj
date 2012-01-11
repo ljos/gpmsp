@@ -209,5 +209,5 @@
                      "mn121075"	
                      "mn121077")))]
     (shutdown-agents)
-    (map :stdout (remove (not= (:status %) 0) out))))
+    (map :stdout (remove #(not= (:status %) 0) out))))
 
