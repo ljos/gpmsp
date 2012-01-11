@@ -3,7 +3,8 @@
             [clojure.string :as string]
             [clojure.data.zip :as dzip])
   (:use [mspacman.individual :as ind]
-        [clojure.java.io :only [reader]])
+        [clojure.java.io :only [reader]]
+        [clojure.string :only [join]])
   (import java.net.InetAddress))
 
 (defstruct individual
