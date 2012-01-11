@@ -194,11 +194,9 @@
 (defn contrl []
   (let [out (doall
              (map #(binding [con/*enable-logging* true]
-                     (let [a (agent %)]
-                       (send-off a
-                                 (fn [b] (exec b "bjo013"
-                                        (list "ssh" "-o ConnectTimeout=2"(format "bjo013@%s" b)
-                                              "cd mspacman; ~/.scripts/check_for_user; ~/.lein/bin/lein run -m mspacman.gpmsp/create-random-individual"))))))
+                     (exec % "bjo013"
+                           (list "ssh" "-o ConnectTimeout=2"(format "bjo013@%s" %)
+                                 "cd mspacman; ~/.scripts/check_for_user; ~/.lein/bin/lein run -m mspacman.gpmsp/create-random-individual")))
                   machines))]
     (shutdown-agents)
     (remove #(= (:status %) 0) out)))
