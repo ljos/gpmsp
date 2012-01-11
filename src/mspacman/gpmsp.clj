@@ -203,5 +203,5 @@
              (map #(send-off (agent %) distribute)
                   machines))]
     (shutdown-agents)
-    out))
+    (map agent-error out)))
 
