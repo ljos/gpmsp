@@ -232,7 +232,7 @@
 (defn distribute [machine]
   (spawn (into-array String
                      ["ssh" "-o ConnectTimeout=2" (format "bjo013@%s" machine)
-                      "cd mspacman; hostname"])))
+                      "hostname"])))
 
 (defn contrl []
   (let [out (doall (map #(assoc @% :status (await-process %))
