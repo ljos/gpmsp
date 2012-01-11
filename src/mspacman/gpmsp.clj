@@ -189,7 +189,14 @@
                "mn121100" "mn121101"	
                "mn121102" "mn121103"	
                "mn121104" "mn121105"	
-               "mn121107"])
+               "mn121107" "mn190142"	
+               "mn190143" "mn190144"	
+               "mn190145" "mn190146"	
+               "mn190147" "mn190148"	
+               "mn190149" "mn190150"	
+               "mn190151" "mn190153"	
+               "mn190154" "mn190155"	
+               "mn190156" "mn190157"])
 
 (def ^{:dynamic :private} *runtime* (Runtime/getRuntime))
 
@@ -225,11 +232,11 @@
 (defn distribute [machine]
   (spawn (into-array String
                      ["ssh" "-o ConnectTimeout=2" (format "bjo013@%s" machine)
-                      "cd mspacman; ~/.scripts/check_for_user; hostname"])))
+                      "cd mspacman; hostname"])))
 
 (defn contrl []
   (let [out (doall (map #(assoc @% :status (await-process %))
                         (map distribute machines)))]
     (shutdown-agents)
-    out))
+    (map :status out)))
 
