@@ -125,7 +125,8 @@
                       (or expr expr)
                       ;;(and expr+)
                       (and expr expr)
-                      )
+                      (msp-ghost? int)
+                      (msp-wall? int))
                     ATOM-LIST))
 
 (def ^:private x1 (ref 0))
@@ -141,8 +142,8 @@
 (def sue 16758855)
 (def pills 14606046)
 (def walkway 0)
-(def wall1  14587719)
-(def wall2 16759006)
+(def wall1 14587719)
+;;(def wall2 16759006)
 (def wall3 4700382)
 (def wall4 2171358)
 (def wall5 65280)
@@ -151,28 +152,28 @@
 (def wall8 14606046)
 
 (defn msp> [& keys]
-  (let [l (remove #(not (instance? Number %1))
+  (let [l (remove #(not (instance? Number %))
                   keys)]
     (if (empty? l)
       true
       (apply > l))))
 
 (defn msp< [& keys]
-  (let [l (remove #(not (instance? Number %1))
+  (let [l (remove #(not (instance? Number %))
                   keys)]
     (if (empty? l)
       true
       (apply > l))))
 
 (defn msp+ [& keys]
-  (let [l (remove #(not (instance? Number %1))
+  (let [l (remove #(not (instance? Number %))
                   keys)]
     (if (empty? l)
       0
       (apply + l))))
 
 (defn msp- [& keys]
-  (let [l (remove #(not (instance? Number %1))
+  (let [l (remove #(not (instance? Number %))
                   keys)]
     (if (empty? l)
       0
@@ -270,3 +271,9 @@
 (defn msp-get-area-below [character]
   (do (msp-find-colour character)
       (msp-get-area (+ @x1 1) @y1)))
+
+(defn msp-ghost? [character]
+  (some #(= character %) (list blinky inky pinky sue)))
+
+(defn msp-wall? [character]
+  (some #(= character %) (list wall1 wall3 wall4 wall4 wall6 wall7 wall8)))

@@ -125,7 +125,7 @@
   (let [elitism (* SIZE-OF-POPULATION ELITISM-RATE)]
     (sort-by :fitness >
              (pmap  #(struct individual %1 (ind/fitness FITNESS-RUNS %1))
-                    (concat  (map #(:program %1)
+                    (concat  (map #(:program %)
                                   (take elitism generation))
                              (repeatedly (- SIZE-OF-POPULATION elitism)
                                          #(recombination generation)))))))
@@ -142,9 +142,9 @@
                            (string/lower-case (.getHostName (InetAddress/getLocalHost)))
                            n)
                    (str generation))
-             (println (map #(:fitness %1) generation)
+             (println (map #(:fitness %) generation)
                       "average:"
-                      (int (/ (reduce + (map #(:fitness %1) generation)) SIZE-OF-POPULATION)))
+                      (int (/ (reduce + (map #(:fitness %) generation)) SIZE-OF-POPULATION)))
              (recur (run-generation generation)
                     (inc n))))))
 
