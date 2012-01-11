@@ -203,5 +203,5 @@
              (pmap distribute
                   machines))]
     (shutdown-agents)
-    (remove #(= (:status @%) 0) out)))
+    (remove #(= (:status %) 0) out)))
 
