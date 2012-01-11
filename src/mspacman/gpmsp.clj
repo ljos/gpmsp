@@ -215,7 +215,7 @@
           :addresses ~(vec (list (first machines))))
         (recur (rest machines)
                (inc n)))))
-  (doall (pmap #(run-control % 'test-for-user)
+  (doall (map #(run-control % 'test-for-user)
          '(;;"mn121033"	
            ;;"mn121034"	
            ;;"mn121035"	
