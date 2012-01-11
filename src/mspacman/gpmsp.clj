@@ -172,7 +172,8 @@
                                    task)))))
 
 (defn contrl []
-  (map #(exec % "bjo013" (list (format "date")))
+  (map #(binding [con/*enable-logging* false]
+          (exec % "bjo013" (list (format "date"))))
         '(;;"mn121033"	
           ;;"mn121034"	
           ;;"mn121035"	
