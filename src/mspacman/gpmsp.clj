@@ -223,11 +223,9 @@
     (.waitFor process)))
 
 (defn distribute [machine]
-  (println (str "Started " machine))
   (spawn (into-array String
                      ["ssh" "-o ConnectTimeout=2" (format "bjo013@%s" machine)
-                      "cd mspacman; ~/.scripts/check_for_user; hostname"]))
-  (println (str "Finished spawning " machine)))
+                      "cd mspacman; ~/.scripts/check_for_user; hostname"])))
 
 (defn contrl []
   (let [out (doall (map await-process
