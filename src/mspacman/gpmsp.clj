@@ -227,7 +227,7 @@
   (spawn (into-array String
                      ["ssh" "-o ConnectTimeout=2" (format "bjo013@%s" machine)
                       "cd mspacman; ~/.scripts/check_for_user; hostname"]))
-  (pritnln (str "Finished spawning " machine)))
+  (println (str "Finished spawning " machine)))
 
 (defn contrl []
   (let [out (map #(do (println %) (assoc % :status (await-process %)))
