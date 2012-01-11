@@ -231,7 +231,8 @@
 
 (defn distribute [machine]
   (spawn (into-array String
-                     ["ssh" "-o ConnectTimeout=2" (format "bjo013@%s" machine)
+                     ["ssh" "-o ConnectTimeout=2 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+                      (format "bjo013@%s" machine)
                       "hostname"])))
 
 (defn contrl []
