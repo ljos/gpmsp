@@ -224,9 +224,8 @@
 
 (defn distribute [machine]
   (spawn (into-array String
-                     (vec "ssh" "-o ConnectTimeout=2" (format "bjo013@%s" machine)
-                           "cd mspacman;" "~/.scripts/check_for_user;"
-                           "sleep 10"))))
+                     (list "ssh" "-o ConnectTimeout=2" (format "bjo013@%s" machine)
+                           "cd mspacman; ~/.scripts/check_for_user; sleep 10"))))
 
 (defn contrl []
   (let [out (map #(assoc % :status (await-process %))
