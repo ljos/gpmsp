@@ -173,7 +173,7 @@
 
 (defn contrl []
   (let [out (doall
-             (pmap #(binding [con/*enable-logging* false]
+             (pmap #(binding [con/*enable-logging* true]
                       (exec % "bjo013" (list "ssh" (format "bjo013@%s" %) "hostname")))
                    '("mn121033"	
                      "mn121034"	
