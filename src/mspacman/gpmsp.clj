@@ -233,13 +233,3 @@
     (shutdown-agents)
     out))
 
-(defn exec2 [host user cmdcol]
-  (println cmdcol)
-  (let [pagent (spawn (println (into-array String (remove nil? cmdcol))))
-        status (await-process pagent)
-        execp @pagent]
-    (log-with-tag host "stdout" (:stdout execp))
-    (log-with-tag host "stderr" (:stderr execp))
-    (log-with-tag host "exit" status)
-    (assoc execp :status status)))
-
