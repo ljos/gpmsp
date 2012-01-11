@@ -233,7 +233,7 @@
   (spawn (into-array String
                      ["ssh" "-o ConnectTimeout=2" "-o StrictHostKeyChecking=no"
                       (format "bjo013@%s" machine)
-                      "hostname"])))
+                      "echo ''; hostname"])))
 
 (defn contrl []
   (let [out (doall (map #(let [execp @%
@@ -241,5 +241,5 @@
                            (assoc execp :status status))
                         (map distribute machines)))]
     (shutdown-agents)
-    (count (remove #(not= (:status %) 0) out))))
+    (map :stdout (remove #(not= (:status %) 0) out))))
 
