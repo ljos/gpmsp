@@ -216,12 +216,12 @@
         (recur (rest machines)
                (inc n)))))
   (doall (pmap #(run-control % 'test-for-user)
-         '("mn121033"	
-           "mn121034"	
-           "mn121035"	
-           "mn121036"	
-           "mn121037"	
-           "mn121038"	
+         '(;;"mn121033"	
+           ;;"mn121034"	
+           ;;"mn121035"	
+           ;;"mn121036"	
+           ;;"mn121037"	
+           ;;"mn121038"	
            "mn121039"	
            "mn121040"	
            "mn121041"	
