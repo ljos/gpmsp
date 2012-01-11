@@ -199,9 +199,9 @@
                 "sleep 10"))))
 
 (defn contrl []
-  (let [out (doall
-             (map #(send-off (agent %) distribute)
-                  machines))]
+  (let [out (map await (doall
+              (map #(send-off (agent %) distribute)
+                   machines)))]
     (shutdown-agents)
-    (map agent-error out)))
+    (map await out)))
 
