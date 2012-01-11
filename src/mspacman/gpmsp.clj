@@ -208,7 +208,7 @@
        n 0]
   (when (not (empty? machines))
     (do (defcluster (keyword (first machines))
-          :parallel true
+          :parallel false
           :user "bjo013"
           :log true
           :results true
