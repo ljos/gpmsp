@@ -193,15 +193,16 @@
 
 (defn distribute [machine]
   (binding [con/*enable-logging* true]
-    (exec machine "bjo013"
+    (println 'begun)
+    (exec machine "bjarte"
           (list "ssh" "-o ConnectTimeout=2"(format "bjo013@%s" machine)
                 "cd mspacman;" "~/.scripts/check_for_user;"
                 "sleep 10"))))
 
 (defn contrl []
   (let [out (map await (doall
-              (map #(send-off (agent %) distribute)
-                   machines)))]
+              (map #(send-off % distribute)
+                   (map agent machines))))]
     (shutdown-agents)
     (map await out)))
 
