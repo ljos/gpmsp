@@ -200,7 +200,7 @@
 
 (defn contrl []
   (let [out (doall
-             (pmap distribute
+             (map #(send-off (agent %) distribute)
                   machines))]
     (shutdown-agents)
     (remove #(= (:status %) 0) out)))
