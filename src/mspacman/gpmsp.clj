@@ -172,7 +172,7 @@
                                    task)))))
 
 (defn contrl []
-  (pmap #(exec "localhost" "bjo013" "ssh bjo013@%s 'date'")
+  (pmap #(exec "localhost" "bjo013" (format "ssh bjo013@%s 'date'" %))
         '(;;"mn121033"	
           ;;"mn121034"	
           ;;"mn121035"	
