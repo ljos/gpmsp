@@ -228,7 +228,7 @@
                       "cd mspacman; ~/.scripts/check_for_user; hostname"])))
 
 (defn contrl []
-  (let [out (doall (map await-process
+  (let [out (doall (map #(assoc % :status (await-process %))
                         (map distribute machines)))]
     (shutdown-agents)
     out))
