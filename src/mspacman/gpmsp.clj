@@ -196,7 +196,7 @@
     (exec machine "bjo013"
           (list "ssh" "-o ConnectTimeout=2"(format "bjo013@%s" machine)
                 "cd mspacman;" "~/.scripts/check_for_user;"
-                "~/.lein/bin/lein run -m mspacman.gpmsp/create-random-individual"))))
+                "sleep 10"))))
 
 (defn contrl []
   (let [out (doall
