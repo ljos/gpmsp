@@ -203,5 +203,5 @@
              (map #(send-off (agent %) distribute)
                   machines))]
     (shutdown-agents)
-    (remove #(= (:status %) 0) out)))
+    out))
 
