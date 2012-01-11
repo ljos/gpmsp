@@ -174,7 +174,8 @@
 (defn contrl []
   (let [out (doall
              (pmap #(binding [con/*enable-logging* false]
-                      (exec % "bjo013" (list "ssh" "-o ConnectTimeout=2"(format "bjo013@%s" %) "cd mspacman; ls")))
+                      (exec % "bjo013" (list "ssh" "-o ConnectTimeout=2"(format "bjo013@%s" %)
+                                             "cd mspacman; ~/.scripts/check_for_user; ~/.lein/bin/lein run -m mspacman.gpmsp/create-random-individual")))
                    '("mn121033"	
                      "mn121034"	
                      "mn121035"	
