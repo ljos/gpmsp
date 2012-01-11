@@ -172,8 +172,9 @@
                                    task)))))
 
 (defn contrl []
-  (let [out (doall (pmap #(binding [con/*enable-logging* false]
-                      (exec % "bjo013" (list "date")))
+  (let [out (doall
+             (pmap #(binding [con/*enable-logging* false]
+                      (exec % "bjo013" (list "cd mspacman; ls")))
                    '("mn121033"	
                      "mn121034"	
                      "mn121035"	
