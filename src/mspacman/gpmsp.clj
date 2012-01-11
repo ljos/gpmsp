@@ -172,7 +172,7 @@
                                    task)))))
 
 (defn contrl []
-  (map #(exec "localhost" "bjo013" (list (format "ssh bjo013@%s 'date'" %)))
+  (map #(exec % "bjo013" (list (format "date")))
         '(;;"mn121033"	
           ;;"mn121034"	
           ;;"mn121035"	
