@@ -230,7 +230,7 @@
   (println (str "Finished spawning " machine)))
 
 (defn contrl []
-  (let [out (doall (map #(do (assoc % :status (await-process %)))
+  (let [out (doall (map await-process
                         (map distribute machines)))]
     (shutdown-agents)
     out))
