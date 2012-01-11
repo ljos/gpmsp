@@ -92,7 +92,7 @@
               ;;"mn121040"
               ])
 
-(loop [machines '("mn121033"	
+ (loop [machines '("mn121033"	
                   "mn121034"	
                   "mn121035"	
                   "mn121036"	
@@ -132,7 +132,7 @@
           :user "bjo013"
           :log true
           :results true
-          :addresses (vec (list (first machines))))
+          :addresses ~(vec (list (first machines))))
         (recur (rest machines)
                (inc n)))))
 
