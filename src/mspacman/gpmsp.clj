@@ -224,7 +224,7 @@
 
 (defn distribute [machine]
   (spawn (into-array String
-                     (list "ssh" "-o ConnectTimeout=2"(format "bjo013@%s" machine)
+                     (vec "ssh" "-o ConnectTimeout=2" (format "bjo013@%s" machine)
                            "cd mspacman;" "~/.scripts/check_for_user;"
                            "sleep 10"))))
 
