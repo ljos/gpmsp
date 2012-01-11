@@ -241,5 +241,5 @@
                            (assoc execp :status status))
                         (map distribute machines)))]
     (shutdown-agents)
-    (map #(str (:stdout %) (:stderr %) (:status %)) (remove #(not= (:status %) 0) out))))
+    (count (remove #(not= (:status %) 0) out))))
 
