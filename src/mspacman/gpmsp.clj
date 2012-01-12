@@ -164,15 +164,16 @@
 
 (defn gp-over-cluster []
   (println "Started")
-  (let [machines (filter #(= 0 (:status (con/send-for-status %)))
-                         (map #(send-to-machine % "~/.scripts/check_for_user; date")
+  (let [machines (filter #(= 0 (:status (con/run-task %)))
+                         (map #(con/send-to-machine % "~/.scripts/check_for_user; date")
                               con/ALL-MACHINES))
         population (map #(individual % 0) (create-random-population))
         out (map con/run-task
                  (for [machine machines
                        batch (partition (/ SIZE-OF-POPULATION (count machines)) population)]
-                   (send-to-machine machine (str "cd mspacman; ~/.lein/bin/lein -m mspacman.gpmsp/run-gen "
-                                                 batch))))]
+                   (con/send-to-machine machine
+                                        (str "cd mspacman; ~/.lein/bin/lein -m mspacman.gpmsp/run-gen "
+                                             batch))))]
     (shutdown-agents)
     out))
 
