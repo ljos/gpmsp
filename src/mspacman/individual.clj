@@ -106,10 +106,10 @@
                       (msp-find-colour int)
                       (msp-get-area expr expr)
                       (msp-get-area int int)
-                      (msp-get-area-below int)
-                      (msp-get-area-above int)
-                      (msp-get-area-leftof int)
-                      (msp-get-area-rightof int)
+                      (msp-get-area-below int int)
+                      (msp-get-area-above int int)
+                      (msp-get-area-leftof int int)
+                      (msp-get-area-rightof int int)
                       (if expr expr expr?)
                       ;;(= expr+)
                       (= expr expr)
@@ -256,21 +256,21 @@
     (find-colour c)
     false))
 
-(defn msp-get-area-leftof [character]
+(defn msp-get-area-leftof [place character]
   (do (msp-find-colour character)
-      (msp-get-area @x1 (- @y1 1))))
+      (msp-get-area @x1 (- @y1 (+ 1 place)))))
 
-(defn msp-get-area-rightof [character]
+(defn msp-get-area-rightof [place character]
   (do (msp-find-colour character)
-      (msp-get-area @x1 (+ @y1 2))))
+      (msp-get-area @x1 (+ @y1 (+ 2 place)))))
 
-(defn msp-get-area-above [character]
+(defn msp-get-area-above [place character]
   (do (msp-find-colour character)
-      (msp-get-area (- @x1 1) @y1)))
+      (msp-get-area (- @x1 (+ 1 place)) @y1)))
 
-(defn msp-get-area-below [character]
+(defn msp-get-area-below [place character]
   (do (msp-find-colour character)
-      (msp-get-area (+ @x1 1) @y1)))
+      (msp-get-area (+ @x1 (+ 1 place)) @y1)))
 
 (defn msp-ghost? [character]
   (some #(= character %) (list blinky inky pinky sue)))
