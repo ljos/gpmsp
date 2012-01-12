@@ -47,7 +47,7 @@
   (let [process (.exec *runtime* cmdarray)
         in (reader (.getInputStream process) :encoding "UTF-8")
         err (reader (.getErrorStream process) :encoding "UTF-8")
-        execp (struct ExecProcess process in err)
+        execp (struct ExecProcess machine process in err)
         pagent (agent execp)]
     (send-off pagent
               (fn [exec-process]
@@ -78,7 +78,8 @@
     out))
 
 (defn send-to-machine [machine task]
-  (assoc (spawn (into-array String
-                            ["ssh" "-o ConnectTimeout=2" "-o StrictHostKeyChecking=no"
-                             (format "bjo013@%s" machine)
-                             task])) :machine machine))
+  (spawn machine
+         (into-array String
+                     ["ssh" "-o ConnectTimeout=2" "-o StrictHostKeyChecking=no"
+                      (format "bjo013@%s" machine)
+                      task])))
