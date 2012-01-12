@@ -164,7 +164,7 @@
 
 (defn gp-over-cluster []
   (println "Started")
-  (let [machines (filter #(= 0 (:status (con/run-task %)))
+  (let [machines (filter #(= 0 (:status @(con/run-task %)))
                          (map #(con/send-to-machine % "~/.scripts/check_for_user; date")
                               con/ALL-MACHINES))
         population (map #(individual % 0) (create-random-population))
