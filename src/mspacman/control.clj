@@ -82,9 +82,3 @@
                             ["ssh" "-o ConnectTimeout=2" "-o StrictHostKeyChecking=no"
                              (format "bjo013@%s" machine)
                              task])) :machine machine))
-
-(defn contrl [machines]
-  (let [out (doall (map run-task
-                        (map #(send-to-machine % task) machines)))]
-    (shutdown-agents)
-    (map :stdout (remove #(not= (:status %) 0) out))))
