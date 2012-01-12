@@ -42,8 +42,7 @@
                    "mn190155" "mn190156"
                    "mn190157"])
 
-(defn- spawn
-  [cmdarray]
+(defn- spawn [machine cmdarray]
   (let [process (.exec *runtime* cmdarray)
         in (reader (.getInputStream process) :encoding "UTF-8")
         err (reader (.getErrorStream process) :encoding "UTF-8")
