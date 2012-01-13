@@ -69,15 +69,14 @@
     (.waitFor process)))
 
 (defn run-task [pagent]
-  (println "Started task at " (:machine pagent))
+  (println "Started task at " (:machine @pagent))
   (let [execp @pagent
         status (await-process pagent)
         out (assoc execp :status status)]
-    (println "Ended task at "  (:machine pagent))
+    (println "Ended task at "  (:machine execp))
     out))
 
 (defn send-to-machine [machine task]
-  (println machine)
   (spawn machine
          (into-array String
                      ["ssh" "-o ConnectTimeout=2" "-o StrictHostKeyChecking=no"
