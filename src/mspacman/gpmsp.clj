@@ -172,10 +172,10 @@
         out (doall (map con/run-task
                         (for [machine machines
                               batch (partition (/ SIZE-OF-POPULATION (count machines)) population)]
-                          (println batch)
-                          (con/send-to-machine machine
-                                               (str "cd mspacman; ~/.lein/bin/lein -m mspacman.gpmsp/run-gen "
-                                                    batch)))))]
+                          (do (println batch)
+                              (con/send-to-machine machine
+                                                   (str "cd mspacman; ~/.lein/bin/lein -m mspacman.gpmsp/run-gen "
+                                                        batch))))))]
     (shutdown-agents)
     out))
 
