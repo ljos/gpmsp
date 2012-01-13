@@ -170,7 +170,7 @@
                                            (map #(con/send-to-machine % (format "~/.scripts/check_for_user;"))
                                                 con/ALL-MACHINES)))))
         population (map #(struct individual % 0) (create-random-population))
-        out (partition (/ SIZE-OF-POPULATION (count machines)) population)]
+        out (partition (int (/ SIZE-OF-POPULATION (count machines))) population)]
     (shutdown-agents)
     out))
 
