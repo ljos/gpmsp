@@ -163,14 +163,14 @@
   (sort-by :fitness > (pmap #(assoc % :fitness (ind/fitness FITNESS-RUNS (:program %)))
                             (read-string input))))
 
-(defn gp-over-cluster []
+(defn gp-over-cluster [pop]
   (println "Started")
   (let [machines  (doall (map :machine
                               (filter #(= 0 (:status %))
                                       (map con/run-task
                                            (map #(con/send-to-machine % (format "~/.scripts/check_for_user;"))
                                                 con/ALL-MACHINES)))))
-        population (map #(struct individual % 0) (create-random-population))
+        population pop
         out (doall (map con/run-task
                         (doall (map #(con/send-to-machine %1
                                                           (format "cd mspacman; %s '%s'"
@@ -183,6 +183,17 @@
     (sort-by :fitness > (mapcat read-string
                                 (remove nil?
                                         (map :stdout out))))))
+
+(defn start-gp-cluster []
+  (println "Started")
+  (loop [population (map #(struct individual % 0) (create-random-population))
+         n NUMBER-OF-GENERATIONS]
+    (when (< 0 n)
+      (recur (gp-over-cluster (concat  (map #(:program %)
+                                            (take elitism generation))
+                                       (repeatedly (- SIZE-OF-POPULATION elitism)
+                                                   #(recombination generation))))
+             (dec n)))))
 
 (defn clustertest []
   (let  [out (doall (map con/run-task
