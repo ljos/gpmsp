@@ -180,9 +180,9 @@
                                     (doall (partition (int (/ SIZE-OF-POPULATION (count machines)))
                                                       population))))))]
     (shutdown-agents)
-    (map read-string
-         (remove nil?
-                 (map :stdout out)))))
+    (mapcat read-string
+            (remove nil?
+                    (map :stdout out)))))
 
 (defn clustertest []
   (let  [out (doall (map con/run-task
