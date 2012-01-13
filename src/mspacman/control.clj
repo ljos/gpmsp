@@ -4,7 +4,7 @@
 
 (def ^{:dynamic :private} *runtime* (Runtime/getRuntime))
 
-(defstruct ExecProcess :process :in :err :stdout :stderr :status)
+(defstruct ExecProcess :machine :process :in :err :stdout :stderr :status)
 
 (def ALL-MACHINES ["mn121033" "mn121034"	
                    "mn121035" "mn121036"
@@ -43,11 +43,11 @@
                    "mn190157"])
 
 (defn- spawn
-  [cmdarray]
+  [machine cmdarray]
   (let [process (.exec *runtime* cmdarray)
         in (reader (.getInputStream process) :encoding "UTF-8")
         err (reader (.getErrorStream process) :encoding "UTF-8")
-        execp (struct ExecProcess process in err)
+        execp (struct ExecProcess machine process in err)
         pagent (agent execp)]
     (send-off pagent
               (fn [exec-process]
@@ -71,11 +71,14 @@
 
 (defn run-task [pagent]
   (let [execp @pagent
-        status (await-process pagent)]
-    (assoc execp :status status)))
+        status (do (println "Started task on:" (:machine execp))
+                   (await-process pagent))]
+    (do (println "Finished task on:" (:machine execp))
+        (assoc execp :status status))))
 
 (defn send-to-machine [machine task]
-  (spawn (into-array String
+  (spawn machine
+         (into-array String
                      ["ssh" "-o ConnectTimeout=2" "-o StrictHostKeyChecking=no"
                       (format "bjo013@%s" machine)
                       task])))
