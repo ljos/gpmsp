@@ -170,7 +170,12 @@
                                            (map #(con/send-to-machine % (format "~/.scripts/check_for_user;"))
                                                 con/ALL-MACHINES)))))
         population (map #(struct individual % 0) (create-random-population))
-        out (partition (int (/ SIZE-OF-POPULATION (count machines))) population)]
+        out (doall (map con/run-task
+                        (for [machine machines
+                              batch (partition (int (/ SIZE-OF-POPULATION (count machines))) population)]
+                          (con/send-to-machine machine
+                                               (format "cd mspacman; ~/.lein/bin/lein run -m mspacman.gpmsp/run-gen %s"
+                                                       batch)))))]
     (shutdown-agents)
     out))
 
