@@ -270,7 +270,7 @@
 
 (defn msp-get-area-below [place character]
   (do (msp-find-colour character)
-      (msp-get-area (+ @x1 (msp+ 1 place)) @y1)))
+      (msp-get-area (+ @x1 (+ 1 place)) @y1)))
 
 (defn msp-ghost? [character]
   (some #(= character %) (list blinky inky pinky sue)))
