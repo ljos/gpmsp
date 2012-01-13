@@ -42,11 +42,11 @@
                    "mn190155" "mn190156"
                    "mn190157"])
 
-(defn- spawn [machine cmdarray]
+(defn- spawn [cmdarray]
   (let [process (.exec *runtime* cmdarray)
         in (reader (.getInputStream process) :encoding "UTF-8")
         err (reader (.getErrorStream process) :encoding "UTF-8")
-        execp (struct ExecProcess machine process in err)
+        execp (struct ExecProcess process in err)
         pagent (agent execp)]
     (send-off pagent
               (fn [exec-process]
@@ -69,16 +69,12 @@
     (.waitFor process)))
 
 (defn run-task [pagent]
-  (println "Started task at" (:machine @pagent))
   (let [execp @pagent
-        status (await-process pagent)
-        out (assoc execp :status status)]
-    (println "Ended task at"  (:machine execp))
-    out))
+        status (await-process pagent)]
+    (assoc execp :status status)))
 
-(defn send-to-machine [machine task]
-  (spawn machine
-         (into-array String
+(defn send-to-machine [machine]
+  (spawn (into-array String
                      ["ssh" "-o ConnectTimeout=2" "-o StrictHostKeyChecking=no"
                       (format "bjo013@%s" machine)
                       "date"])))
