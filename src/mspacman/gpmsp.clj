@@ -174,7 +174,7 @@
                         (map #(con/send-to-machine %1
                                                    (format "cd mspacman;%s %s"
                                                            "~/.lein/bin/lein run -m mspacman.gpmsp/run-gen"
-                                                           (list (apply str %2))))
+                                                           (str (doall %2))))
                               machines
                               (doall (partition (int (/ SIZE-OF-POPULATION (count machines)))
                                                 population))
