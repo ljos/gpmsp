@@ -74,7 +74,7 @@
         status (await-process pagent)]
     (assoc execp :status status)))
 
-(defn send-to-machine [machine]
+(defn send-to-machine [machine task]
   (spawn (into-array String
                      ["ssh" "-o ConnectTimeout=2" "-o StrictHostKeyChecking=no"
                       (format "bjo013@%s" machine)
