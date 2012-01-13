@@ -172,8 +172,9 @@
         population (map #(struct individual % 0) (create-random-population))
         out (doall (map con/run-task
                         (map #(con/send-to-machine %1
-                                                 
-                                                "date")
+                                                   (format "cd mspacman; %s %s"
+                                                           "~/.lein/bin/lein run -m mspacman.gpmsp/run-gen"
+                                                           (apply list %2)))
                               machines
                               (doall (partition (int (/ SIZE-OF-POPULATION (count machines)))
                                                 population))
