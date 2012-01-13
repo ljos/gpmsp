@@ -71,10 +71,8 @@
 
 (defn run-task [pagent]
   (let [execp @pagent
-        status (do (println "Started task on:" (:machine execp))
-                   (await-process pagent))]
-    (do (println "Finished task on:" (:machine execp))
-        (assoc execp :status status))))
+        status (await-process pagent)]
+    (assoc execp :status status)))
 
 (defn send-to-machine [machine task]
   (spawn machine
