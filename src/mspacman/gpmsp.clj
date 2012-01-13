@@ -191,9 +191,9 @@
            n NUMBER-OF-GENERATIONS]
       (when (< 0 n)
         (recur (gp-over-cluster (concat  (map #(:program %)
-                                              (take elitism generation))
+                                              (take elitism population))
                                          (repeatedly (- SIZE-OF-POPULATION elitism)
-                                                     #(recombination generation))))
+                                                     #(recombination population))))
                (dec n))))))
 
 (defn clustertest []
