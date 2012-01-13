@@ -77,6 +77,7 @@
     out))
 
 (defn send-to-machine [machine task]
+  (println machine)
   (spawn machine
          (into-array String
                      ["ssh" "-o ConnectTimeout=2" "-o StrictHostKeyChecking=no"
