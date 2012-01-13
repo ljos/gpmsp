@@ -174,7 +174,7 @@
                         (for [machine machines
                               batch (partition (int (/ SIZE-OF-POPULATION (count machines))) population)]
                           (con/send-to-machine machine
-                                               (format "cd mspacman; ~/.lein/bin/lein run -m mspacman.gpmsp/run-gen %s"
+                                               (str "cd mspacman; ~/.lein/bin/lein run -m mspacman.gpmsp/run-gen"
                                                        batch)))))]
     (shutdown-agents)
     out))
