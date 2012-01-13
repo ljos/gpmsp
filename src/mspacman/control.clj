@@ -57,6 +57,7 @@
               (fn [exec-process]
                 (assoc exec-process :stderr (str (:stderr exec-process)
                                                  (join "\r\n" (doall (line-seq err)))))))
+    (println "Everything sent.")
     pagent))
 
 (defn- await-process [pagent]
