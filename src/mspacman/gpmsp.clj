@@ -180,7 +180,6 @@
                                     machines
                                     (doall (partition (int (/ SIZE-OF-POPULATION (count machines)))
                                                       population))))))]
-    (shutdown-agents)
     (sort-by :fitness > (mapcat read-string
                                 (remove nil?
                                         (map :stdout out))))))
@@ -191,12 +190,13 @@
     (loop [population (gp-over-cluster (map #(struct individual % 0)
                                             (create-random-population)))
            n NUMBER-OF-GENERATIONS]
-      (when (< 0 n)
+      (if (< 0 n)
         (recur (gp-over-cluster (concat (take elitism population)
                                         (map #(struct individual %  0)
                                              (repeatedly (- SIZE-OF-POPULATION elitism)
                                                          #(recombination population)))))
-               (dec n))))))
+               (dec n))
+        (shutdown-agents)))))
 
 (defn clustertest []
   (let  [out (doall (map con/run-task
