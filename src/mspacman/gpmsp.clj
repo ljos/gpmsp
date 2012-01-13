@@ -187,10 +187,11 @@
 (defn start-gp-cluster []
   (println "Started")
   (let [elitism (* SIZE-OF-POPULATION ELITISM-RATE)]
-    (loop [population (map #(struct individual % 0) (create-random-population))
+    (loop [population (gp-over-cluster (map #(struct individual % 0)
+                                            (create-random-population)))
            n NUMBER-OF-GENERATIONS]
       (when (< 0 n)
-        (recur (gp-over-cluster (concat  (map #(:program %)
+        (recur (gp-over-cluster (concat (map #(:program %)
                                               (take elitism population))
                                          (repeatedly (- SIZE-OF-POPULATION elitism)
                                                      #(recombination population))))
