@@ -171,7 +171,7 @@
         population (map #(struct individual % 0) (create-random-population))
         out (partition (/ SIZE-OF-POPULATION (count machines)) population)]
     (shutdown-agents)
-    out))
+    machines))
 
 (defn clustertest []
   (let  [out (doall (map con/run-task
