@@ -4,7 +4,7 @@
 
 (def ^{:dynamic :private} *runtime* (Runtime/getRuntime))
 
-(defstruct ExecProcess :in :err :stdout :stderr :status)
+(defstruct ExecProcess :process :in :err :stdout :stderr :status)
 
 (def ALL-MACHINES ["mn121033" "mn121034"	
                    "mn121035" "mn121036"
