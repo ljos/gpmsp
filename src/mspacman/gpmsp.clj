@@ -180,7 +180,7 @@
                                     (doall (partition (int (/ SIZE-OF-POPULATION (count machines)))
                                                       population))))))]
     (shutdown-agents)
-    (map (read-string (:stdout %)) out)))
+    (map #(read-string (:stdout %)) out)))
 
 (defn clustertest []
   (let  [out (doall (map con/run-task
