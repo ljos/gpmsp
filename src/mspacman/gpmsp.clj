@@ -165,11 +165,12 @@
 
 (defn gp-over-cluster [pop]
   (println "Started")
-  (let [machines  (doall (map :machine
-                              (filter #(= 0 (:status %))
-                                      (map con/run-task
-                                           (map #(con/send-to-machine % (format "~/.scripts/check_for_user;"))
-                                                con/ALL-MACHINES)))))
+  (let [machines  
+        (map :machine
+             (filter #(= 0 (:status %))
+                     (doall (map con/run-task
+                                 (doall (map #(con/send-to-machine % (format "~/.scripts/check_for_user;"))
+                                             con/ALL-MACHINES))))))
         population pop
         out (doall (map con/run-task
                         (doall (map #(con/send-to-machine %1
@@ -191,10 +192,10 @@
                                             (create-random-population)))
            n NUMBER-OF-GENERATIONS]
       (when (< 0 n)
-        (recur (gp-over-cluster (concat (map #(:program %)
-                                              (take elitism population))
-                                         (repeatedly (- SIZE-OF-POPULATION elitism)
-                                                     #(recombination population))))
+        (recur (gp-over-cluster (concat (take elitism population)
+                                        (map #(struct individual %  0)
+                                             (repeatedly (- SIZE-OF-POPULATION elitism)
+                                                         #(recombination population)))))
                (dec n))))))
 
 (defn clustertest []
