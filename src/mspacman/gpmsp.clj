@@ -182,7 +182,7 @@
                          (map #(con/send-to-machine % "~/.scripts/check_for_user; echo $(hostname) : $(date)")
                               con/ALL-MACHINES)))]
     (shutdown-agents)
-    (map :stdout (filter #(= 0 (:status %)) out))))
+    (count (map :stdout (filter #(= 0 (:status %)) out)))))
 
 
 
