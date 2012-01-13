@@ -179,7 +179,7 @@
 
 (defn clustertest []
   (let  [out (doall (map con/run-task
-                         (map #(con/send-to-machine %)
+                         (map #(con/send-to-machine % "date")
                               con/ALL-MACHINES)))]
     (shutdown-agents)
     out))

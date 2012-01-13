@@ -4,7 +4,7 @@
 
 (def ^{:dynamic :private} *runtime* (Runtime/getRuntime))
 
-(defstruct ExecProcess :machine :process :in :err :stdout :stderr :status)
+(defstruct ExecProcess :in :err :stdout :stderr :status)
 
 (def ALL-MACHINES ["mn121033" "mn121034"	
                    "mn121035" "mn121036"
@@ -42,7 +42,8 @@
                    "mn190155" "mn190156"
                    "mn190157"])
 
-(defn- spawn [cmdarray]
+(defn- spawn
+  [cmdarray]
   (let [process (.exec *runtime* cmdarray)
         in (reader (.getInputStream process) :encoding "UTF-8")
         err (reader (.getErrorStream process) :encoding "UTF-8")
@@ -77,4 +78,4 @@
   (spawn (into-array String
                      ["ssh" "-o ConnectTimeout=2" "-o StrictHostKeyChecking=no"
                       (format "bjo013@%s" machine)
-                      "date"])))
+                      task])))
