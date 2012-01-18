@@ -27,10 +27,10 @@
 (defn atomize [term]
   (cond (= term 'int)
         (rand-int 288)
-        (= term 'item)
-        ,(rand-nth ind/ITEM-LIST)
         (= term 'entity)
         ,(rand-nth ind/ENTITY-LIST)
+        (= term 'item)
+        ,(rand-nth ind/ITEM-LIST)
         (symbol? term)
         ,`~term
         :else
@@ -40,7 +40,9 @@
   (if (or (symbol? exprs)
           (empty? exprs)
           (< depth 1))
-    (atomize (rand-nth ind/ATOM-LIST))
+    (if (symbol? exprs)
+      (atomize exprs)
+      (atomize (rand-nth ind/ATOM-LIST)))
     (cons (first exprs) 
           (loop [terms (rest exprs)
                  acc ()
@@ -101,16 +103,33 @@
                     loc val)
                   (inc n)))))
 
+(defn find-relevant-expr [loc]
+  (println loc)
+  (let [l (zip/node (zip/leftmost loc))
+        n (count (zip/lefts loc))
+        expr (first (filter #(and (not (symbol? %))
+                                  (= (first %) l))
+                            ind/FUNCTION-LIST))
+        c (if (= (second expr) 'expr+) 'expr+ (nth expr n))]
+    (println c)
+    (case c 
+      (expr expr+) (rand-nth ind/FUNCTION-LIST)
+      entity (do (println 'here) (rand-nth ind/ENTITY-LIST))
+      item (rand-nth ind/ITEM-LIST))))
+
 (defn reproduction [parents]
-  (zip/root
-   (zip/replace (select-random-node (first parents))
-                (zip/node (select-random-node (second parents))))))
+  (let [original (select-random-node (first parents))]
+    (zip/root
+     (zip/replace (if (zip/branch? original)
+                    original
+                    (zip/up original))
+                  (zip/node (select-random-node (second parents)))))))
 
 (defn mutation [tree]
-  (zip/root
-   (zip/replace (select-random-node tree)
-                (expand (rand-nth ind/FUNCTION-LIST)
-                        MUTATION-DEPTH))))
+  (let [original (select-random-node tree)
+        replacement (expand (find-relevant-expr original) MUTATION-DEPTH)]
+    (zip/root
+     (zip/replace original replacement))))
 
 (defn recombination [population]
   (let [r (rand)]
