@@ -176,15 +176,15 @@
 
 (defn msp-check-area-rightof
   ([entity]
-     (-> msp (.checkForGhostLeft (:colour @entity)))))
+     (-> msp (.checkForGhostRight (:colour @entity)))))
 
 (defn msp-check-area-above
   ([entity]
-     (-> msp (.checkForGhostLeft (:colour @entity)))))
+     (-> msp (.checkForGhostTop (:colour @entity)))))
 
 (defn msp-check-area-below
   ([entity]
-     (-> msp (.checkForGhostLeft (:colour @entity)))))
+     (-> msp (.checkForGhostDown (:colour @entity)))))
 
 (defn msp-relative-distance [entity item]
   (swap! entity
