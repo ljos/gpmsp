@@ -104,17 +104,15 @@
                   (inc n)))))
 
 (defn find-relevant-expr [loc]
-  (println loc)
   (let [l (zip/node (zip/leftmost loc))
         n (count (zip/lefts loc))
         expr (first (filter #(and (not (symbol? %))
                                   (= (first %) l))
                             ind/FUNCTION-LIST))
         c (if (= (second expr) 'expr+) 'expr+ (nth expr n))]
-    (println c)
     (case c 
       (expr expr+) (rand-nth ind/FUNCTION-LIST)
-      entity (do (println 'here) (rand-nth ind/ENTITY-LIST))
+      entity (rand-nth ind/ENTITY-LIST)
       item (rand-nth ind/ITEM-LIST))))
 
 (defn reproduction [parents]
