@@ -160,7 +160,7 @@
          n gen-nb]
     (if (>= n NUMBER-OF-GENERATIONS)
          (println 'finished)
-         (do (println'generation n)
+         (do (println 'generation n)
              (spit (format "%s/generations/%s_generation_%tL.txt"
                            (System/getProperty "user.home")
                            (string/lower-case (.getHostName (InetAddress/getLocalHost)))
