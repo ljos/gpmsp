@@ -118,6 +118,8 @@
 (defn reproduction [parents]
   (let [original (select-random-node (first parents))
         replacement (select-random-node (second parents))]
+    (println (first parents))
+    (println (second parents))
     (println original)
     (println (format "rep %s" replacement))
     (println)
