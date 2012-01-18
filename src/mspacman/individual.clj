@@ -73,24 +73,15 @@
                                  fitness-score#))))))
              (dec t)))))
 
-(def INT-LIST '(mspacman
-                blinky
-                pinky
-                inky
-                sue
-                pills
-                walkway
-                wall1
-             ;;   wall2
-                wall3
-                wall4
-                wall5
-                wall6
-                wall7
-                wall8
-                (x)
-                (y)
-                (msp-get-areaxy)))
+(def ENTITY-LIST '(mspacman
+                   blinky
+                   pinky
+                   inky
+                   sue))
+
+(def ITEM-LIST (concat
+                '(pills)
+                ENTITY-LIST))
 
 (def ATOM-LIST (concat
                 '((move-left)
@@ -98,58 +89,35 @@
                   (move-up)
                   (move-down)
                   (msp-sleep)
-                  ())
-                INT-LIST))
+                  int)
+                ITEM-LIST
+                ENTITY-LIST))
 
 (def FUNCTION-LIST (concat
                     '((do expr+)
-                      (msp-find-colour int)
-                      (msp-get-area expr expr)
-                      (msp-get-area int int)
-                      (msp-get-area-below int int)
-                      (msp-get-area-above int int)
-                      (msp-get-area-leftof int int)
-                      (msp-get-area-rightof int int)
+                      (msp-relative-distance entity item)
+                      (msp-check-area-below entity)
+                      (msp-check-area-above entity)
+                      (msp-check-area-leftof entity)
+                      (msp-check-area-rightof entity)
                       (if expr expr expr?)
-                      ;;(= expr+)
                       (= expr expr)
-                      ;;(msp- expr+)
                       (msp- expr expr)
-                      ;;(msp+ expr+)
                       (msp+ expr expr)
-                      ;;(msp> expr+)
                       (msp> expr expr)
-                      ;;(msp< expr+)
                       (msp< expr expr)
-                      ;;(or expr+)
                       (or expr expr)
-                      ;;(and expr+)
-                      (and expr expr)
-                      (msp-ghost? int)
-                      (msp-wall? int))
+                      (and expr expr))
                     ATOM-LIST))
 
-(def ^:private x1 (ref 0))
-(defn x [] @x1)
+(def mspacman (atom {:name 'mspacman :colour 16776960}))
+(def blinky (atom {:name 'blinky :colour 16711680}))
+(def pinky (atom {:name 'pinky :colour 16759006}))
+(def inky  (atom {:name 'inky :colour 65502}))
+(def sue (atom {:name 'sue :colour 16758855}))
+(def pills (atom {:name 'pills :colour 14606046}))
+(def walkway (atom {::name 'walkway :colour 0}))
 
-(def ^:private y1 (ref 0))
-(defn y [] @y1)
-
-(def mspacman 16776960)
-(def blinky 16711680)
-(def pinky 16759006)
-(def inky  65502)
-(def sue 16758855)
-(def pills 14606046)
-(def walkway 0)
-(def wall1 14587719)
-;;(def wall2 16759006)
-(def wall3 4700382)
-(def wall4 2171358)
-(def wall5 65280)
-(def wall6 4700311)
-(def wall7 16758935)
-(def wall8 14606046)
 
 (defn msp> [& keys]
   (let [l (remove #(not (instance? Number %))
@@ -202,78 +170,32 @@
        (Thread/sleep 50)
        (-> msp (.keyReleased KeyEvent/VK_DOWN))))
 
-(defn get-area [x y]
-  (let [col-freq (frequencies (for [i (range (* y 8) (+ (* y 8) 8))
-                                    j (range (* x 8) (+ (* x 8) 8))]
-                                (-> msp (.getPixel i j))))]
-    (cond (and (contains? col-freq mspacman) (< 10 (get col-freq mspacman)))
-          ,mspacman
-          (= {0 22, 16711680 32, 14587719 8, 14606046 2} col-freq)
-          ,0
-          :else
-          ,(loop [colours (keys col-freq)
-                  colour (first colours)]
-             (cond (empty? colours)
-                   ,colour
-                   (or (and (not (zero? (first colours)))
-                            (<= (get col-freq colour)
-                                (get col-freq (first colours))))
-                       (= colour 0))
-                   ,(recur (rest colours) (first colours))
-                   :else
-                   ,(recur (rest colours) colour))))))
+(defn msp-check-area-leftof
+  ([entity]
+     (-> msp (.checkForGhostLeft (:colour @entity)))))
 
-(defn msp-get-area [x y]
-  (let [i (if (number? x)
-            (mod (int x) 36)
-            0)
-        j (if (number? y)
-            (mod (int y) 28)
-            0)]
-    (get-area i j)))
+(defn msp-check-area-rightof
+  ([entity]
+     (-> msp (.checkForGhostLeft (:colour @entity)))))
 
-(defn msp-get-areaxy []
-  (msp-get-area @x1 @y1))
+(defn msp-check-area-above
+  ([entity]
+     (-> msp (.checkForGhostLeft (:colour @entity)))))
 
-(defn find-colour [c]
-  (loop [x 0
-         y 0]
-    (cond (= y 28)
-          ,(recur (inc x) 0)
-          (= x 36)
-          ,(dosync (ref-set x1 -1)
-                   (ref-set y1 -1)
-                   false)
-          (= c (msp-get-area x y))
-          ,(dosync (ref-set x1 x)
-                   (ref-set y1 y)
-                   true)
-          :else
-          ,(recur x (inc y)))))
+(defn msp-check-area-below
+  ([entity]
+     (-> msp (.checkForGhostLeft (:colour @entity)))))
 
-(defn msp-find-colour [c]
-  (if (number? c)
-    (find-colour c)
-    false))
+(defn msp-relative-distance [entity item]
+  (swap! entity
+         assoc (keyword (:name @item))
+         (-> msp (.relativeDistance (:colour @entity) (:colour @item)))))
 
-(defn msp-get-area-leftof [place character]
-  (do (msp-find-colour character)
-      (msp-get-area @x1 (- @y1 (msp+ 1 place)))))
+(defn msp-closer? [entity item]
+  (let [k (keyword (:name @item))
+        prev-d (k @entity)
+        new-d (msp-relative-distance entity item)]
+    (or (nil? (k entity))
+        (< prev-d new-d))))
 
-(defn msp-get-area-rightof [place character]
-  (do (msp-find-colour character)
-      (msp-get-area @x1 (+ @y1 (msp+ 2 place)))))
 
-(defn msp-get-area-above [place character]
-  (do (msp-find-colour character)
-      (msp-get-area (- @x1 (msp+ 1 place)) @y1)))
-
-(defn msp-get-area-below [place character]
-  (do (msp-find-colour character)
-      (msp-get-area (+ @x1 (+ 1 place)) @y1)))
-
-(defn msp-ghost? [character]
-  (some #(= character %) (list blinky inky pinky sue)))
-
-(defn msp-wall? [character]
-  (some #(= character %) (list wall1 wall3 wall4 wall4 wall6 wall7 wall8)))
