@@ -171,31 +171,40 @@
        (-> msp (.keyReleased KeyEvent/VK_DOWN))))
 
 (defn msp-check-area-leftof [entity]
-  (let [xy (-> msp (.getEntity (:colour @entity)))]
-    (-> msp (.checkForGhostLeft (first xy) (second xy)))))
+  (when (some #(= entity %) ENTITY-LIST)
+    (let [xy (-> msp (.getEntity (:colour @entity)))]
+      (-> msp (.checkForGhostLeft (first xy) (second xy))))))
 
 (defn msp-check-area-rightof [entity]
-  (let [xy (-> msp (.getEntity (:colour @entity)))]
-    (-> msp (.checkForGhostRight (first xy) (second xy)))))
+  (when (some #(= entity %) ENTITY-LIST)
+    (let [xy (-> msp (.getEntity (:colour @entity)))]
+      (-> msp (.checkForGhostRight (first xy) (second xy))))))
 
 (defn msp-check-area-above [entity]
-  (let [xy (-> msp (.getEntity (:colour @entity)))]
-    (-> msp (.checkForGhostUp (first xy) (second xy)))))
+  (when (some #(= entity %) ENTITY-LIST)
+    (let [xy (-> msp (.getEntity (:colour @entity)))]
+      (-> msp (.checkForGhostUp (first xy) (second xy))))))
 
 (defn msp-check-area-below [entity]
-  (let [xy (-> msp (.getEntity (:colour @entity)))]
-    (-> msp (.checkForGhostDown (first xy) (second xy)))))
+  (when (some #(= entity %) ENTITY-LIST)
+    (let [xy (-> msp (.getEntity (:colour @entity)))]
+      (-> msp (.checkForGhostDown (first xy) (second xy))))))
 
 (defn msp-relative-distance [entity item]
-  (swap! entity
-         assoc (keyword (:name @item))
-         (-> msp (.relativeDistance (:colour @entity) (:colour @item)))))
+  (when (and (some #(= % entity) ENTITY-LIST)
+             (some #(= % item) ITEM-LIST))
+    (let [k (keyword (:name @item))]
+      (k (swap! entity
+                assoc k
+                (-> msp (.relativeDistance (:colour @entity) (:colour @item))))))))
 
 (defn msp-closer? [entity item]
-  (let [k (keyword (:name @item))
-        prev-d (k @entity)
-        new-d (msp-relative-distance entity item)]
-    (or (nil? (k entity))
-        (< prev-d new-d))))
+  (when (and (some #(= % entity) ENTITY-LIST)
+             (some #(= % item) ITEM-LIST))
+    (let [k (keyword (:name @item))
+          prev-d (k @entity)
+          new-d (msp-relative-distance entity item)]
+      (or (nil? (k entity))
+          (< prev-d new-d)))))
 
 
