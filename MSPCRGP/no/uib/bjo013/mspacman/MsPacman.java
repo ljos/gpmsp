@@ -15,6 +15,8 @@ public interface MsPacman extends Runnable {
 	
 	public boolean isGameOver();
 	
+	public int[] getEntity(int colour);
+	
 	public boolean checkForGhostRight(int x, int y);
 	
 	public boolean checkForGhostLeft(int x, int y);

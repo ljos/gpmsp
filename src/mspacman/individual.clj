@@ -170,21 +170,21 @@
        (Thread/sleep 50)
        (-> msp (.keyReleased KeyEvent/VK_DOWN))))
 
-(defn msp-check-area-leftof
-  ([entity]
-     (-> msp (.checkForGhostLeft (:colour @entity)))))
+(defn msp-check-area-leftof [entity]
+  (let [xy (-> msp (.getEntity (:colour @entity)))]
+    (-> msp (.checkForGhostLeft (first xy) (second xy)))))
 
-(defn msp-check-area-rightof
-  ([entity]
-     (-> msp (.checkForGhostRight (:colour @entity)))))
+(defn msp-check-area-rightof [entity]
+  (let [xy (-> msp (.getEntity (:colour @entity)))]
+    (-> msp (.checkForGhostRight (first xy) (second xy)))))
 
-(defn msp-check-area-above
-  ([entity]
-     (-> msp (.checkForGhostTop (:colour @entity)))))
+(defn msp-check-area-above [entity]
+  (let [xy (-> msp (.getEntity (:colour @entity)))]
+    (-> msp (.checkForGhostUp (first xy) (second xy)))))
 
-(defn msp-check-area-below
-  ([entity]
-     (-> msp (.checkForGhostDown (:colour @entity)))))
+(defn msp-check-area-below [entity]
+  (let [xy (-> msp (.getEntity (:colour @entity)))]
+    (-> msp (.checkForGhostDown (first xy) (second xy)))))
 
 (defn msp-relative-distance [entity item]
   (swap! entity
