@@ -90,7 +90,8 @@
     tournament-selection (tournament-selection TOURNAMENT-SIZE population)))
 
 (defn select-random-node [tree]
-  (if (symbol? tree)
+  (if (or (= 1 (count tree))
+          (symbol? tree))
     (zip/seq-zip tree)
     (loop [loc (zip/seq-zip tree)
           val nil
@@ -105,6 +106,16 @@
                      loc val)
                    (inc n))))))
 
+(defn reproduction [parents]
+  (let [original (select-random-node (first parents))
+        replacement (select-random-node (second parents))]
+    (zip/root
+     (zip/replace (if (or (zip/branch? original)
+                          (symbol? (zip/root original)))
+                    original
+                    (zip/up original))
+                  (zip/node replacement)))))
+
 (defn find-relevant-expr [loc]
   (let [l (zip/node (zip/leftmost loc))
         n (count (zip/lefts loc))
@@ -117,19 +128,10 @@
       entity (rand-nth ind/ENTITY-LIST)
       item (rand-nth ind/ITEM-LIST))))
 
-(defn reproduction [parents]
-  (let [original (select-random-node (first parents))
-        replacement (select-random-node (second parents))]
-    (zip/root
-     (zip/replace (if (or (zip/branch? original)
-                          (symbol? (zip/root original)))
-                    original
-                    (zip/up original))
-                  (zip/node replacement)))))
-
 (defn mutation [tree]
   (let [original (select-random-node tree)
-        replacement (if (symbol? tree)
+        replacement (if (or (symbol? tree)
+                            (=  (count tree)))
                       (expand (rand-nth ind/FUNCTION-LIST) MUTATION-DEPTH)
                       (expand (find-relevant-expr original) MUTATION-DEPTH))]
     (zip/root
