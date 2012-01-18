@@ -26,9 +26,11 @@
 
 (defn atomize [term]
   (cond (= term 'int)
-        ,(if (< (rand) RAND-INT-RATE)
-           (rand-int 36)
-           (rand-nth ind/INT-LIST))
+        (rand-int 288)
+        (= term 'item)
+        ,(rand-nth ind/ITEM-LIST)
+        (= term 'entity)
+        ,(rand-nth ind/ENTITY-LIST)
         (symbol? term)
         ,`~term
         :else
