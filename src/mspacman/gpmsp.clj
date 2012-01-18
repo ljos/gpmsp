@@ -120,11 +120,6 @@
 (defn reproduction [parents]
   (let [original (select-random-node (first parents))
         replacement (select-random-node (second parents))]
-    (println (first parents))
-    (println (second parents))
-    (println original)
-    (println (format "rep %s" replacement))
-    (println)
     (zip/root
      (zip/replace (if (or (zip/branch? original)
                           (symbol? (zip/root original)))
@@ -134,7 +129,9 @@
 
 (defn mutation [tree]
   (let [original (select-random-node tree)
-        replacement (expand (find-relevant-expr original) MUTATION-DEPTH)]
+        replacement (if (symbol? tree)
+                      (expand (rand-nth ind/FUNCTION-LIST) MUTATION-DEPTH)
+                      (expand (find-relevant-expr original) MUTATION-DEPTH))]
     (zip/root
      (zip/replace original replacement))))
 
@@ -163,7 +160,7 @@
          n gen-nb]
     (if (>= n NUMBER-OF-GENERATIONS)
          (println 'finished)
-         (do (println 'generation n)
+         (do (println'generation n)
              (spit (format "%s/generations/%s_generation_%tL.txt"
                            (System/getProperty "user.home")
                            (string/lower-case (.getHostName (InetAddress/getLocalHost)))
