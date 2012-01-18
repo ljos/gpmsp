@@ -90,8 +90,8 @@
     tournament-selection (tournament-selection TOURNAMENT-SIZE population)))
 
 (defn select-random-node [tree]
-  (if (or (= 1 (count tree))
-          (symbol? tree))
+  (if (or (symbol? tree)
+          (= 1 (count tree)))
     (zip/seq-zip tree)
     (loop [loc (zip/seq-zip tree)
           val nil
