@@ -210,6 +210,8 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 		
 		return false;
 	}
+	
+	@Override
 	public int[] getEntity(int colour) {
 		if (colour == 16776960) {
 			return getMsPacman();
