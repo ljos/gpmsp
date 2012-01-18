@@ -171,7 +171,8 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 			t.throttle();
 		}
 	}
-
+	
+	@Override	
 	public int[] getPixels() {
 		return pixel;
 	}
@@ -181,6 +182,7 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 		return (x>=0 && x<224 && y>=0 && y<288) ? pixel[x + y * 224] : -1;
 	}
 	
+	@Override
 	public boolean checkForWallX(int x, int y) {
 		int[] walls = {4700382, 2171358, 65280, 4700311, 16758935, 14606046};
 		for(int wall : walls) {
@@ -191,6 +193,7 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 		return false;
 	}
 	
+	@Override
 	public boolean checkForGhostRight(int x, int y) {
 		int[] ghosts = {16711680, 16759006, 65502, 16758855};
 		
@@ -208,6 +211,7 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 		return false;
 	}
 	
+	@Override
 	public boolean checkForGhostLeft(int x, int y) {
 		int[] ghosts = {16711680, 16759006, 65502, 16758855};
 		
@@ -224,6 +228,7 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 		return false;
 	}
 	
+	@Override
 	public boolean checkForWallY(int x, int y) {
 		int[] walls = {4700382, 2171358, 65280, 4700311, 16758935, 14606046};
 		for(int wall : walls) {
@@ -234,6 +239,7 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 		return false;
 	}
 	
+	@Override
 	public boolean checkForGhostUp(int x, int y) {
 		int[] ghosts = {16711680, 16759006, 65502, 16758855};
 		
@@ -251,6 +257,7 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 		return false;
 	}
 	
+	@Override
 	public boolean checkForGhostDown(int x, int y) {
 		int[] ghosts = {16711680, 16759006, 65502, 16758855};
 		
@@ -268,6 +275,7 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 		return false;
 	}
 	
+	@Override
 	public boolean containsGhost(int ghost, int x, int y) {
 		return (getPixel(x+5,y+1)  != ghost &&
 				getPixel(x+6,y+1)  == ghost &&
@@ -279,6 +287,7 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 				getPixel(x+14,y+7) == ghost);
 	}
 	
+	@Override
 	public int[] getMsPacman() {
 		for(int y = 27; y < 260; ++y) {
 			for(int x = 0; x < 216; ++x) {
@@ -304,6 +313,7 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 		return new int[] {-1, -1};
 	}
 	
+	@Override
 	public int[] getGhost(int ghost) {
 		for(int y = 27; y < 253; ++y) {
 			for(int x = 0; x < 216; ++x) {
@@ -323,6 +333,7 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 		return new int[] {-1, -1};
 	}
 	
+	@Override
 	public int relativeDistance(int entity, int item) {
 		int[] ent1 = new int[2];
 		int[] ent2 = new int[2];
