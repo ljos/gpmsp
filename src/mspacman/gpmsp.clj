@@ -91,6 +91,7 @@
 
 (defn select-random-node [tree]
   (if (or (symbol? tree)
+          (number? tree)
           (= 1 (count tree)))
     (zip/seq-zip tree)
     (loop [loc (zip/seq-zip tree)
@@ -111,7 +112,8 @@
         replacement (select-random-node (second parents))]
     (zip/root
      (zip/replace (if (or (zip/branch? original)
-                          (symbol? (zip/root original)))
+                          (symbol? (zip/root original))
+                          (number? (zip/root original)))
                     original
                     (zip/up original))
                   (zip/node replacement)))))
@@ -122,7 +124,9 @@
         expr (first (filter #(and (not (symbol? %))
                                   (= (first %) l))
                             ind/FUNCTION-LIST))
-        c (if (= (second expr) 'expr+) 'expr+ (nth expr n))]
+        c (if (= (second expr) 'expr+)
+            'expr+
+            (nth expr n))]
     (case c 
       (expr expr+) (rand-nth ind/FUNCTION-LIST)
       entity (rand-nth ind/ENTITY-LIST)
@@ -131,6 +135,7 @@
 (defn mutation [tree]
   (let [original (select-random-node tree)
         replacement (if (or (symbol? tree)
+                            (number? tree)
                             (=  (count tree)))
                       (expand (rand-nth ind/FUNCTION-LIST) MUTATION-DEPTH)
                       (expand (find-relevant-expr original) MUTATION-DEPTH))]
