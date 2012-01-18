@@ -72,6 +72,20 @@ public class NUIMsPacman implements MsPacman {
 			t.throttle();
 		}
 	}
+	
+	public int[] getEntity(int colour) {
+		if (colour == 16776960) {
+			return getMsPacman();
+		} else {
+			int[] ghosts = {16711680, 16759006, 65502, 16758855};
+			for(int ghost : ghosts) {
+				if(colour == ghost) {
+					return getGhost(ghost);
+				}
+			}
+		}
+		return new int[] {-1, -1};
+	}
 
 	@Override
 	public int[] getPixels() {
