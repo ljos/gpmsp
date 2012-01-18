@@ -116,13 +116,16 @@
       item (rand-nth ind/ITEM-LIST))))
 
 (defn reproduction [parents]
-  (let [original (select-random-node (first parents))]
+  (let [original (select-random-node (first parents))
+        replacement (select-random-node (second parents))]
     (println original)
+    (println (format "rep %s" replacement))
+    (println)
     (zip/root
      (zip/replace (if (zip/branch? original)
                     original
                     (zip/up original))
-                  (zip/node (select-random-node (second parents)))))))
+                  (zip/node replacement)))))
 
 (defn mutation [tree]
   (let [original (select-random-node tree)
