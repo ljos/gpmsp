@@ -82,6 +82,229 @@ public class NUIMsPacman implements MsPacman {
 	public int getPixel(int x, int y) {
 		return (x>=0 && x<224 && y>=0 && y<288) ? pixel[x + y * 224] : -1;
 	}
+	
+	public boolean checkForWallX(int x, int y) {
+		int[] walls = {4700382, 2171358, 65280, 4700311, 16758935, 14606046};
+		for(int wall : walls) {
+			if(getPixel(x, y+10) == wall) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean checkForGhostRight(int x, int y) {
+		int[] ghosts = {16711680, 16759006, 65502, 16758855};
+		
+		for(int ghost : ghosts) {
+			for(int i = x; i < 224; ++i) {
+				if(checkForWallX(i, y)) {
+					break;
+				}
+				if (containsGhost(ghost, x+i, y)) {
+					return true; 
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	public boolean checkForGhostLeft(int x, int y) {
+		int[] ghosts = {16711680, 16759006, 65502, 16758855};
+		
+		for(int ghost : ghosts) {
+			for(int i = x; i > 0; --i) {
+				if(checkForWallX(i, y)) {
+					break;
+				}
+				if (containsGhost(ghost, i, y)) {
+					return true; 
+				}
+			}
+		}
+		return false;
+	}
+	
+	public boolean checkForWallY(int x, int y) {
+		int[] walls = {4700382, 2171358, 65280, 4700311, 16758935, 14606046};
+		for(int wall : walls) {
+			if(getPixel(x+2, y) == wall) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean checkForGhostUp(int x, int y) {
+		int[] ghosts = {16711680, 16759006, 65502, 16758855};
+		
+		for(int ghost : ghosts) {
+			for(int i = y; i > 0; --i) {
+				if(checkForWallY(x, i)) {
+					System.out.println(x + " "+ i);
+					break;
+				}
+				if (containsGhost(ghost, x, i)) {
+					return true; 
+				}
+			}
+		}
+		return false;
+	}
+	
+	public boolean checkForGhostDown(int x, int y) {
+		int[] ghosts = {16711680, 16759006, 65502, 16758855};
+		
+		for(int ghost : ghosts) {
+			for(int i = y; i < 288; ++i) {
+				if(checkForWallY(x, i)) {
+					System.out.println(x + " "+ i);
+					break;
+				}
+				if (containsGhost(ghost, x, i)) {
+					return true; 
+				}
+			}
+		}
+		return false;
+	}
+	
+	public boolean containsGhost(int ghost, int x, int y) {
+		return (getPixel(x+5,y+1)  != ghost &&
+				getPixel(x+6,y+1)  == ghost &&
+				getPixel(x+9,y+1)  == ghost &&
+				getPixel(x+10,y+1) != ghost &&
+				getPixel(x+1,y+6)  != ghost &&
+				getPixel(x+1,y+7)  == ghost &&
+				getPixel(x+14,y+6) != ghost &&
+				getPixel(x+14,y+7) == ghost);
+	}
+	
+	public int[] getMsPacman() {
+		for(int y = 27; y < 260; ++y) {
+			for(int x = 0; x < 216; ++x) {
+				if((getPixel(x+10,y+5) == 16776960 &&
+					getPixel(x+11,y+3) == 2171358  &&
+				    getPixel(x+12,y+4) == 2171358  &&
+					getPixel(x+11,y+4) == 16711680 &&
+					getPixel(x+12,y+3) == 16711680) ||
+				   (getPixel(x+5,y+5)  == 16776960 &&
+					getPixel(x+4,y+3)  == 2171358  &&
+				    getPixel(x+3,y+4)  == 2171358  &&
+					getPixel(x+4,y+4)  == 16711680 &&
+					getPixel(x+3,y+3)  == 16711680) ||
+				   (getPixel(x+5,y+10)  == 16776960 &&
+					getPixel(x+4,y+12)  == 2171358  &&
+				    getPixel(x+3,y+11)  == 2171358  &&
+					getPixel(x+4,y+11)  == 16711680 &&
+					getPixel(x+3,y+12)  == 16711680)) {
+					return new int[] {x, y};
+				}
+			}
+		}
+		return new int[] {-1, -1};
+	}
+	
+	public int[] getGhost(int ghost) {
+		for(int y = 27; y < 253; ++y) {
+			for(int x = 0; x < 216; ++x) {
+				if(getPixel(x+5,y+1)  != ghost &&
+				   getPixel(x+6,y+1)  == ghost &&
+				   getPixel(x+9,y+1)  == ghost &&
+				   getPixel(x+10,y+1) != ghost &&
+				   getPixel(x+1,y+6)  != ghost &&
+				   getPixel(x+1,y+7)  == ghost &&
+				   getPixel(x+14,y+6) != ghost &&
+				   getPixel(x+14,y+7) == ghost) {
+					return new int[] {x, y};
+				}
+			}
+		}
+		
+		return new int[] {-1, -1};
+	}
+	
+	public int relativeDistance(int entity, int item) {
+		int[] ent1 = new int[2];
+		int[] ent2 = new int[2];
+		
+
+		if(entity == 16776960) {
+			ent1 = getMsPacman();
+		} else {
+			ent1 = getGhost(entity);
+		}
+		
+		if(item == 16776960) {
+			ent2 = getMsPacman();
+		} else if (item == 14606046) { //pill
+			ent2 = findClostestPill(ent1[0], ent1[1]);
+		} else {
+			ent2 = getGhost(item);
+		}
+		
+		double distance = Math.sqrt(Math.pow((ent1[0]-ent2[0]), 2) + 
+									Math.pow((ent1[1]-ent2[1]), 2));
+		
+		return (int)Math.floor(distance);
+	}
+	
+	private boolean checkForPill(int x, int y) {
+		return getPixel(x, y) == 0 &&
+			   getPixel(x+3, y) == 0 &&
+			   getPixel(x, y+3) == 0 &&
+			   getPixel(x+3, y+3) == 0 &&
+			   getPixel(x+1, y+1) == 14606046 &&
+			   getPixel(x+1, y+2) == 14606046 &&
+			   getPixel(x+2, y+1) == 14606046 &&
+			   getPixel(x+2, y+2) == 14606046;
+	}
+	
+	private int[] findClostestPill(int x, int y) {
+		int xs = x;
+		int ys = y;
+		
+		for (int d = 1; d< 16*5; d++)
+		{
+		    for (int i = 0; i < d + 1; i++)
+		    {
+		        int x1 = xs - d + i < 3 ? 3 : xs - d + 1;
+		        int y1 = ys - i < 29 ? 29 : ys - 1;
+
+		        if(checkForPill(x1, y1)) {
+		        	return new int[] {x1, y1};
+		        }
+
+		        int x2 = xs + d - i < 3 ? 3 : xs + d - i;
+		        int y2 = ys + i < 29 ? 29 : ys + i;
+
+		        if(checkForPill(x2, y2)) {
+		        	return new int[] {x2, y2};
+		        }
+		    }
+
+
+		    for (int i = 1; i < d; i++)
+		    {
+		        int x1 = xs - i < 3 ? 3 : xs - i;
+		        int y1 = ys + d - i < 29 ? 29 : ys + d - i;
+
+		        if(checkForPill(x1, y1)) {
+		        	return new int[] {x1, y1};
+		        }
+
+		        int x2 = xs + d - i < 3 ? 3 : xs + d - i;
+		        int y2 = ys - i < 29 ? 29 : ys - i;
+
+		        if(checkForPill(x2, y2)) {
+		        	return new int[] {x2, y2};
+		        }
+		    }
+		}
+		
+		return new int[] {-1, -1};
+	}
 
 	@Override
 	public void keyPressed(int keyCode) {
