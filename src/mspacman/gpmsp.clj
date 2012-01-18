@@ -144,10 +144,10 @@
   (let [elitism (* SIZE-OF-POPULATION ELITISM-RATE)]
     (sort-by :fitness >
              (pmap  #(struct individual %1 (ind/fitness FITNESS-RUNS %1))
-                    (concat  (map #(:program %)
-                                  (take elitism generation))
-                             (repeatedly (- SIZE-OF-POPULATION elitism)
-                                         #(recombination generation)))))))
+                    (concat (map #(:program %)
+                                 (take elitism generation))
+                            (doall (repeatedly (- SIZE-OF-POPULATION elitism)
+                                               #(recombination generation))))))))
 
 (defn- gp-go [gen gen-nb]
   (use 'mspacman.individual)
