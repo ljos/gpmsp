@@ -90,18 +90,20 @@
     tournament-selection (tournament-selection TOURNAMENT-SIZE population)))
 
 (defn select-random-node [tree]
-  (loop [loc (zip/seq-zip tree)
-         val nil
-         n 1]
-    (cond (zip/end? loc)
-          ,val
-          (or (dzip/leftmost? loc) (nil? (zip/node loc)))
-          ,(recur (zip/next loc) val n)
-          :else
-          ,(recur (zip/next loc)
-                  (if (= 0 (mod (rand-int n) n))
-                    loc val)
-                  (inc n)))))
+  (if (symbol? tree)
+    (zip/seq-zip tree)
+    (loop [loc (zip/seq-zip tree)
+          val nil
+          n 1]
+     (cond (zip/end? loc)
+           ,val
+           (or (dzip/leftmost? loc) (nil? (zip/node loc)))
+           ,(recur (zip/next loc) val n)
+           :else
+           ,(recur (zip/next loc)
+                   (if (= 0 (mod (rand-int n) n))
+                     loc val)
+                   (inc n))))))
 
 (defn find-relevant-expr [loc]
   (let [l (zip/node (zip/leftmost loc))
@@ -124,7 +126,8 @@
     (println (format "rep %s" replacement))
     (println)
     (zip/root
-     (zip/replace (if (zip/branch? original)
+     (zip/replace (if (or (zip/branch? original)
+                          (symbol? (zip/root original)))
                     original
                     (zip/up original))
                   (zip/node replacement)))))
