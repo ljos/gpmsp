@@ -10,7 +10,7 @@
   :program
   :fitness)
 
-(def SIZE-OF-POPULATION 50)
+(def SIZE-OF-POPULATION 300)
 (def ELITISM-RATE 0.05)
 (def NUMBER-OF-GENERATIONS 1000)
 (def MAX-STARTING-DEPTH 10)
@@ -20,7 +20,7 @@
 (def MUTATION-DEPTH 5)
 (def RAND-INT-RATE 0.25)
 (def EXPR?-RATE 0.80)
-(def FITNESS-RUNS 5)
+(def FITNESS-RUNS 10)
 
 (def SELECTION 'fitness-proportionate)
 (def TOURNAMENT-SIZE 10)
