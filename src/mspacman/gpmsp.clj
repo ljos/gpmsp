@@ -20,7 +20,7 @@
 (def MUTATION-DEPTH 5)
 (def RAND-INT-RATE 0.25)
 (def EXPR?-RATE 0.80)
-(def FITNESS-RUNS 10)
+(def FITNESS-RUNS 5)
 (def SELECTION 'fitness-proportionate)
 (def TOURNAMENT-SIZE 10)
 
