@@ -1,4 +1,5 @@
-(ns mspacman.individual)
+(ns mspacman.individual
+  (use [clojure.inspector :include (atom?)]))
 
 (import '(no.uib.bjo013.mspacman MsPacman NUIMsPacman GUIMsPacman))
 (import javax.swing.JFrame)
@@ -110,27 +111,33 @@
        (-> msp (.keyReleased KeyEvent/VK_DOWN))))
 
 (defn msp-check-area-leftof [entity]
-  (when (some #(= (:name @entity) %) ENTITY-LIST)
+  (when (and (= (type entity) clojure.lang.Atom)
+             (some #(= (:name @entity) %) ENTITY-LIST))
     (let [xy (-> msp (.getEntity (:colour @entity)))]
       (-> msp (.checkForGhostLeft (first xy) (second xy))))))
 
 (defn msp-check-area-rightof [entity]
-  (when (some #(= (:name @entity) %) ENTITY-LIST)
+  (when (and (= (type entity) clojure.lang.Atom)
+             (some #(= (:name @entity) %) ENTITY-LIST))
     (let [xy (-> msp (.getEntity (:colour @entity)))]
       (-> msp (.checkForGhostRight (first xy) (second xy))))))
 
 (defn msp-check-area-above [entity]
-  (when (some #(= (:name @entity) %) ENTITY-LIST)
+  (when (and (= (type entity) clojure.lang.Atom)
+             (some #(= (:name @entity) %) ENTITY-LIST))
     (let [xy (-> msp (.getEntity (:colour @entity)))]
       (-> msp (.checkForGhostUp (first xy) (second xy))))))
 
 (defn msp-check-area-below [entity]
-  (when (some #(= (:name @entity) %) ENTITY-LIST)
+  (when (and (= (type entity) clojure.lang.Atom)
+             (some #(= (:name @entity) %) ENTITY-LIST))
     (let [xy (-> msp (.getEntity (:colour @entity)))]
       (-> msp (.checkForGhostDown (first xy) (second xy))))))
 
 (defn msp-relative-distance [entity item]
-  (when (and (some #(= % (:name @entity)) ENTITY-LIST)
+  (when (and (= (type entity) clojure.lang.Atom)
+             (= (type item) clojure.lang.Atom)
+             (some #(= % (:name @entity)) ENTITY-LIST)
              (some #(= % (:name @item)) ITEM-LIST))
     (let [k (keyword (:name @item))]
       (k (swap! entity
@@ -138,7 +145,9 @@
                 (-> msp (.relativeDistance (:colour @entity) (:colour @item))))))))
 
 (defn msp-closer? [entity item]
-  (when (and (some #(= % (:name @entity)) ENTITY-LIST)
+  (when (and (= (type entity) clojure.lang.Atom)
+             (= (type item) clojure.lang.Atom)
+             (some #(= % (:name @entity)) ENTITY-LIST)
              (some #(= % (:name @item)) ITEM-LIST))
     (let [k (keyword (:name @item))
           prev-d (k @entity)
