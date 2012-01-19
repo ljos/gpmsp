@@ -53,6 +53,11 @@
 (def pills (atom {:name 'pills :colour 14606046}))
 (def walkway (atom {::name 'walkway :colour 0}))
 
+(def move-left 'move-left)
+(def move-right 'move-right)
+(def move-up 'move-up)
+(def move-down 'move-down)
+
 (defn msp> [& keys]
   (let [l (remove #(not (instance? Number %))
                   keys)]
