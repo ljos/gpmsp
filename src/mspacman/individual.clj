@@ -8,71 +8,6 @@
 
 (def ^:dynamic msp nil)
 
-(defn fitness [tries code]
-  "Tests fitness of MsPacman bot."
-  (loop [score 0
-         t tries]
-    (cond (= t 0)
-          ,(int (/ score tries))
-          (and (= tries 3) (= (/ score tries) 120))
-          ,score
-          :else
-          ,(recur (+ score
-                    (eval `(let [signal# (new CountDownLatch 1)]
-                             (binding [~'msp (new NUIMsPacman signal#)]
-                               (do (-> (new Thread ~'msp) .start)
-                                   (-> signal# .await)
-                                   (-> ~'msp (.keyPressed KeyEvent/VK_5))
-                                   (Thread/sleep 200)
-                                   (-> ~'msp (.keyReleased KeyEvent/VK_5))
-                                   (Thread/sleep 200)
-                                   (-> ~'msp (.keyPressed KeyEvent/VK_1))
-                                   (Thread/sleep 200)
-                                   (-> ~'msp (.keyReleased KeyEvent/VK_1))
-                                   (Thread/sleep 700)
-                                   (while (not (-> ~'msp .isGameOver))
-                                     ~code)
-                                   (let [fitness-score# (-> ~'msp .getScore)]
-                                     (-> ~'msp  (.stop true))
-                                     fitness-score#))))))
-                 (dec t)))))
-
-(defn fitness-graphic [tries code]
- (loop [score 0
-         t tries]
-    (if (= t 0)
-      (int (/ score tries))
-      (recur (+ score
-                (eval `(binding [~'msp (doto (new GUIMsPacman)
-                                         (.setSize 224 (+ 288 22)))]
-                         (let [frame# (doto (new JFrame)
-                                        (.setDefaultCloseOperation
-                                         javax.swing.JFrame/EXIT_ON_CLOSE)
-                                        (.setSize 224 (+ 288 22))
-                                        (.setLocation 100 0)
-                                        (-> .getContentPane
-                                            (.add ~'msp java.awt.BorderLayout/CENTER))
-                                        (.setVisible Boolean/TRUE))
-                               t# (new Thread ~'msp)]
-                           (do (-> t# .start)
-                               (Thread/sleep 7000)
-                               (-> ~'msp (.keyPressed KeyEvent/VK_5))
-                               (Thread/sleep 100)
-                               (-> ~'msp (.keyReleased KeyEvent/VK_5))
-                               (Thread/sleep 100)
-                               (-> ~'msp (.keyPressed KeyEvent/VK_1))
-                               (Thread/sleep 100)
-                               (-> ~'msp (.keyReleased KeyEvent/VK_1))
-                               (Thread/sleep 500)
-                               (while (not (-> ~'msp .isGameOver))
-                                 ~code)
-                               (let [fitness-score# (-> ~'msp .getScore)]
-                                 (-> ~'msp  (.stop true))
-                                 (-> frame# .dispose)
-                                 (println fitness-score#)
-                                 fitness-score#))))))
-             (dec t)))))
-
 (def ENTITY-LIST '(mspacman
                    blinky
                    pinky
@@ -84,17 +19,17 @@
                 ENTITY-LIST))
 
 (def ATOM-LIST (concat
-                '((move-left)
-                  (move-right)
-                  (move-up)
-                  (move-down)
+                '(move-left
+                  move-right
+                  move-up
+                  move-down
                   (msp-sleep)
                   int)
                 ITEM-LIST
                 ENTITY-LIST))
 
 (def FUNCTION-LIST (concat
-                    '((do expr+)
+                    '(;(do expr+)
                       (msp-relative-distance entity item)
                       (msp-check-area-below entity)
                       (msp-check-area-above entity)
@@ -117,7 +52,6 @@
 (def sue (atom {:name 'sue :colour 16758855}))
 (def pills (atom {:name 'pills :colour 14606046}))
 (def walkway (atom {::name 'walkway :colour 0}))
-
 
 (defn msp> [& keys]
   (let [l (remove #(not (instance? Number %))
@@ -207,4 +141,76 @@
       (or (nil? (k entity))
           (< prev-d new-d)))))
 
+(defn move-in-direction [direction]
+  (case direction
+    move-left  (move-left)
+    move-right (move-right)
+    move-up    (move-up)
+    move-down  (move-down)
+    ()))
+
+(defn fitness [tries code]
+  "Tests fitness of MsPacman bot."
+  (let [signal# (new CountDownLatch 1)]
+    (binding [msp (new NUIMsPacman signal#)]
+      (do (-> (new Thread msp) .start)
+          (-> signal# .await)
+          (loop [score 0
+                 t tries]
+            (cond (= t 0)
+                  ,(do (-> msp  (.stop true))
+                       (int (/ score tries)))
+                  (and (= tries 3) (= (/ score tries) 120))
+                  ,(do (-> msp  (.stop true))
+                       score)
+                  :else
+                  ,(recur (+ score
+                             (do (-> msp (.keyPressed KeyEvent/VK_5))
+                                 (Thread/sleep 100)
+                                 (-> msp (.keyReleased KeyEvent/VK_5))
+                                 (Thread/sleep 100)
+                                 (-> msp (.keyPressed KeyEvent/VK_1))
+                                 (Thread/sleep 100)
+                                 (-> msp (.keyReleased KeyEvent/VK_1))
+                                 (Thread/sleep 500)
+                                 (while (not (-> msp .isGameOver))
+                                   (move-in-direction (eval `~code)))
+                                 (Thread/sleep 500)
+                                 score))
+                          (dec t))))))))
+
+(defn fitness-graphic [tries code]
+  (binding [msp (doto (new GUIMsPacman)
+                  (.setSize 224 (+ 288 22)))]
+    (let [frame# (doto (new JFrame)
+                   (.setDefaultCloseOperation
+                    javax.swing.JFrame/EXIT_ON_CLOSE)
+                   (.setSize 224 (+ 288 22))
+                   (.setLocation 100 0)
+                   (-> .getContentPane
+                       (.add msp java.awt.BorderLayout/CENTER))
+                   (.setVisible Boolean/TRUE))
+          t# (new Thread msp)]
+      (do (-> t# .start)
+          (Thread/sleep 7000)
+          (loop [score 0
+                 t tries]
+            (if (= t 0)
+              (do (-> msp  (.stop true))
+                  (-> frame# .dispose)
+                  (int (/ score tries)))
+              (recur (+ score
+                        (do (-> msp (.keyPressed KeyEvent/VK_5))
+                            (Thread/sleep 100)
+                            (-> msp (.keyReleased KeyEvent/VK_5))
+                            (Thread/sleep 100)
+                            (-> msp (.keyPressed KeyEvent/VK_1))
+                            (Thread/sleep 100)
+                            (-> msp (.keyReleased KeyEvent/VK_1))
+                            (Thread/sleep 500)
+                            (while (not (-> msp .isGameOver))
+                              (move-in-direction (eval `~code)))
+                            (Thread/sleep 1000)
+                            (-> msp .getScore)))
+                     (dec t))))))))
 
