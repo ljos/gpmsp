@@ -188,9 +188,7 @@
                                  (-> msp (.keyReleased KeyEvent/VK_1))
                                  (while (not (-> msp .isGameOver))
                                    (move-in-direction (eval `~code)))
-                                 (let [sc (-> msp .getScore)]
-                                   (println sc)
-                                   sc)))
+                                 (-> msp .getScore)))
                           (dec t))))))))
 
 (defn fitness-graphic [tries code]
