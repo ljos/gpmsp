@@ -29,7 +29,7 @@
                 ENTITY-LIST))
 
 (def FUNCTION-LIST (concat
-                    '(;(do expr+)
+                    '((do expr+)
                       (msp-relative-distance entity item)
                       (msp-check-area-below entity)
                       (msp-check-area-above entity)
@@ -84,57 +84,57 @@
 (defn msp-sleep []
   (Thread/sleep 10))
 
-(defn move-left []
+(defn msp-move-left []
   (do (-> msp (.keyPressed KeyEvent/VK_LEFT))
       (Thread/sleep 50)
       (-> msp (.keyReleased KeyEvent/VK_LEFT))))
 
-(defn move-right []
+(defn msp-move-right []
   (do (-> msp (.keyPressed KeyEvent/VK_RIGHT))
       (Thread/sleep 50)
       (-> msp (.keyReleased KeyEvent/VK_RIGHT))))
 
-(defn move-up []
+(defn msp-move-up []
   (do (-> msp (.keyPressed KeyEvent/VK_UP))
       (Thread/sleep 50)
       (-> msp (.keyReleased KeyEvent/VK_UP))))
 
-(defn move-down []
+(defn msp-move-down []
   (do (-> msp (.keyPressed KeyEvent/VK_DOWN))
        (Thread/sleep 50)
        (-> msp (.keyReleased KeyEvent/VK_DOWN))))
 
 (defn msp-check-area-leftof [entity]
-  (when (some #(= entity %) ENTITY-LIST)
+  (when (some #(= (:name @entity) %) ENTITY-LIST)
     (let [xy (-> msp (.getEntity (:colour @entity)))]
       (-> msp (.checkForGhostLeft (first xy) (second xy))))))
 
 (defn msp-check-area-rightof [entity]
-  (when (some #(= entity %) ENTITY-LIST)
+  (when (some #(= (:name @entity) %) ENTITY-LIST)
     (let [xy (-> msp (.getEntity (:colour @entity)))]
       (-> msp (.checkForGhostRight (first xy) (second xy))))))
 
 (defn msp-check-area-above [entity]
-  (when (some #(= entity %) ENTITY-LIST)
+  (when (some #(= (:name @entity) %) ENTITY-LIST)
     (let [xy (-> msp (.getEntity (:colour @entity)))]
       (-> msp (.checkForGhostUp (first xy) (second xy))))))
 
 (defn msp-check-area-below [entity]
-  (when (some #(= entity %) ENTITY-LIST)
+  (when (some #(= (:name @entity) %) ENTITY-LIST)
     (let [xy (-> msp (.getEntity (:colour @entity)))]
       (-> msp (.checkForGhostDown (first xy) (second xy))))))
 
 (defn msp-relative-distance [entity item]
-  (when (and (some #(= % entity) ENTITY-LIST)
-             (some #(= % item) ITEM-LIST))
+  (when (and (some #(= % (:name @entity)) ENTITY-LIST)
+             (some #(= % (:name @item)) ITEM-LIST))
     (let [k (keyword (:name @item))]
       (k (swap! entity
                 assoc k
                 (-> msp (.relativeDistance (:colour @entity) (:colour @item))))))))
 
 (defn msp-closer? [entity item]
-  (when (and (some #(= % entity) ENTITY-LIST)
-             (some #(= % item) ITEM-LIST))
+  (when (and (some #(= % (:name @entity)) ENTITY-LIST)
+             (some #(= % (:name @item)) ITEM-LIST))
     (let [k (keyword (:name @item))
           prev-d (k @entity)
           new-d (msp-relative-distance entity item)]
@@ -143,11 +143,12 @@
 
 (defn move-in-direction [direction]
   (case direction
-    move-left  (move-left)
-    move-right (move-right)
-    move-up    (move-up)
-    move-down  (move-down)
-    ()))
+    move-left (msp-move-left)
+    move-right (msp-move-right)
+    move-up (msp-move-up)
+    move-down (msp-move-down)
+    ())
+  direction)
 
 (defn fitness [tries code]
   "Tests fitness of MsPacman bot."
@@ -166,16 +167,16 @@
                   :else
                   ,(recur (+ score
                              (do (-> msp (.keyPressed KeyEvent/VK_5))
-                                 (Thread/sleep 200)
+                                 (Thread/sleep 100)
                                  (-> msp (.keyReleased KeyEvent/VK_5))
-                                 (Thread/sleep 200)
+                                 (Thread/sleep 100)
                                  (-> msp (.keyPressed KeyEvent/VK_1))
-                                 (Thread/sleep 200)
+                                 (Thread/sleep 100)
                                  (-> msp (.keyReleased KeyEvent/VK_1))
-                                 (Thread/sleep 700)
+                                 (Thread/sleep 500)
                                  (while (not (-> msp .isGameOver))
                                    (move-in-direction (eval `~code)))
-                                 (Thread/sleep 1000)
+                                 (Thread/sleep 250)
                                  (-> msp .getScore)))
                           (dec t))))))))
 
