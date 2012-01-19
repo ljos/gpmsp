@@ -161,7 +161,6 @@ public class NUIMsPacman implements MsPacman {
 		for(int ghost : ghosts) {
 			for(int i = y; i > 0; --i) {
 				if(checkForWallY(x, i)) {
-					System.out.println(x + " "+ i);
 					break;
 				}
 				if (containsGhost(ghost, x, i)) {
@@ -179,7 +178,6 @@ public class NUIMsPacman implements MsPacman {
 		for(int ghost : ghosts) {
 			for(int i = y; i < 288; ++i) {
 				if(checkForWallY(x, i)) {
-					System.out.println(x + " "+ i);
 					break;
 				}
 				if (containsGhost(ghost, x, i)) {
