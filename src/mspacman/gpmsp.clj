@@ -62,7 +62,7 @@
                                 (> expr-width 0))
                          terms
                          (rest terms))
-                       (cons exp acc)
+                       (concat acc (list exp))
                        (dec expr-width))))))))
 
 (defn create-random-individual []
