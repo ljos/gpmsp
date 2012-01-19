@@ -342,7 +342,7 @@ public class NUIMsPacman implements MsPacman {
 
 	@Override
 	public long getScore() {
-		return getScore(0x43ed, m.md.getREGION_CPU());
+		return getScore(0x43f7, m.md.getREGION_CPU());
 		// score = 0x43f7, highscore = 0x43ed
 	}
 

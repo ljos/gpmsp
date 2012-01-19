@@ -66,7 +66,7 @@
                        (dec expr-width))))))))
 
 (defn create-random-individual []
-  (expand '(do expr+) MAX-STARTING-DEPTH))
+  (expand (rand-nth ind/FUNCTION-LIST) MAX-STARTING-DEPTH))
 
 (defn create-random-population []
   (take SIZE-OF-POPULATION (repeatedly #(create-random-individual))))

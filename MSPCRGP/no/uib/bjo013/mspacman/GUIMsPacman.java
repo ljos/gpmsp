@@ -439,7 +439,7 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 	}
 
 	public long getScore() {
-		return getScore(0x43ed, ((cottage.machine.Pacman) m).md.getREGION_CPU());
+		return getScore(0x43f7, ((cottage.machine.Pacman) m).md.getREGION_CPU());
 	}
 
 	private long getScore(int offset, int[] mem) {
