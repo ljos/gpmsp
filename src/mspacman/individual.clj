@@ -176,7 +176,7 @@
                                  (while (not (-> msp .isGameOver))
                                    (move-in-direction (eval `~code)))
                                  (Thread/sleep 500)
-                                 score))
+                                 (-> msp .getScore)))
                           (dec t))))))))
 
 (defn fitness-graphic [tries code]
