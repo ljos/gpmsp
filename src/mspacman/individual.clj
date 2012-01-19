@@ -166,16 +166,16 @@
                   :else
                   ,(recur (+ score
                              (do (-> msp (.keyPressed KeyEvent/VK_5))
-                                 (Thread/sleep 100)
+                                 (Thread/sleep 200)
                                  (-> msp (.keyReleased KeyEvent/VK_5))
-                                 (Thread/sleep 100)
+                                 (Thread/sleep 200)
                                  (-> msp (.keyPressed KeyEvent/VK_1))
-                                 (Thread/sleep 100)
+                                 (Thread/sleep 200)
                                  (-> msp (.keyReleased KeyEvent/VK_1))
-                                 (Thread/sleep 500)
+                                 (Thread/sleep 700)
                                  (while (not (-> msp .isGameOver))
                                    (move-in-direction (eval `~code)))
-                                 (Thread/sleep 500)
+                                 (Thread/sleep 1000)
                                  (-> msp .getScore)))
                           (dec t))))))))
 
