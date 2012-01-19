@@ -16,7 +16,7 @@
 (def MAX-STARTING-DEPTH 10)
 (def MAX-STARTING-WIDTH-OF-EXPR 5)
 (def MUTATION-RATE 0.15)
-(def REPRODUCTION-RATE 0.65)
+(def REPRODUCTION-RATE 0.70)
 (def MUTATION-DEPTH 5)
 (def RAND-INT-RATE 0.25)
 (def EXPR?-RATE 0.80)
@@ -93,7 +93,7 @@
 (defn select-random-node [tree]
   (if (or (symbol? tree)
           (number? tree)
-          (= 1 (count tree)))
+          (>= 1 (count tree)))
     (zip/seq-zip tree)
     (loop [loc (zip/seq-zip tree)
           val nil
@@ -189,7 +189,7 @@
                            (create-random-population))) 0))
   ([gen-file nb-gen]
      (println (format "Started at generation %s." nb-gen))
-     (gp-go (run-generation (read-string (slurp gen-file))) nb-gen)))
+     (gp-go (run-generation (read-string (slurp gen-file))) (read-string nb-gen))))
 
 (defn run-gen [input]
   (use 'mspacman.individual)
