@@ -165,7 +165,6 @@
   direction)
 
 (defn fitness [tries code]
-  "Tests fitness of MsPacman bot."
   (let [signal# (new CountDownLatch 1)]
     (binding [msp (new NUIMsPacman signal#)]
       (do (-> (new Thread msp) .start)
@@ -181,17 +180,17 @@
                   :else
                   ,(recur (+ score
                              (do (-> msp (.keyPressed KeyEvent/VK_5))
-                                 (Thread/sleep 100)
+                                 (Thread/sleep 50)
                                  (-> msp (.keyReleased KeyEvent/VK_5))
-                                 (Thread/sleep 100)
+                                 (Thread/sleep 50)
                                  (-> msp (.keyPressed KeyEvent/VK_1))
-                                 (Thread/sleep 100)
+                                 (Thread/sleep 50)
                                  (-> msp (.keyReleased KeyEvent/VK_1))
-                                 (Thread/sleep 500)
                                  (while (not (-> msp .isGameOver))
                                    (move-in-direction (eval `~code)))
-                                 (Thread/sleep 250)
-                                 (-> msp .getScore)))
+                                 (let [sc (-> msp .getScore)]
+                                   (println sc)
+                                   sc)))
                           (dec t))))))))
 
 (defn fitness-graphic [tries code]
