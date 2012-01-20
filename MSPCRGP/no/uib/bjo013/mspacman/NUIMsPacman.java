@@ -65,6 +65,26 @@ public class NUIMsPacman implements MsPacman {
 		}
 
 		new Thread(new SendKeys((cottage.machine.Pacman) m)).start(); //sending keys for starting the game
+		
+		i = 3;
+		while (i > 0) { //waiting for ready message to appear
+			m.refresh(true);
+			t.throttle();
+			if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 82) {
+				--i;
+			} else if (i < 3) {
+				++i;
+			}
+		}
+
+		for (;;) { // waiting for ready message to disappear
+			m.refresh(true);
+			t.throttle();
+			if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 64) {
+				break;
+			}
+		}
+		
 		signal.countDown();
 
 		while (!stop) { //running game
@@ -72,6 +92,28 @@ public class NUIMsPacman implements MsPacman {
 			t.throttle();
 			if (this.isGameOver()) {
 				new Thread(new SendKeys((cottage.machine.Pacman) m)).start();
+				i = 3;
+				while (i > 0) { //waiting for ready message to appear
+					m.refresh(true);
+					t.throttle();
+					if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 82) {
+						--i;
+					} else if (i < 3) {
+						++i;
+					}
+				}
+
+				for (;;) { // waiting for ready message to disappear
+					m.refresh(true);
+					t.throttle();
+					if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 64) {
+						break;
+					}
+				}
+				
+				synchronized(signal) {
+					signal.notifyAll();
+				}
 			}
 		}
 	}
@@ -386,28 +428,6 @@ public class NUIMsPacman implements MsPacman {
 				m.keyRelease(KeyEvent.VK_1);
 				Thread.sleep(100);
 				
-				int i = 3;
-				while (i > 0) { //waiting for ready message to appear
-					m.refresh(true);
-					t.throttle();
-					if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 82) {
-						--i;
-					} else if (i < 3) {
-						++i;
-					}
-				}
-
-				for (;;) { // waiting for ready message to dissapear
-					m.refresh(true);
-					t.throttle();
-					if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 64) {
-						break;
-					}
-				}
-				
-				synchronized(signal) {
-					signal.notifyAll();
-				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
