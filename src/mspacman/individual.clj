@@ -165,10 +165,10 @@
   direction)
 
 (defn fitness [tries code]
-  (let [signal# (new CountDownLatch 1)]
-    (binding [msp (new NUIMsPacman signal#)]
+  (let [signal (new CountDownLatch 1)]
+    (binding [msp (new NUIMsPacman signal)]
       (do (-> (new Thread msp) .start)
-          (-> signal# .await)
+          (.await signal)
           (loop [score 0
                  t tries]
             (cond (= t 0)
@@ -179,37 +179,32 @@
                        score)
                   :else
                   ,(recur (+ score
-                             (do (-> msp (.keyPressed KeyEvent/VK_5))
-                                 (Thread/sleep 50)
-                                 (-> msp (.keyReleased KeyEvent/VK_5))
-                                 (Thread/sleep 50)
-                                 (-> msp (.keyPressed KeyEvent/VK_1))
-                                 (Thread/sleep 50)
-                                 (-> msp (.keyReleased KeyEvent/VK_1))
-                                 (while (not (-> msp .isGameOver))
+                             (do (while (not (-> msp .isGameOver))
                                    (move-in-direction (eval `~code)))
-                                 (-> msp .getScore)))
+                                 (let [sc (-> msp .getScore)]
+                                   (locking signal
+                                     (.wait signal))
+                                   sc)))
                           (dec t))))))))
 
 (defn fitness-graphic [tries code]
   (binding [msp (doto (new GUIMsPacman)
                   (.setSize 224 (+ 288 22)))]
-    (let [frame# (doto (new JFrame)
-                   (.setDefaultCloseOperation
-                    javax.swing.JFrame/EXIT_ON_CLOSE)
-                   (.setSize 224 (+ 288 22))
-                   (.setLocation 100 0)
-                   (-> .getContentPane
-                       (.add msp java.awt.BorderLayout/CENTER))
-                   (.setVisible Boolean/TRUE))
-          t# (new Thread msp)]
-      (do (-> t# .start)
+    (let [frame (doto (new JFrame)
+                  (.setDefaultCloseOperation
+                   javax.swing.JFrame/EXIT_ON_CLOSE)
+                  (.setSize 224 (+ 288 22))
+                  (.setLocation 100 0)
+                  (-> .getContentPane
+                      (.add msp java.awt.BorderLayout/CENTER))
+                  (.setVisible Boolean/TRUE))]
+      (do (-> (new Thread msp) .start)
           (Thread/sleep 7000)
           (loop [score 0
                  t tries]
             (if (= t 0)
               (do (-> msp  (.stop true))
-                  (-> frame# .dispose)
+                  (-> frame .dispose)
                   (int (/ score tries)))
               (recur (+ score
                         (do (-> msp (.keyPressed KeyEvent/VK_5))
