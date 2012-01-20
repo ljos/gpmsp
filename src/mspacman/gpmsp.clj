@@ -10,7 +10,7 @@
   :program
   :fitness)
 
-(def SIZE-OF-POPULATION 100)
+(def SIZE-OF-POPULATION 300)
 (def ELITISM-RATE 0.05)
 (def NUMBER-OF-GENERATIONS 1000)
 (def MAX-STARTING-DEPTH 10)
@@ -20,7 +20,7 @@
 (def MUTATION-DEPTH 5)
 (def RAND-INT-RATE 0.25)
 (def EXPR?-RATE 0.80)
-(def FITNESS-RUNS 5)
+(def FITNESS-RUNS 10)
 
 (def SELECTION 'fitness-proportionate)
 (def TOURNAMENT-SIZE 10)
@@ -156,11 +156,11 @@
   (use 'mspacman.individual)
   (let [elitism (* SIZE-OF-POPULATION ELITISM-RATE)]
     (sort-by :fitness >
-             (pmap  #(struct individual %1 (ind/fitness FITNESS-RUNS %1))
-                    (concat (map #(:program %)
-                                 (take elitism generation))
-                            (doall (repeatedly (- SIZE-OF-POPULATION elitism)
-                                               #(recombination generation))))))))
+             (map #(struct individual % (ind/fitness FITNESS-RUNS %))
+                   (concat (map #(:program %)
+                                (take elitism generation))
+                           (repeatedly (- SIZE-OF-POPULATION elitism)
+                                       #(recombination generation)))))))
 
 (defn- gp-go [gen gen-nb]
   (use 'mspacman.individual)
@@ -185,8 +185,8 @@
      (println "Started")
      (use 'mspacman.individual)
      (gp-go (sort-by :fitness >
-                     (pmap #(struct individual %1 (ind/fitness FITNESS-RUNS %1))
-                           (create-random-population))) 0))
+                     (map #(struct individual %1 (ind/fitness FITNESS-RUNS %1))
+                          (create-random-population))) 0))
   ([gen-file nb-gen]
      (println (format "Started at generation %s." nb-gen))
      (gp-go (run-generation (read-string (slurp gen-file))) (read-string nb-gen))))

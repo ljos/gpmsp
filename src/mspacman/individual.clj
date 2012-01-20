@@ -165,10 +165,10 @@
   direction)
 
 (defn fitness [tries code]
-  (let [signal (new CountDownLatch 1)]
-    (binding [msp (new NUIMsPacman signal)]
+  (let [signal# (new CountDownLatch 1)]
+    (binding [msp (new NUIMsPacman signal#)]
       (do (-> (new Thread msp) .start)
-          (.await signal)
+          (.await signal#)
           (loop [score 0
                  t 0]
             (cond (= t tries)
@@ -176,14 +176,14 @@
                        (int (/ score t)))
                   (and (= t 3) (= (/ score t) 120))
                   ,(do (-> msp (.stop true))
-                       (/ score t))
+                       (int (/ score t)))
                   :else
                   ,(recur (+ score
                              (do (while (not (.isGameOver msp))
                                    (move-in-direction (eval `~code)))
                                  (let [sc (.getScore msp)]
-                                   (locking signal
-                                     (.wait signal))
+                                   (locking signal#
+                                     (.wait signal#))
                                    sc)))
                           (inc t))))))))
 
