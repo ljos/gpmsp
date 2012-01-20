@@ -6,11 +6,12 @@
   :dev-dependencies [[control "0.2.3-SNAPSHOT"]]
   :java-source-path [["CottAGE_1.6_src/"]
                      ["MSPCRGP/"]]
-  :java-opts ["-server"
+  :jvm-opts ["-server"
               "-Xmx2G"
               "-Xms2G"
               "-Xmn1G"
               "-XX:MaxPermSize=256M"
               "-XX:ThreadStackSize=512k"
-              "-XX:+UseConcMarkSweepGC"]
+              "-XX:+UseConcMarkSweepGC"
+              "-Djava.awt.headless=true"]
   :main mspacman.core)
