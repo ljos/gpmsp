@@ -170,22 +170,22 @@
       (do (-> (new Thread msp) .start)
           (.await signal)
           (loop [score 0
-                 t tries]
-            (cond (= t 0)
-                  ,(do (-> msp  (.stop true))
-                       (int (/ score tries)))
-                  (and (= tries 3) (= (/ score tries) 120))
-                  ,(do (-> msp  (.stop true))
-                       score)
+                 t 0]
+            (cond (= t tries)
+                  ,(do (-> msp (.stop true))
+                       (int (/ score t)))
+                  (and (= t 3) (= (/ score t) 120))
+                  ,(do (-> msp (.stop true))
+                       (/ score t))
                   :else
                   ,(recur (+ score
-                             (do (while (not (-> msp .isGameOver))
+                             (do (while (not (.isGameOver msp))
                                    (move-in-direction (eval `~code)))
-                                 (let [sc (-> msp .getScore)]
+                                 (let [sc (.getScore msp)]
                                    (locking signal
                                      (.wait signal))
                                    sc)))
-                          (dec t))))))))
+                          (inc t))))))))
 
 (defn fitness-graphic [tries code]
   (binding [msp (doto (new GUIMsPacman)
