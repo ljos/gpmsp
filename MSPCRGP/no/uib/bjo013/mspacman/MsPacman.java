@@ -11,7 +11,7 @@ public interface MsPacman extends Runnable {
 	
 	public long getScore();
 	
-	public void stop(boolean stop);
+	public void stopMSP();
 	
 	public boolean isGameOver();
 	

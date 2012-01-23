@@ -165,30 +165,27 @@
   direction)
 
 (defn fitness [tries code]
-  (let [signal# (new CountDownLatch 1)]
-    (binding [msp (new NUIMsPacman signal#)]
-      (do (-> (new Thread msp) .start)
-          (.await signal#)
-          (loop [score 0
-                 t 0]
-            (cond (= t tries)
-                  ,(do (-> msp (.stop true))
-                       (.join th)
-                       (int (/ score t)))
-                  (and (= t 3) (= (/ score t) 120))
-                  ,(do (-> msp (.stop true))
-                       (.join th)
-                       (int (/ score t)))
-                  :else
-                  ,(recur (+ score
-                             (do (while (not (.isGameOver msp))
-                                   (move-in-direction (eval `~code)))
-                                 (let [sc (.getScore msp)]
-                                   (locking signal#
-                                     (while (.isGameOver msp)
-                                       (.wait signal#)))
-                                   sc)))
-                          (inc t))))))))
+  (let [signal (into-array (repeatedly (+ tries 1) #(new CountDownLatch 1)))]
+    (binding [msp (new NUIMsPacman signal)]
+      (let [th (new Thread msp)]
+        (-> th .start)
+        (loop [score 0
+               t 0]
+          (if (or (= t tries)
+                  (and (= t 3)
+                       (= (/ score t) 120)))
+            (do (locking msp
+                  (.stopMSP msp))
+                (.join th)
+                (int (/ score t)))
+            
+            (do (.await (nth signal t))
+                (recur (+ score
+                          (do (while (not (.isGameOver msp))
+                                (move-in-direction (eval `~code)))
+                              (let [sc (.getScore msp)]
+                                sc)))
+                       (inc t)))))))))
 
 (defn fitness-graphic [tries code]
   (binding [msp (doto (new GUIMsPacman)

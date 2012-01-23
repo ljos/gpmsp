@@ -451,8 +451,8 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 		return (score > 9999999) ? 0 : score;
 	}
 
-	public void stop(boolean stop) {
-		this.stop = stop;
+	public synchronized void stopMSP() {
+		this.stop = true;
 	}
 	
 	@Override
