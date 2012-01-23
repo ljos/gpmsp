@@ -16,9 +16,9 @@ public class NUIMsPacman implements MsPacman {
 	private Throttle t;
 	private boolean stop = false;
 
-	private final CountDownLatch signal;
+	private final CountDownLatch[] signal;
 
-	public NUIMsPacman(CountDownLatch signal) {
+	public NUIMsPacman(CountDownLatch[] signal) {
 		this.signal = signal;
 	}
 
@@ -64,7 +64,8 @@ public class NUIMsPacman implements MsPacman {
 			}
 		}
 
-		new Thread(new SendKeys((cottage.machine.Pacman) m)).start(); //sending keys for starting the game
+		Thread tj = new Thread(new SendKeys()); //sending keys for starting the game
+		tj.start();
 		
 		i = 3;
 		while (i > 0) { //waiting for ready message to appear
@@ -85,13 +86,33 @@ public class NUIMsPacman implements MsPacman {
 			}
 		}
 		
-		signal.countDown();
-	
+		try {
+			tj.join();
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+		
+		int latch = 0;
+		signal[latch].countDown();
+		++latch;
 		while (!stop) { //running game
 			m.refresh(true);
 			t.throttle();
-			if (this.isGameOver()) {
-				new Thread(new SendKeys((cottage.machine.Pacman) m)).start();
+			if (this.isGameOver() && !stop) {
+
+				i = 3;
+				while (i > 0) { //finding if the game is past ended screen
+					m.refresh(true);
+					t.throttle();
+					if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] != 77) {
+						--i;
+					} else if (i < 3) {
+						++i;
+					}
+				}
+				Thread th = new Thread(new SendKeys());
+				th.start();
+				
 				i = 3;
 				while (i > 0) { //waiting for ready message to appear
 					m.refresh(true);
@@ -111,12 +132,17 @@ public class NUIMsPacman implements MsPacman {
 					}
 				}
 				
-				synchronized(signal) {
-					signal.notify();
+				try {
+					th.join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
+				signal[latch].countDown();
+				++latch;
 			}
 		}
 	}
+	
 
 	public int[] getEntity(int colour) {
 		if (colour == 16776960) {
@@ -401,25 +427,24 @@ public class NUIMsPacman implements MsPacman {
 		return (score > 9999999) ? 0 : score;
 	}
 
-	public void stop(boolean stop) {
-		this.stop = stop;
+	public synchronized void stopMSP() {
+		this.stop = true;
 	}
 
 	@Override
 	public boolean isGameOver() {
 		return ((Pacman) m).md.getREGION_CPU()[0x403B] == 67;
 	}
+	
+	public boolean stopq() {
+		return stop;
+	}
 
 	private class SendKeys implements Runnable {
-		cottage.machine.Pacman m;
-
-		public SendKeys(cottage.machine.Pacman m) {
-			this.m = m;
-		}
-
 		@Override
 		public void run() {
 			try {
+				Thread.sleep(100);
 				m.keyPress(KeyEvent.VK_5);
 				Thread.sleep(100);
 				m.keyRelease(KeyEvent.VK_5);
