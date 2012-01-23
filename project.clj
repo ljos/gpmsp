@@ -13,5 +13,6 @@
               "-XX:MaxPermSize=256M"
               "-XX:ThreadStackSize=512k"
               "-XX:+UseConcMarkSweepGC"
-              "-Djava.awt.headless=true"]
+              ;"-Djava.awt.headless=true"
+              ]
   :main mspacman.core)
