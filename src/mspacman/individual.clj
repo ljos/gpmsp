@@ -107,8 +107,8 @@
 
 (defn msp-move-down []
   (do (-> msp (.keyPressed KeyEvent/VK_DOWN))
-       (Thread/sleep 50)
-       (-> msp (.keyReleased KeyEvent/VK_DOWN))))
+      (Thread/sleep 50)
+      (-> msp (.keyReleased KeyEvent/VK_DOWN))))
 
 (defn msp-check-area-leftof [entity]
   (when (and (= (type entity) clojure.lang.Atom)
@@ -173,9 +173,11 @@
                  t 0]
             (cond (= t tries)
                   ,(do (-> msp (.stop true))
+                       (.join th)
                        (int (/ score t)))
                   (and (= t 3) (= (/ score t) 120))
                   ,(do (-> msp (.stop true))
+                       (.join th)
                        (int (/ score t)))
                   :else
                   ,(recur (+ score
@@ -183,7 +185,8 @@
                                    (move-in-direction (eval `~code)))
                                  (let [sc (.getScore msp)]
                                    (locking signal#
-                                     (.wait signal#))
+                                     (while (.isGameOver msp)
+                                       (.wait signal#)))
                                    sc)))
                           (inc t))))))))
 
@@ -220,4 +223,3 @@
                             (Thread/sleep 1000)
                             (-> msp .getScore)))
                      (dec t))))))))
-

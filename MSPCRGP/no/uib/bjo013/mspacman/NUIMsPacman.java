@@ -51,7 +51,7 @@ public class NUIMsPacman implements MsPacman {
 		pixel = m.refresh(true).getPixels();
 
 		t = new Throttle(m.getProperty(Machine.FPS));
-		t.enable(false);
+		t.enable(true);
 
 		int i = 3;
 		while (i > 0) { //finding if the game is at start screen.
@@ -86,7 +86,7 @@ public class NUIMsPacman implements MsPacman {
 		}
 		
 		signal.countDown();
-
+	
 		while (!stop) { //running game
 			m.refresh(true);
 			t.throttle();
@@ -112,7 +112,7 @@ public class NUIMsPacman implements MsPacman {
 				}
 				
 				synchronized(signal) {
-					signal.notifyAll();
+					signal.notify();
 				}
 			}
 		}
@@ -242,7 +242,8 @@ public class NUIMsPacman implements MsPacman {
 				&& getPixel(x + 10, y + 1) != ghost
 				&& getPixel(x + 1, y + 6) != ghost
 				&& getPixel(x + 1, y + 7) == ghost
-				&& getPixel(x + 14, y + 6) != ghost && getPixel(x + 14, y + 7) == ghost);
+				&& getPixel(x + 14, y + 6) != ghost 
+				&& getPixel(x + 14, y + 7) == ghost);
 	}
 
 	@Override
@@ -257,13 +258,13 @@ public class NUIMsPacman implements MsPacman {
 						|| (getPixel(x + 5, y + 5) == 16776960
 								&& getPixel(x + 4, y + 3) == 2171358
 								&& getPixel(x + 3, y + 4) == 2171358
-								&& getPixel(x + 4, y + 4) == 16711680 && getPixel(
-								x + 3, y + 3) == 16711680)
+								&& getPixel(x + 4, y + 4) == 16711680 
+								&& getPixel(x + 3, y + 3) == 16711680)
 						|| (getPixel(x + 5, y + 10) == 16776960
 								&& getPixel(x + 4, y + 12) == 2171358
 								&& getPixel(x + 3, y + 11) == 2171358
-								&& getPixel(x + 4, y + 11) == 16711680 && getPixel(
-								x + 3, y + 12) == 16711680)) {
+								&& getPixel(x + 4, y + 11) == 16711680 
+								&& getPixel(x + 3, y + 12) == 16711680)) {
 					return new int[] { x, y };
 				}
 			}
@@ -427,7 +428,6 @@ public class NUIMsPacman implements MsPacman {
 				Thread.sleep(100);
 				m.keyRelease(KeyEvent.VK_1);
 				Thread.sleep(100);
-				
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
