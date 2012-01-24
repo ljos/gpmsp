@@ -171,8 +171,8 @@
         (-> th .start)
         (loop [score 0
                t 0]
-          (if (or (= t tries)
-                  (and (= t 3)
+          (if (or (< tries t)
+                  (and (< 3 t)
                        (= (/ score t) 120)))
             (do (locking msp
                   (.stopMSP msp))
