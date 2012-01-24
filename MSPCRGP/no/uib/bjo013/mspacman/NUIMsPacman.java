@@ -95,11 +95,12 @@ public class NUIMsPacman implements MsPacman {
 		int latch = 0;
 		signal[latch].countDown();
 		++latch;
-		while (!stop) { //running game
+		
+		int sevenseven = 0;
+		while (!stop && sevenseven < 10) { //running game
 			m.refresh(true);
 			t.throttle();
 			if (this.isGameOver() && !stop) {
-
 				i = 3;
 				while (i > 0) { //finding if the game is past ended screen
 					m.refresh(true);
@@ -140,6 +141,11 @@ public class NUIMsPacman implements MsPacman {
 				signal[latch].countDown();
 				++latch;
 			}
+		}
+		if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 77) {
+			--sevenseven;
+		} else if (sevenseven < 3) {
+			++sevenseven;
 		}
 	}
 	
