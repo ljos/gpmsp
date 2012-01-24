@@ -171,6 +171,7 @@
         (-> th .start)
         (loop [score 0
                t 0]
+          (println (.toString th) t)
           (if (or (< tries t)
                   (and (< 3 t)
                        (= (/ score t) 120)))
