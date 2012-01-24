@@ -175,7 +175,9 @@
                   (and (< 3 t)
                        (= (/ score t) 120)))
             (do (locking msp
-                  (.stopMSP msp))
+                  (while (.alive th)
+                    (.interrupt th)
+                    (.stopMSP msp)))
                 (.join th)
                 (int (/ score t)))
             
