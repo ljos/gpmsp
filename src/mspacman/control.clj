@@ -66,7 +66,7 @@
         process (:process execp)
         in (:in execp)
         err (:err execp)]
-    (await-for 10000 pagent)
+    (await pagent)
     (.close in)
     (.close err)
     (.waitFor process)))
@@ -81,6 +81,6 @@
   (println (str "Starting " task " at " machine))
   (spawn machine
          (into-array String
-                     ["ssh" "-o ConnectTimeout=2" "-o StrictHostKeyChecking=no"
+                     ["ssh" "-o ConnectTimeout=2" "-o StrictHostKeyChecking=no" "-o PasswordAuthentication no"
                       (format "bjo013@%s" machine)
                       task])))
