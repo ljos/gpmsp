@@ -51,7 +51,7 @@ public class NUIMsPacman implements MsPacman {
 		pixel = m.refresh(true).getPixels();
 
 		t = new Throttle(m.getProperty(Machine.FPS));
-		t.enable(false);
+		t.enable(true);
 
 		int i = 3;
 		while (i > 0) { //finding if the game is at start screen.
