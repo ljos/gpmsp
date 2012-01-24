@@ -215,9 +215,12 @@
                                     machines
                                     (doall (partition (int (/ SIZE-OF-POPULATION (count machines)))
                                                       population))))))
-       generation (sort-by :fitness > (mapcat read-string
-                                (remove nil?
-                                        (map :stdout out))))]
+        generation (sort-by :fitness >
+                            (mapcat read-string
+                                    (remove nil?
+                                            (map #(if (= (:status %) 0)
+                                                    (:stdout %))
+                                                 out))))]
     (do (println "/n" 'generation n)
             (spit (format "%s/generations/%s_generation_%tL.txt"
                           (System/getProperty "user.home")
@@ -252,6 +255,3 @@
                              con/ALL-MACHINES)))]
     (shutdown-agents)
     out))
-
-
-
