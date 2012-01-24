@@ -207,16 +207,28 @@
                                              con/ALL-MACHINES))))))
         population pop
         out (doall (map con/run-task
-                        (doall (map #(con/send-to-machine %1
-                                                          (format "cd mspacman; %s '%s'"
-                                                                  "~/.lein/bin/lein run -m mspacman.gpmsp/run-gen"
-                                                                  (apply list %2)))
+                        (doall
+                         (map #(con/send-to-machine %1
+                                                    (format "cd mspacman; %s '%s'"
+                                                            "~/.lein/bin/lein run -m mspacman.gpmsp/run-gen"
+                                                            (apply list %2)))
                                     machines
                                     (doall (partition (int (/ SIZE-OF-POPULATION (count machines)))
-                                                      population))))))]
-    (sort-by :fitness > (mapcat read-string
+                                                      population))))))
+       generation (sort-by :fitness > (mapcat read-string
                                 (remove nil?
-                                        (map :stdout out))))))
+                                        (map :stdout out))))]
+    (do (println "/n" 'generation n)
+            (spit (format "%s/generations/%s_generation_%tL.txt"
+                          (System/getProperty "user.home")
+                          (string/lower-case (.getHostName (InetAddress/getLocalHost)))
+                          n)
+                  (str generation))
+            (println (map #(:fitness %) generation)
+                     "average:"
+                     (int (/ (reduce + (map #(:fitness %) generation)) SIZE-OF-POPULATION))
+                     "/n")
+            generation)))
 
 (defn start-gp-cluster []
   (println "Started")
@@ -225,20 +237,11 @@
                                             (create-random-population)))
            n NUMBER-OF-GENERATIONS]
       (if (< 0 n)
-        (do (println 'generation n)
-            (spit (format "%s/generations/%s_generation_%tL.txt"
-                          (System/getProperty "user.home")
-                          (string/lower-case (.getHostName (InetAddress/getLocalHost)))
-                          n)
-                  (str generation))
-            (println (map #(:fitness %) generation)
-                     "average:"
-                     (int (/ (reduce + (map #(:fitness %) generation)) SIZE-OF-POPULATION)))
-            (recur (gp-over-cluster (concat (take elitism population)
-                                            (map #(struct individual %  0)
-                                                 (repeatedly (- SIZE-OF-POPULATION elitism)
-                                                             #(recombination population)))))
-                   (dec n)))
+        (recur (gp-over-cluster (concat (take elitism population)
+                                        (map #(struct individual %  0)
+                                             (repeatedly (- SIZE-OF-POPULATION elitism)
+                                                         #(recombination population)))))
+               (dec n))
         (shutdown-agents)))))
 
 (defn cluster-kill []
