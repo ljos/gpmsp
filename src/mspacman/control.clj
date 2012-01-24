@@ -66,7 +66,7 @@
         process (:process execp)
         in (:in execp)
         err (:err execp)]
-    (await pagent)
+    (await pagent 3000000)
     (.close in)
     (.close err)
     (.waitFor process)))
