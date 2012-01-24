@@ -12,3 +12,5 @@ pom.xml
 bin/java.policy.applet
 
 bin/readme.txt
+
+src/mspacman/gpmsp.clj
