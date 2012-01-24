@@ -197,7 +197,7 @@
   (sort-by :fitness > (doall (pmap #(assoc % :fitness (ind/fitness FITNESS-RUNS (:program %)))
                                    (read-string input)))))
 
-(defn gp-over-cluster [pop]
+(defn gp-over-cluster [pop n]
   (println "Started")
   (let [machines  
         (map :machine
@@ -235,12 +235,12 @@
   (let [elitism (* SIZE-OF-POPULATION ELITISM-RATE)]
     (loop [population (gp-over-cluster (map #(struct individual % 0)
                                             (create-random-population)))
-           n NUMBER-OF-GENERATIONS]
-      (if (< 0 n)
+           n 0]
+      (if (< n NUMBER-OF-GENERATIONS)
         (recur (gp-over-cluster (concat (take elitism population)
                                         (map #(struct individual %  0)
                                              (repeatedly (- SIZE-OF-POPULATION elitism)
-                                                         #(recombination population)))))
+                                                         #(recombination population)))) n)
                (dec n))
         (shutdown-agents)))))
 
