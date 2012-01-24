@@ -4,6 +4,7 @@
 
 (defcluster :H4 
   :user "bjo013"
+  :ssh-options "-o ConnectTimeout=2" "-o StrictHostKeyChecking=no"
   :addresses ["mn121033"	
               "mn121034"	
               "mn121035"	
@@ -40,6 +41,7 @@
 
 (defcluster :H3
   :user "bjo013"
+  :ssh-options "-o ConnectTimeout=2" "-o StrictHostKeyChecking=no"
   :addresses ["mn121083"	
               "mn121085"	
               "mn121086"	
@@ -65,6 +67,7 @@
 
 (defcluster :RFB1
   :user "bjo013"
+  :ssh-options "-o ConnectTimeout=2" "-o StrictHostKeyChecking=no"
   :addresses ["mn190142"	
               "mn190143"	
               "mn190144"	
@@ -86,6 +89,7 @@
   :user "bjo013"
   :log true
   :results true
+  :ssh-options "-o ConnectTimeout=2" "-o StrictHostKeyChecking=no"
   :addresses ["mn121037"	
               "mn121038"	
               "mn121039"	
