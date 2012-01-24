@@ -6,6 +6,7 @@
 (import java.awt.BorderLayout)
 (import java.awt.event.KeyEvent)
 (import java.util.concurrent.CountDownLatch)
+(import java.util.concurrent.TimeUnit)
 
 (def ^:dynamic msp nil)
 
@@ -184,7 +185,7 @@
                          (catch Exception e '()))))
                 (int (/ score t)))
             
-            (do (.await (nth signal t))
+            (do (.await (nth signal t) 30 TimeUnit/SECONDS)
                 (recur (+ score
                           (do (while (not (.isGameOver msp))
                                 (move-in-direction (eval `~code)))
