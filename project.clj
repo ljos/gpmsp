@@ -10,8 +10,6 @@
               "-Xmx2G"
               "-Xms2G"
               "-Xmn1G"
-              "-XX:MaxPermSize=256M"
-              "-XX:ThreadStackSize=512k"
               "-XX:+UseConcMarkSweepGC"
               "-Djava.awt.headless=true"
               ]
