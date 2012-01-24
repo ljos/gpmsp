@@ -176,7 +176,11 @@
                        (= (/ score t) 120)))
             (do (locking msp
                   (.stopMSP msp))
-                (.join th)
+                (while (.isAlive th)
+                  (.join th 1000)
+                  (if (.isAlive th)
+                    (try (.interrupt th)
+                         (catch Exception e '()))))
                 (int (/ score t)))
             
             (do (.await (nth signal t))
