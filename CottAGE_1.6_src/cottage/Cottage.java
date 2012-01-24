@@ -174,7 +174,7 @@ public class Cottage extends GfxProducer {
 		while (!stop) {
 			if (!paused) {
 				update(m.refresh(true));
-				System.out.println(((Pacman) m).md.getREGION_CPU()[0x4252]);
+				System.out.println(((cottage.machine.Pacman) m).md.getREGION_CPU()[0x43F8]);
 			}
 			t.throttle();
 		}
