@@ -233,9 +233,9 @@
         (shutdown-agents)))))
 
 (defn cluster-kill []
-  (let [out (map con/run-task
-                 (map #(con/send-to-machine % "killall java")
-                      con/ALL-MACHINES))]
+  (let [out (doall (map con/run-task
+                        (map #(con/send-to-machine % "killall java")
+                             con/ALL-MACHINES)))]
     (shutdown-agents)
     out))
 
