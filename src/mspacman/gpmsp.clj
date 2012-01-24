@@ -232,12 +232,12 @@
                (dec n))
         (shutdown-agents)))))
 
-(defn clustertest []
-  (let  [out (doall (map con/run-task
-                         (map #(con/send-to-machine % "~/.scripts/check_for_user; echo $(hostname) : $(date)")
-                              con/ALL-MACHINES)))]
+(defn cluster-kill []
+  (let [out (map con/run-task
+                 (map #(con/send-to-machine % "killall java")
+                      con/ALL-MACHINES))]
     (shutdown-agents)
-    (map :stdout (filter #(= 0 (:status %)) out))))
+    out))
 
 
 
