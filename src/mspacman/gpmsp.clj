@@ -194,8 +194,8 @@
 
 (defn run-gen [input]
   (use 'mspacman.individual)
-  (sort-by :fitness > (pmap #(assoc % :fitness (ind/fitness FITNESS-RUNS (:program %)))
-                            (read-string input))))
+  (sort-by :fitness > (doall (pmap #(assoc % :fitness (ind/fitness FITNESS-RUNS (:program %)))
+                                   (read-string input)))))
 
 (defn gp-over-cluster [pop]
   (println "Started")
@@ -225,11 +225,20 @@
                                             (create-random-population)))
            n NUMBER-OF-GENERATIONS]
       (if (< 0 n)
-        (recur (gp-over-cluster (concat (take elitism population)
-                                        (map #(struct individual %  0)
-                                             (repeatedly (- SIZE-OF-POPULATION elitism)
-                                                         #(recombination population)))))
-               (dec n))
+        (do (println 'generation n)
+            (spit (format "%s/generations/%s_generation_%tL.txt"
+                          (System/getProperty "user.home")
+                          (string/lower-case (.getHostName (InetAddress/getLocalHost)))
+                          n)
+                  (str generation))
+            (println (map #(:fitness %) generation)
+                     "average:"
+                     (int (/ (reduce + (map #(:fitness %) generation)) SIZE-OF-POPULATION)))
+            (recur (gp-over-cluster (concat (take elitism population)
+                                            (map #(struct individual %  0)
+                                                 (repeatedly (- SIZE-OF-POPULATION elitism)
+                                                             #(recombination population)))))
+                   (dec n)))
         (shutdown-agents)))))
 
 (defn cluster-kill []
