@@ -165,7 +165,7 @@
   direction)
 
 (defn fitness [tries code]
-  (let [signal (into-array (repeatedly (+ tries 1) #(new CountDownLatch 1)))]
+  (let [signal (into-array (repeatedly tries #(new CountDownLatch 1)))]
     (binding [msp (new NUIMsPacman signal)]
       (let [th (new Thread msp)]
         (-> th .start)
@@ -179,7 +179,8 @@
                 (while (.isAlive th)
                   (.join th 1000)
                   (if (.isAlive th)
-                    (try (.interrupt th)
+                    (try (.stopMSP msp)
+                         (.interrupt th)
                          (catch Exception e '()))))
                 (int (/ score t)))
             
