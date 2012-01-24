@@ -141,11 +141,14 @@ public class NUIMsPacman implements MsPacman {
 				signal[latch].countDown();
 				++latch;
 			}
+			if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 77) {
+				++sevenseven;
+			} else if (sevenseven > 0) {
+				--sevenseven;
+			}
 		}
-		if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 77) {
-			--sevenseven;
-		} else if (sevenseven < 3) {
-			++sevenseven;
+		for(CountDownLatch l : signal) {
+			l.countDown();
 		}
 	}
 	
