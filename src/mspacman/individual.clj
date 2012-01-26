@@ -221,6 +221,3 @@
                             (Thread/sleep 1000)
                             (-> msp .getScore)))
                      (dec t))))))))
-
-(defn fitness-test [in]
-  (fitness 3 (read-string in)))

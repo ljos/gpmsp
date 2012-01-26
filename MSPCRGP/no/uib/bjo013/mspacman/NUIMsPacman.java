@@ -91,8 +91,7 @@ public class NUIMsPacman implements MsPacman {
 			tj.join();
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
-		} finally {
-			System.exit(1);
+			System.exit(1);	
 		}
 		
 		int latch = 0;
@@ -140,9 +139,8 @@ public class NUIMsPacman implements MsPacman {
 					th.join();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
-				} finally {
 					System.exit(1);
-				}
+				} 
 				signal[latch].countDown();
 				++latch;
 			}
@@ -438,7 +436,7 @@ public class NUIMsPacman implements MsPacman {
 
 	public synchronized void stopMSP() {
 		this.stop = true;
-		t.enable(false);
+		t.enable(false);	
 	}
 	
 	public synchronized boolean shouldContinue() {
@@ -466,7 +464,6 @@ public class NUIMsPacman implements MsPacman {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				e.printStackTrace();	
-			} finally {
 				System.exit(1);
 			}
 		}
