@@ -235,7 +235,7 @@
                                                         "({:program pinky, :fitness 0} {:program (msp< (if move-down (msp- (or blinky inky) inky) move-up) pinky), :fitness 0} {:program sue, :fitness 0})"))))
 
 (defn test-g []
-  (sort-by :fitness > (doall (pmap #(assoc % :fitness (ind/fitness FITNESS-RUNS (:program %)))
+  (sort-by :fitness > (doall (pmap #(assoc % :fitness (mspacman.individual/fitness FITNESS-RUNS (:program %)))
                                             (read-string "({:program pinky, :fitness 0} {:program (msp< (if move-down (msp- (or blinky inky) inky) move-up) pinky), :fitness 0} {:program sue, :fitness 0})")))))
 
 (defn cluster-kill []
