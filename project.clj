@@ -6,8 +6,7 @@
   :dev-dependencies [[control "0.2.3-SNAPSHOT"]]
   :java-source-path [["CottAGE_1.6_src/"]
                      ["MSPCRGP/"]]
-  :jvm-opts ["-server"
-              "-Xmx2G"
+  :jvm-opts [ "-Xmx3G"
               "-Xms2G"
               "-Xmn1G"
               "-XX:+UseConcMarkSweepGC"
