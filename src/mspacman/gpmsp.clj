@@ -2,8 +2,8 @@
   (:require [clojure.zip :as zip]
             [clojure.string :as string]
             [clojure.data.zip :as dzip]
-            [mspacman.control :as con]
-            [mspacman.individual :as ind])
+            [mspacman.control :as con])
+  (:use [mspacman.individual :as ind])
   (import java.net.InetAddress))
 
 (defstruct individual
@@ -194,8 +194,8 @@
 
 (defn run-gen [input]
   (use 'mspacman.individual)
-  (println (sort-by :fitness > (doall (pmap #(assoc % :fitness (ind/fitness FITNESS-RUNS (:program %)))
-                                            (read-string input))))))
+  (sort-by :fitness > (doall (pmap #(assoc % :fitness (ind/fitness FITNESS-RUNS (:program %)))
+                                   (read-string input)))))
 
 (defn gp-over-cluster [pop n]
   (println "Started")
@@ -215,8 +215,23 @@
                                     machines
                                     (doall (partition (int (/ SIZE-OF-POPULATION (count machines)))
                                                       population))))))
-       ]
-    out))
+        generation (sort-by :fitness >
+                            (mapcat read-string
+                                    (remove nil?
+                                            (map #(if (= (:status %) 0)
+                                                    (:stdout %))
+                                                 out))))]
+    (do (println "/n" 'generation n)
+            (spit (format "%s/generations/%s_generation_%tL.txt"
+                          (System/getProperty "user.home")
+                          (string/lower-case (.getHostName (InetAddress/getLocalHost)))
+                          n)
+                  (str generation))
+            (println (map #(:fitness %) generation)
+                     "average:"
+                     (int (/ (reduce + (map #(:fitness %) generation)) SIZE-OF-POPULATION))
+                     "/n")
+            generation)))
 
 (defn start-gp-cluster []
   (println "Started")
@@ -225,18 +240,14 @@
                                             (create-random-population))
                                        0)
            n 1]
-      (println population)
-      (shutdown-agents)
-      population)))
-
-(defn test-c []
-  (con/run-task (con/send-to-machine "mn121033" (format "cd mspacman; %s '%s'"
-                                                        "~/.lein/bin/lein run -m mspacman.gpmsp/run-gen"
-                                                        "({:program pinky, :fitness 0} {:program (msp< (if move-down (msp- (or blinky inky) inky) move-up) pinky), :fitness 0} {:program sue, :fitness 0})"))))
-
-(defn test-g []
-  (use 'mspacman.individual)
-  (pmap #(ind/fitness 3 (:program %)) (read-string "({:program pinky, :fitness 10} {:program (msp< (if move-down (msp- (or blinky inky) inky) move-up) pinky), :fitness 0} {:program sue, :fitness 12})")))
+      (if (< n NUMBER-OF-GENERATIONS)
+        (recur (gp-over-cluster (concat (take elitism population)
+                                        (map #(struct individual %  0)
+                                             (repeatedly (- SIZE-OF-POPULATION elitism)
+                                                         #(recombination population))))
+                                n)
+               (dec n))
+        (shutdown-agents)))))
 
 (defn cluster-kill []
   (let [out (doall (map con/run-task
