@@ -2,8 +2,8 @@
   (:require [clojure.zip :as zip]
             [clojure.string :as string]
             [clojure.data.zip :as dzip]
-            [mspacman.control :as con])
-  (:use [mspacman.individual :as ind])
+            [mspacman.control :as con]
+            [mspacman.individual :as ind])
   (import java.net.InetAddress))
 
 (defstruct individual
