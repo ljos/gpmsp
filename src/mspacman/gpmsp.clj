@@ -228,7 +228,7 @@
                                     (remove nil?
                                             (map #(if (zero? (:status %))
                                                     (:stdout %))
-                                                 out))))]
+                                                 from-machines))))]
     (newline)
     (println 'generation n)
     (spit (format "%s/generations/%s_generation_%tL.txt"
@@ -238,8 +238,8 @@
           (str generation))
     (println (map #(:fitness %) generation)
              "average:"
-             (int (/ (reduce + (map #(:fitness %) g
-                                    eneration))
+             (int (/ (reduce + (map #(:fitness %)
+                                    generation))
                      SIZE-OF-POPULATION)))
     (newline)
     generation))
