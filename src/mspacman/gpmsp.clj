@@ -221,17 +221,18 @@
                                             (map #(if (= (:status %) 0)
                                                     (:stdout %))
                                                  out))))]
-    (do (println "/n" 'generation n)
-            (spit (format "%s/generations/%s_generation_%tL.txt"
-                          (System/getProperty "user.home")
-                          (string/lower-case (.getHostName (InetAddress/getLocalHost)))
-                          n)
-                  (str generation))
-            (println (map #(:fitness %) generation)
-                     "average:"
-                     (int (/ (reduce + (map #(:fitness %) generation)) SIZE-OF-POPULATION))
-                     "/n")
-            generation)))
+    (do (println "")
+        (println "Generation" n)
+        (spit (format "%s/generations/%s_generation_%tL.txt"
+                      (System/getProperty "user.home")
+                      (string/lower-case (.getHostName (InetAddress/getLocalHost)))
+                      n)
+              (str (apply list generation)))
+        (println (str (map #(:fitness %) generation))
+                 "average:"
+                 (int (/ (reduce + (map #(:fitness %) generation)) SIZE-OF-POPULATION)))
+        (println "")
+        generation)))
 
 (defn start-gp-cluster []
   (println "Started")
@@ -240,13 +241,14 @@
                                             (create-random-population))
                                        0)
            n 1]
-      (if (< n NUMBER-OF-GENERATIONS)
-        (recur (gp-over-cluster (concat (take elitism population)
-                                        (map #(struct individual %  0)
-                                             (repeatedly (- SIZE-OF-POPULATION elitism)
-                                                         #(recombination population))))
-                                n)
-               (dec n))
+      (println population)
+      ;; (if (< n NUMBER-OF-GENERATIONS)
+      ;;   (recur (gp-over-cluster (concat (take elitism population)
+      ;;                                   (map #(struct individual %  0)
+      ;;                                        (repeatedly (- SIZE-OF-POPULATION elitism)
+      ;;                                                    #(recombination population))))
+      ;;                           n)
+      ;;          (dec n))
         (shutdown-agents)))))
 
 (defn cluster-kill []
