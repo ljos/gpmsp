@@ -233,7 +233,8 @@
       ;;                                                  #(recombination population))))
       ;;                         n)
       ;;        (dec n))
-      (shutdown-agents))))
+      (shutdown-agents)
+      population)))
 
 (defn cluster-kill []
   (let [out (doall (map con/run-task
