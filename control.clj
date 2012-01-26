@@ -110,7 +110,3 @@
   (ssh (cd "mspacman"
            (run (format "~/.lein/bin/lein run -m mspacman.gpmsp/run-gen '%s'"
                         input)))))
-
-(deftask :test-fitness "" []
-  (ssh (cd "mspacman"
-           (run (format "~/.lein/bin/lein run -m mspacman.individual/test-fitness")))))
