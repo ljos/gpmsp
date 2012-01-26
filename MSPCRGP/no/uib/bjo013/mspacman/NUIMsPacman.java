@@ -87,20 +87,22 @@ public class NUIMsPacman implements MsPacman {
 		}
 		
 		try {
+			tj.setPriority(Thread.MAX_PRIORITY);
 			tj.join();
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
+		} finally {
+			System.exit(1);
 		}
 		
 		int latch = 0;
 		signal[latch].countDown();
 		++latch;
 		
-		int sevenseven = 0;
-		while (!stop && sevenseven < 10) { //running game
+		while (shouldContinue()) { //running game
 			m.refresh(true);
 			t.throttle();
-			if (this.isGameOver() && !stop) {
+			if (this.isGameOver() && shouldContinue()) {
 				i = 3;
 				while (i > 0) { //finding if the game is past ended screen
 					m.refresh(true);
@@ -134,17 +136,15 @@ public class NUIMsPacman implements MsPacman {
 				}
 				
 				try {
+					th.setPriority(Thread.MAX_PRIORITY);
 					th.join();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
+				} finally {
+					System.exit(1);
 				}
 				signal[latch].countDown();
 				++latch;
-			}
-			if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 77) {
-				++sevenseven;
-			} else if (sevenseven > 0) {
-				--sevenseven;
 			}
 		}
 		for(CountDownLatch l : signal) {
@@ -438,6 +438,11 @@ public class NUIMsPacman implements MsPacman {
 
 	public synchronized void stopMSP() {
 		this.stop = true;
+		t.enable(false);
+	}
+	
+	public synchronized boolean shouldContinue() {
+		return !stop;
 	}
 
 	@Override
@@ -445,9 +450,6 @@ public class NUIMsPacman implements MsPacman {
 		return ((Pacman) m).md.getREGION_CPU()[0x403B] == 67;
 	}
 	
-	public boolean stopq() {
-		return stop;
-	}
 
 	private class SendKeys implements Runnable {
 		@Override
@@ -463,7 +465,9 @@ public class NUIMsPacman implements MsPacman {
 				m.keyRelease(KeyEvent.VK_1);
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				e.printStackTrace();	
+			} finally {
+				System.exit(1);
 			}
 		}
 	}
