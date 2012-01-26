@@ -216,11 +216,11 @@
                                     (doall (partition (int (/ SIZE-OF-POPULATION (count machines)))
                                                       population))))))
         generation (sort-by :fitness >
-                            (mapcat read-string
-                                    (remove nil?
-                                            (map #(if (= (:status %) 0)
-                                                    (:stdout %))
-                                                 out))))]
+                            (doall (mapcat read-string
+                                           (remove nil?
+                                                   (map #(if (= (:status %) 0)
+                                                           (:stdout %))
+                                                        out)))))]
     (do (println "")
         (println "Generation" n)
         (spit (format "%s/generations/%s_generation_%tL.txt"
