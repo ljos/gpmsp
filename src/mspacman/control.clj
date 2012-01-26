@@ -84,3 +84,11 @@
                      ["ssh" "-o ConnectTimeout=2" "-o StrictHostKeyChecking=no" "-o PasswordAuthentication no"
                       (format "bjo013@%s" machine)
                       task])))
+
+(defn cluster-kill []
+  (let [out (doall
+             (map con/run-task
+                  (map #(con/send-to-machine % "killall java")
+                       con/ALL-MACHINES)))]
+    (shutdown-agents)
+    out))

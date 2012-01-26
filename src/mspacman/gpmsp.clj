@@ -104,8 +104,9 @@
            ,(recur (zip/next loc) val n)
            :else
            ,(recur (zip/next loc)
-                   (if (= 0 (mod (rand-int n) n))
-                     loc val)
+                   (if (zero? (mod (rand-int n) n))
+                     loc
+                     val)
                    (inc n))))))
 
 (defn reproduction [parents]
@@ -197,41 +198,51 @@
   (sort-by :fitness > (doall (pmap #(assoc % :fitness (ind/fitness FITNESS-RUNS (:program %)))
                                    (read-string input)))))
 
-(defn gp-over-cluster [pop n]
+(defn- find-useable-machines [machines]
+  (map :machine
+       (filter #(zero? (:status %))
+               (doall
+                (map con/run-task
+                     (doall
+                      (map #(con/send-to-machine % "~/.scripts/check_for_user;")
+                           machines)))))))
+
+(defn- send-population [machines population]
+  (doall
+   (map con/run-task
+        (doall
+         (map #(con/send-to-machine %1 (format "cd mspacman; %s '%s'"
+                                               "~/.lein/bin/lein run -m mspacman.gpmsp/run-gen"
+                                               (apply list %2)))
+              machines
+              (doall (partition (int (/ SIZE-OF-POPULATION
+                                        (count machines)))
+                                population)))))))
+
+(defn gp-over-cluster [population n]
   (println "Started")
-  (let [machines  
-        (map :machine
-             (filter #(= 0 (:status %))
-                     (doall (map con/run-task
-                                 (doall (map #(con/send-to-machine % (format "~/.scripts/check_for_user;"))
-                                             con/ALL-MACHINES))))))
-        population pop
-        out (doall (map con/run-task
-                        (doall
-                         (map #(con/send-to-machine %1
-                                                    (format "cd mspacman; %s '%s'"
-                                                            "~/.lein/bin/lein run -m mspacman.gpmsp/run-gen"
-                                                            (apply list %2)))
-                                    machines
-                                    (doall (partition (int (/ SIZE-OF-POPULATION (count machines)))
-                                                      population))))))
+  (let [machines  (find-useable-machines con/ALL-MACHINES)
+        from-machines (send-population machines population)
         generation (sort-by :fitness >
                             (mapcat read-string
                                     (remove nil?
-                                            (map #(if (= (:status %) 0)
+                                            (map #(if (zero? (:status %))
                                                     (:stdout %))
                                                  out))))]
-    (do (println "/n" 'generation n)
-            (spit (format "%s/generations/%s_generation_%tL.txt"
-                          (System/getProperty "user.home")
-                          (string/lower-case (.getHostName (InetAddress/getLocalHost)))
-                          n)
-                  (str generation))
-            (println (map #(:fitness %) generation)
-                     "average:"
-                     (int (/ (reduce + (map #(:fitness %) generation)) SIZE-OF-POPULATION))
-                     "/n")
-            generation)))
+    (newline)
+    (println 'generation n)
+    (spit (format "%s/generations/%s_generation_%tL.txt"
+                  (System/getProperty "user.home")
+                  (string/lower-case (.getHostName (InetAddress/getLocalHost)))
+                  n)
+          (str generation))
+    (println (map #(:fitness %) generation)
+             "average:"
+             (int (/ (reduce + (map #(:fitness %) g
+                                    eneration))
+                     SIZE-OF-POPULATION)))
+    (newline)
+    generation))
 
 (defn start-gp-cluster []
   (println "Started")
@@ -248,10 +259,3 @@
                                 n)
                (dec n))
         (shutdown-agents)))))
-
-(defn cluster-kill []
-  (let [out (doall (map con/run-task
-                        (map #(con/send-to-machine % "killall java")
-                             con/ALL-MACHINES)))]
-    (shutdown-agents)
-    out))
