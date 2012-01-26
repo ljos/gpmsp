@@ -242,14 +242,14 @@
                                        0)
            n 1]
       (println population)
-      ;; (if (< n NUMBER-OF-GENERATIONS)
-      ;;   (recur (gp-over-cluster (concat (take elitism population)
-      ;;                                   (map #(struct individual %  0)
-      ;;                                        (repeatedly (- SIZE-OF-POPULATION elitism)
-      ;;                                                    #(recombination population))))
-      ;;                           n)
-      ;;          (dec n))
-        (shutdown-agents)))))
+      ;; if (< n NUMBER-OF-GENERATIONS)
+      ;; (recur (gp-over-cluster (concat (take elitism population)
+      ;;                                 (map #(struct individual %  0)
+      ;;                                      (repeatedly (- SIZE-OF-POPULATION elitism)
+      ;;                                                  #(recombination population))))
+      ;;                         n)
+      ;;        (dec n))
+      (shutdown-agents))))
 
 (defn cluster-kill []
   (let [out (doall (map con/run-task
