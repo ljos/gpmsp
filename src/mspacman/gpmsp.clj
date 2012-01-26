@@ -194,8 +194,8 @@
 
 (defn run-gen [input]
   (use 'mspacman.individual)
-  (sort-by :fitness > (doall (pmap #(assoc % :fitness (ind/fitness FITNESS-RUNS (:program %)))
-                                   (read-string input)))))
+  (str (sort-by :fitness > (doall (pmap #(assoc % :fitness (ind/fitness FITNESS-RUNS (:program %)))
+                                        (read-string input))))))
 
 (defn gp-over-cluster [pop n]
   (println "Started")
