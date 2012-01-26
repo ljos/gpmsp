@@ -234,10 +234,8 @@
                                                         "~/.lein/bin/lein run -m mspacman.gpmsp/run-gen"
                                                         "({:program pinky, :fitness 0} {:program (msp< (if move-down (msp- (or blinky inky) inky) move-up) pinky), :fitness 0} {:program sue, :fitness 0})"))))
 
-(defn test-g []
-  (sort-by :fitness > 
-           (pmap #(struct individual % (ind/fitness FITNESS-RUNS %))
-                 (map :program (read-string "({:program pinky, :fitness 10} {:program (msp< (if move-down (msp- (or blinky inky) inky) move-up) pinky), :fitness 0} {:program sue, :fitness 12})")))))
+(defn test-g []  
+  (map :program (read-string "({:program pinky, :fitness 10} {:program (msp< (if move-down (msp- (or blinky inky) inky) move-up) pinky), :fitness 0} {:program sue, :fitness 12})")))
 
 (defn cluster-kill []
   (let [out (doall (map con/run-task
