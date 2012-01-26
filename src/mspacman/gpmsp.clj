@@ -226,15 +226,13 @@
                                        0)
            n 1]
       (println population)
-      ;; if (< n NUMBER-OF-GENERATIONS)
-      ;; (recur (gp-over-cluster (concat (take elitism population)
-      ;;                                 (map #(struct individual %  0)
-      ;;                                      (repeatedly (- SIZE-OF-POPULATION elitism)
-      ;;                                                  #(recombination population))))
-      ;;                         n)
-      ;;        (dec n))
       (shutdown-agents)
       population)))
+
+(defn test-c []
+  (con/run-task (con/send-to-machine "mn121033" (format "cd mspacman; %s '%s'"
+                                                        "~/.lein/bin/lein run -m mspacman.gpmsp/run-gen"
+                                                        "({:program pinky, :fitness 0} {:program (msp< (if move-down (msp- (or blinky inky) inky) move-up) pinky), :fitness 0} {:program sue, :fitness 0})")))
 
 (defn cluster-kill []
   (let [out (doall (map con/run-task
