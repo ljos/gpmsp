@@ -172,20 +172,17 @@
         (-> th .start)
         (loop [score 0
                t 0]
+          (println (.toString th) ":" t)
           (if (or (< tries t)
                   (and (< 3 t)
                        (= (/ score t) 120)))
             (do (locking msp
-                  (.stopMSP msp))
-                (while (.isAlive th)
-                  (.join th 1000)
-                  (if (.isAlive th)
-                    (try (.stopMSP msp)
-                         (.interrupt th)
-                         (catch Exception e '()))))
+                  (.stopMSP msp))   
+                (.join th 1000)
+                (println "Ended" (.toString th))
                 (int (/ score t)))
             
-            (do (.await (nth signal t) 30 TimeUnit/SECONDS)
+            (do (.await (nth signal t))
                 (recur (+ score
                           (do (while (not (.isGameOver msp))
                                 (move-in-direction (eval `~code)))
@@ -226,3 +223,12 @@
                             (Thread/sleep 1000)
                             (-> msp .getScore)))
                      (dec t))))))))
+
+(def fitness-test []
+  (doall (pmap #(fitness 7 %) '({:program inky, :fitness 0}
+                                {:program (msp-check-area-above sue), :fitness 0}
+                                {:program move-up, :fitness 0}
+                                {:program (msp-relative-distance sue inky), :fitness 0}
+                                {:program inky, :fitness 0}
+                                {:program (do (msp+ pills (msp-check-area-leftof blinky)) move-up move-left sue),
+                                 :fitness 0}))))
