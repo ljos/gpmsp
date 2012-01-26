@@ -166,29 +166,27 @@
   direction)
 
 (defn fitness [tries code]
-  (let [signal (into-array (repeatedly tries #(new CountDownLatch 1)))]
+  (let [signal (into-array (repeatedly (inc tries)
+                                       #(new CountDownLatch 1)))]
     (binding [msp (new NUIMsPacman signal)]
-      (let [th (new Thread msp)]
-        (-> th .start)
+      (let [thread (new Thread msp)]
+        (.start thread)
         (loop [score 0
-               t 0]
-          (println (.toString th) ":" t)
-          (if (or (< tries t)
-                  (and (< 3 t)
-                       (= (/ score t) 120)))
+               times 0]
+          (if (or (<= tries times)
+                  (and (<= 3 times)
+                       (= (/ score times) 120)))
             (do (locking msp
-                  (.stopMSP msp))   
-                (.join th 1000)
-                (println "Ended" (.toString th))
-                (int (/ score t)))
-            
-            (do (.await (nth signal t))
+                  (.stopMSP msp))
+                (.setPriority thread Thread/MAX_PRIORITY)
+                (.join thread)
+                (int (/ score times)))
+            (do (.await (nth signal times))
                 (recur (+ score
                           (do (while (not (.isGameOver msp))
                                 (move-in-direction (eval `~code)))
-                              (let [sc (.getScore msp)]
-                                sc)))
-                       (inc t)))))))))
+                              (.getScore msp)))
+                       (inc times)))))))))
 
 (defn fitness-graphic [tries code]
   (binding [msp (doto (new GUIMsPacman)
@@ -223,12 +221,3 @@
                             (Thread/sleep 1000)
                             (-> msp .getScore)))
                      (dec t))))))))
-
-(def fitness-test []
-  (doall (pmap #(fitness 7 %) '({:program inky, :fitness 0}
-                                {:program (msp-check-area-above sue), :fitness 0}
-                                {:program move-up, :fitness 0}
-                                {:program (msp-relative-distance sue inky), :fitness 0}
-                                {:program inky, :fitness 0}
-                                {:program (do (msp+ pills (msp-check-area-leftof blinky)) move-up move-left sue),
-                                 :fitness 0}))))
