@@ -215,24 +215,8 @@
                                     machines
                                     (doall (partition (int (/ SIZE-OF-POPULATION (count machines)))
                                                       population))))))
-        generation (sort-by :fitness >
-                            (doall (mapcat read-string
-                                           (remove nil?
-                                                   (map #(if (= (:status %) 0)
-                                                           (:stdout %))
-                                                        out)))))]
-    (do (println "")
-        (println "Generation" n)
-        (spit (format "%s/generations/%s_generation_%tL.txt"
-                      (System/getProperty "user.home")
-                      (string/lower-case (.getHostName (InetAddress/getLocalHost)))
-                      n)
-              (str (apply list generation)))
-        (println (str (map #(:fitness %) generation))
-                 "average:"
-                 (int (/ (reduce + (map #(:fitness %) generation)) SIZE-OF-POPULATION)))
-        (println "")
-        generation)))
+       ]
+    out))
 
 (defn start-gp-cluster []
   (println "Started")
