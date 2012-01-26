@@ -232,7 +232,7 @@
 (defn test-c []
   (con/run-task (con/send-to-machine "mn121033" (format "cd mspacman; %s '%s'"
                                                         "~/.lein/bin/lein run -m mspacman.gpmsp/run-gen"
-                                                        "({:program pinky, :fitness 0} {:program (msp< (if move-down (msp- (or blinky inky) inky) move-up) pinky), :fitness 0} {:program sue, :fitness 0})")))
+                                                        "({:program pinky, :fitness 0} {:program (msp< (if move-down (msp- (or blinky inky) inky) move-up) pinky), :fitness 0} {:program sue, :fitness 0})"))))
 
 (defn cluster-kill []
   (let [out (doall (map con/run-task
