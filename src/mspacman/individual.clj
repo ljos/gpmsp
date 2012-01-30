@@ -172,24 +172,24 @@
       (let [thread (new Thread msp)]
         (.start thread)
         (Thread/sleep (rand-int 10))
-        (println (.toString thread) "begins with code:" code)
+        (println (str (.toString thread) " begins with code: " code))
         (loop [score 0
                times 0]
           (if (or (<= tries times)
                   (and (<= 3 times)
                        (= (/ score times) 120)))
-            (do (println (.toString thread) "before lock msp:" times)
+            (do (println (str (.toString thread) " before lock msp: " times))
                 (locking msp
                   (.stopMSP msp))
-                (println (.toString thread) "after lock msp:" times)
+                (println (str (.toString thread) " after lock msp: " times))
                 (.setPriority thread Thread/MAX_PRIORITY)
-                (println (.toString thread) "before join:" times)
+                (println (str (.toString thread) " before join: " times))
                 (.join thread)
-                (println (.toString thread) "after join:" times)
+                (println ((.toString thread) " after join: " times))
                 (int (/ score times)))
-            (do (println (.toString thread) "before await:" times)
+            (do (println (str (.toString thread) " before await: " times))
                 (.await (nth signal times))
-                (println (.toString thread) "after await:" times)
+                (println (str (.tostring thread) " after await: " times))
                 (recur (+ score
                           (do (while (not (.isGameOver msp))
                                 (move-in-direction (eval `~code)))
