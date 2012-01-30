@@ -185,7 +185,7 @@
                 (.setPriority thread Thread/MAX_PRIORITY)
                 (println (str (.toString thread) " before join: " times))
                 (.join thread)
-                (println ((.toString thread) " after join: " times))
+                (println (str (.toString thread) " after join: " times))
                 (int (/ score times)))
             (do (println (str (.toString thread) " before await: " times))
                 (.await (nth signal times))
