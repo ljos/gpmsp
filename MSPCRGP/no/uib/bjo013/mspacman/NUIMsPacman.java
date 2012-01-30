@@ -102,27 +102,21 @@ public class NUIMsPacman implements MsPacman {
 			m.refresh(true);
 			t.throttle();
 			if (this.isGameOver() && shouldContinue()) {
-				i = 3;
-				while (i > 0) { //finding if the game is past ended screen
+				for (;;) { //finding if the game is past ended screen
 					m.refresh(true);
 					t.throttle();
 					if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] != 77) {
-						--i;
-					} else if (i < 3) {
-						++i;
+						break;
 					}
 				}
 				Thread th = new Thread(new SendKeys());
 				th.start();
 				
-				i = 3;
-				while (i > 0) { //waiting for ready message to appear
+				for (;;) { //waiting for ready message to appear
 					m.refresh(true);
 					t.throttle();
 					if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 82) {
-						--i;
-					} else if (i < 3) {
-						++i;
+						break;
 					}
 				}
 
