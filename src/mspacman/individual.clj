@@ -189,7 +189,7 @@
                 (int (/ score times)))
             (do (println (str (.toString thread) " before await: " times))
                 (.await (nth signal times))
-                (println (str (.tostring thread) " after await: " times))
+                (println (str (.toString thread) " after await: " times))
                 (recur (+ score
                           (do (while (not (.isGameOver msp))
                                 (move-in-direction (eval `~code)))
