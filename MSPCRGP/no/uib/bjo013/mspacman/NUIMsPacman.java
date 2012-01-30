@@ -67,14 +67,11 @@ public class NUIMsPacman implements MsPacman {
 		Thread tj = new Thread(new SendKeys()); //sending keys for starting the game
 		tj.start();
 		
-		i = 3;
-		while (i > 0) { //waiting for ready message to appear
+		for (;;) { //waiting for ready message to appear
 			m.refresh(true);
 			t.throttle();
 			if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 82) {
-				--i;
-			} else if (i < 3) {
-				++i;
+				break;
 			}
 		}
 
