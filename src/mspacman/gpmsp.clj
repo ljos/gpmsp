@@ -211,7 +211,7 @@
   (doall
    (map con/run-task
         (doall
-         (map #(con/send-to-machine %1 (format "cd mspacman; %s '%s'"
+         (map #(con/send-to-machine %1 (format "cd mspacman; %s '%s' &> ~/log/$(hostname -s).log"
                                                "~/.lein/bin/lein trampoline run -m mspacman.gpmsp/run-gen"
                                                (apply list %2)))
               machines

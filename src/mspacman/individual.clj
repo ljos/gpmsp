@@ -181,7 +181,8 @@
                 (.setPriority thread Thread/MAX_PRIORITY)
                 (.join thread)
                 (int (/ score times)))
-            (do (.await (nth signal times))
+            (do (println (.toString thread) ":" times)
+                (.await (nth signal times))
                 (recur (+ score
                           (do (while (not (.isGameOver msp))
                                 (move-in-direction (eval `~code)))
