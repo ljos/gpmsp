@@ -5,8 +5,6 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.net.URL;
 
-import cottage.machine.Pacman;
-
 import jef.machine.Machine;
 import jef.util.Throttle;
 import jef.video.GfxProducer;
