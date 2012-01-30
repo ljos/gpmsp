@@ -81,7 +81,10 @@
   (println (str "Starting " task " at " machine))
   (spawn machine
          (into-array String
-                     ["ssh" "-o ConnectTimeout=2" "-o StrictHostKeyChecking=no" "-o PasswordAuthentication no"
+                     ["ssh"
+                      "-o ConnectTimeout=2"
+                      "-o StrictHostKeyChecking=no"
+                      "-o PasswordAuthentication no"
                       (format "bjo013@%s" machine)
                       task])))
 
