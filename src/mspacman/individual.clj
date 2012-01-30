@@ -171,6 +171,7 @@
     (binding [msp (new NUIMsPacman signal)]
       (let [thread (new Thread msp)]
         (.start thread)
+        (println (.toString thread) ":" code)
         (loop [score 0
                times 0]
           (if (or (<= tries times)
