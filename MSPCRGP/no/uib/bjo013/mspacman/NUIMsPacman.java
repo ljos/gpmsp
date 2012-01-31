@@ -54,6 +54,7 @@ public class NUIMsPacman implements MsPacman {
 		t.enable(true);
 
 		int i = 3;
+		System.out.println(Thread.currentThread().toString() +"Before finding if game is at start screen");
 		while (i > 0) { //finding if the game is at start screen.
 			m.refresh(true);
 			t.throttle();
@@ -63,10 +64,12 @@ public class NUIMsPacman implements MsPacman {
 				++i;
 			}
 		}
+		System.out.println(Thread.currentThread().toString() + "After finding if game is at start screen");
 
 		Thread tj = new Thread(new SendKeys()); //sending keys for starting the game
 		tj.start();
 		
+		System.out.println(Thread.currentThread().toString() + "waiting for ready");
 		for (;;) { //waiting for ready message to appear
 			m.refresh(true);
 			t.throttle();
@@ -74,7 +77,8 @@ public class NUIMsPacman implements MsPacman {
 				break;
 			}
 		}
-
+		System.out.println(Thread.currentThread().toString() + "after ready");
+		System.out.println(Thread.currentThread().toString() + "waiting for ready to dissapear");
 		for (;;) { // waiting for ready message to disappear
 			m.refresh(true);
 			t.throttle();
@@ -82,13 +86,12 @@ public class NUIMsPacman implements MsPacman {
 				break;
 			}
 		}
+		System.out.println(Thread.currentThread().toString() + "ready dissapeared");
 		
 		try {
-			tj.setPriority(Thread.MAX_PRIORITY);
 			tj.join();
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
-			System.exit(1);	
 		}
 		
 		int latch = 0;
@@ -99,6 +102,7 @@ public class NUIMsPacman implements MsPacman {
 			m.refresh(true);
 			t.throttle();
 			if (this.isGameOver() && shouldContinue()) {
+				System.out.println(Thread.currentThread().toString() + "finding if endscreen is gone");
 				for (;;) { //finding if the game is past ended screen
 					m.refresh(true);
 					t.throttle();
@@ -106,9 +110,11 @@ public class NUIMsPacman implements MsPacman {
 						break;
 					}
 				}
+				System.out.println(Thread.currentThread().toString() + "endscreen gone");
 				Thread th = new Thread(new SendKeys());
 				th.start();
 				
+				System.out.println(Thread.currentThread().toString() + "waiting for ready message to appear");
 				for (;;) { //waiting for ready message to appear
 					m.refresh(true);
 					t.throttle();
@@ -117,6 +123,7 @@ public class NUIMsPacman implements MsPacman {
 					}
 				}
 
+				System.out.println(Thread.currentThread().toString() + "waiting for ready message to dissapear");
 				for (;;) { // waiting for ready message to disappear
 					m.refresh(true);
 					t.throttle();
@@ -124,13 +131,12 @@ public class NUIMsPacman implements MsPacman {
 						break;
 					}
 				}
+				System.out.println(Thread.currentThread().toString() + "ready massage dissapeared");
 				
 				try {
-					th.setPriority(Thread.MAX_PRIORITY);
 					th.join();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
-					System.exit(1);
 				} 
 				signal[latch].countDown();
 				++latch;
@@ -444,7 +450,7 @@ public class NUIMsPacman implements MsPacman {
 		@Override
 		public void run() {
 			try {
-				Thread.sleep(100);
+				Thread.sleep(300);
 				m.keyPress(KeyEvent.VK_5);
 				Thread.sleep(100);
 				m.keyRelease(KeyEvent.VK_5);
@@ -455,7 +461,6 @@ public class NUIMsPacman implements MsPacman {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				e.printStackTrace();	
-				System.exit(1);
 			}
 		}
 	}
