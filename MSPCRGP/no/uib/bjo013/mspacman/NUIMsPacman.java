@@ -70,11 +70,15 @@ public class NUIMsPacman implements MsPacman {
 		tj.start();
 		
 		System.out.println(Thread.currentThread().toString() + "waiting for ready");
-		for (;;) { //waiting for ready message to appear
+		for (long j = 0;; ++j) { //waiting for ready message to appear
 			m.refresh(true);
 			t.throttle();
 			if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 82) {
 				break;
+			}
+			if(j % 50 == 0) {
+				System.out.println(((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252]);
+				new Thread(new SendKeys()).start();
 			}
 		}
 		System.out.println(Thread.currentThread().toString() + "after ready");
@@ -123,6 +127,7 @@ public class NUIMsPacman implements MsPacman {
 						break;
 					}
 					if(j % 50 == 0) {
+						System.out.println(((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252]);
 						new Thread(new SendKeys()).start();
 					}
 				}
