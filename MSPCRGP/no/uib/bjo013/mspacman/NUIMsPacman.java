@@ -115,11 +115,15 @@ public class NUIMsPacman implements MsPacman {
 				th.start();
 				
 				System.out.println(Thread.currentThread().toString() + "waiting for ready message to appear");
-				for (;;) { //waiting for ready message to appear
+				
+				for (long j = 0;; ++j) { //waiting for ready message to appear
 					m.refresh(true);
 					t.throttle();
 					if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 82) {
 						break;
+					}
+					if(j % 50 == 0) {
+						new Thread(new SendKeys()).start();
 					}
 				}
 
@@ -450,7 +454,7 @@ public class NUIMsPacman implements MsPacman {
 		@Override
 		public void run() {
 			try {
-				Thread.sleep(300);
+				Thread.sleep(100);
 				m.keyPress(KeyEvent.VK_5);
 				Thread.sleep(100);
 				m.keyRelease(KeyEvent.VK_5);
