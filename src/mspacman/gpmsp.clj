@@ -257,13 +257,5 @@
                                              (repeatedly (- SIZE-OF-POPULATION elitism)
                                                          #(recombination population))))
                                 n)
-               (dec n))
+               (inc n))
         (shutdown-agents)))))
-
- (defn test-start-gp-c []
-  (println "Started")
-  (let [machines  (find-useable-machines con/ALL-MACHINES)
-        from-machines (send-population machines (map #(struct individual % 0)
-                                                     (create-random-population)))
-        generation from-machines]
-    generation))
