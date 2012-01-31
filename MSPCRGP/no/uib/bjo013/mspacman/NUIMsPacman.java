@@ -117,7 +117,6 @@ public class NUIMsPacman implements MsPacman {
 						break;
 					}
 					if(j % 50 == 0) {
-						System.out.println(Thread.currentThread().toString() + ((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252]);
 						new Thread(new SendKeys()).start();
 					}
 				}
