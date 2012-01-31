@@ -219,7 +219,7 @@
                                         (count machines)))
                                 population)))))))
 
-(defn gp-over-cluster [population n]
+ (defn gp-over-cluster [population n]
   (println "Started")
   (let [machines  (find-useable-machines con/ALL-MACHINES)
         from-machines (send-population machines population)
@@ -259,3 +259,16 @@
                                 n)
                (dec n))
         (shutdown-agents)))))
+
+ (defn test-start-gp-c []
+  (println "Started")
+  (let [machines  (find-useable-machines con/ALL-MACHINES)
+        from-machines (send-population machines (map #(struct individual % 0)
+                                                     (create-random-population)))
+        generation (sort-by :fitness >
+                            (mapcat read-string
+                                    (remove nil?
+                                            (map #(if (zero? (:status %))
+                                                    (:stdout %))
+                                                 from-machines))))]
+    generation))
