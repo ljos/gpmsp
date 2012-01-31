@@ -76,8 +76,8 @@ public class NUIMsPacman implements MsPacman {
 			if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 82) {
 				break;
 			}
-			if(j % 50 == 0) {
-				System.out.println(((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252]);
+			if(j % 25 == 0) {
+				System.out.println(Thread.currentThread().toString() + ((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252]);
 				new Thread(new SendKeys()).start();
 			}
 		}
@@ -127,7 +127,7 @@ public class NUIMsPacman implements MsPacman {
 						break;
 					}
 					if(j % 50 == 0) {
-						System.out.println(((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252]);
+						System.out.println(Thread.currentThread().toString() + ((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252]);
 						new Thread(new SendKeys()).start();
 					}
 				}
