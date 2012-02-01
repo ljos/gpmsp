@@ -223,9 +223,11 @@
   (doall
    (map con/run-task
         (doall
-         (map #(con/send-to-machine %1 (format "cd mspacman; %s '%s' 2>&1 | tee ~/log/$(hostname -s).log"
-                                               "~/.lein/bin/lein trampoline run -m mspacman.gpmsp/run-gen"
-                                               (apply list %2)))
+         (map #(con/send-to-machine
+                %1
+                (format "cd mspacman; %s '%s' 2>&1 | tee ~/log/$(hostname -s | tr [:upper:] [:lower:]).log"
+                        "~/.lein/bin/lein trampoline run -m mspacman.gpmsp/run-gen"
+                        (apply list %2)))
               machines
               (doall (partition (int (/ SIZE-OF-POPULATION
                                         (count machines)))
