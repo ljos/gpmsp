@@ -10,7 +10,7 @@
   :program
   :fitness)
 
-(def SIZE-OF-POPULATION 300)
+(def SIZE-OF-POPULATION 500)
 (def ELITISM-RATE 0.05)
 (def NUMBER-OF-GENERATIONS 1000)
 (def MAX-STARTING-DEPTH 10)
@@ -67,7 +67,7 @@
                        (dec expr-width))))))))
 
 (defn create-random-individual []
-  (expand (rand-nth ind/FUNCTION-LIST) MAX-STARTING-DEPTH))
+  (expand (rand-nth ind/FUNCTION-LIST) (rand-int  MAX-STARTING-DEPTH)))
 
 (defn create-random-population []
   (take SIZE-OF-POPULATION (repeatedly #(create-random-individual))))
@@ -110,15 +110,17 @@
                    (inc n))))))
 
 (defn reproduction [parents]
-  (let [original (select-random-node (first parents))
-        replacement (select-random-node (second parents))]
-    (zip/root
-     (zip/replace (if (or (zip/branch? original)
-                          (symbol? (zip/root original))
-                          (number? (zip/root original)))
-                    original
-                    (zip/up original))
-                  (zip/node replacement)))))
+  (let [node-parent-1 (select-random-node (first parents))
+        node-parent-2 (select-random-node (second parents))
+        reproduce #(zip/root
+                    (zip/replace (if (or (zip/branch? %1)
+                                         (symbol? (zip/root %1))
+                                         (number? (zip/root %1)))
+                                   %1
+                                   (zip/up %1))
+                                 (zip/node %2)))]
+    (list (reproduce node-parent-1 node-parent-2)
+          (reproduce node-parent-2 node-parent-1))))
 
 (defn find-relevant-expr [loc]
   (let [l (zip/node (zip/leftmost loc))
@@ -139,19 +141,30 @@
         replacement (if (or (symbol? tree)
                             (number? tree)
                             (=  (count tree)))
-                      (expand (rand-nth ind/FUNCTION-LIST) MUTATION-DEPTH)
-                      (expand (find-relevant-expr original) MUTATION-DEPTH))]
+                      (expand (rand-nth ind/FUNCTION-LIST) (rand-int MUTATION-DEPTH))
+                      (expand (find-relevant-expr original) (rand-int MUTATION-DEPTH)))]
     (zip/root
      (zip/replace original replacement))))
 
-(defn recombination [population]
-  (let [r (rand)]
-    (cond (< r REPRODUCTION-RATE)
-          ,(reproduction (repeatedly 2 #(:program (selection population))))
-          (< r (+ REPRODUCTION-RATE MUTATION-RATE))
-          ,(mutation (:program (selection population)))
-          :else
-          (:program (selection population)))))
+(defn recombination [elitism population]
+  (loop [indivs (- SIZE-OF-POPULATION elitism)
+         r (rand)
+         acc '()]
+    (if (zero? indivs)
+      acc
+      (let [indiv (cond (< r REPRODUCTION-RATE)
+                        ,(reproduction (repeatedly 2 #(:program (selection population))))
+                        (< r (+ REPRODUCTION-RATE MUTATION-RATE))
+                        ,(mutation (:program (selection population)))
+                        :else
+                        (:program (selection population)))]
+        (recur (if (seq? indiv)
+                 (- indivs 2)
+                 (dec indivs))
+               (rand)
+               (if (seq? indiv)
+                 (concat acc indiv)
+                 (conj acc indiv)))))))
 
 (defn run-generation [generation]
   (use 'mspacman.individual)
@@ -160,8 +173,7 @@
              (pmap #(struct individual % (ind/fitness FITNESS-RUNS %))
                    (concat (map #(:program %)
                                 (take elitism generation))
-                           (repeatedly (- SIZE-OF-POPULATION elitism)
-                                       #(recombination generation)))))))
+                           (recombination elitism generation))))))
 
 (defn- gp-go [gen gen-nb]
   (use 'mspacman.individual)
@@ -177,7 +189,7 @@
                    (str generation))
              (println (map #(:fitness %) generation)
                       "average:"
-                      (int (/ (reduce + (map #(:fitness %) generation)) SIZE-OF-POPULATION)))
+                      (int (/ (reduce + (map #(:fitness %) generation)) (count generation))))
              (recur (run-generation generation)
                     (inc n))))))
 
@@ -238,9 +250,8 @@
           (str generation))
     (println (map #(:fitness %) generation)
              "average:"
-             (int (/ (reduce + (map #(:fitness %)
-                                    generation))
-                     SIZE-OF-POPULATION)))
+             (int (/ (reduce + (map #(:fitness %) generation))
+                     (count generation))))
     (newline)
     generation))
 
@@ -254,8 +265,7 @@
       (if (< n NUMBER-OF-GENERATIONS)
         (recur (gp-over-cluster (concat (take elitism population)
                                         (map #(struct individual %  0)
-                                             (repeatedly (- SIZE-OF-POPULATION elitism)
-                                                         #(recombination population))))
+                                             (recombination elitism population)))
                                 n)
                (inc n))
         (shutdown-agents)))))
