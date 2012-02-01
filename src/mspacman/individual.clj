@@ -44,8 +44,7 @@
                       (msp> expr expr)
                       (msp< expr expr)
                       (or expr expr)
-                      (and expr expr))
-                    ATOM-LIST))
+                      (and expr expr))))
 
 (def mspacman (atom {:name 'mspacman :colour 16776960}))
 (def blinky (atom {:name 'blinky :colour 16711680}))
