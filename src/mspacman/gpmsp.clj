@@ -234,12 +234,13 @@
 (defn gp-over-cluster [population n]
   (let [machines  (find-useable-machines con/ALL-MACHINES)
         from-machines (send-population machines population)
-        generation (sort-by :fitness >
-                            (mapcat read-string
-                                    (remove nil?
-                                            (map #(if (zero? (:status %))
-                                                    (:stdout %))
-                                                 from-machines))))]
+        generation (do (println from-machines)
+                       (sort-by :fitness >
+                             (mapcat read-string
+                                     (remove nil?
+                                             (map #(if (zero? (:status %))
+                                                     (:stdout %))
+                                                  from-machines)))))]
     (newline)
     (println 'generation n)
     (spit (format "%s/generations/%s_generation_%tL.txt"
