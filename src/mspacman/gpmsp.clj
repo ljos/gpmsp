@@ -150,7 +150,7 @@
   (loop [indivs (- SIZE-OF-POPULATION elitism)
          r (rand)
          acc '()]
-    (if (zero? indivs)
+    (if (< indivs 0)
       acc
       (let [indiv (cond (< r REPRODUCTION-RATE)
                         ,(reproduction (repeatedly 2 #(:program (selection population))))
@@ -231,7 +231,7 @@
                                         (count machines)))
                                 population)))))))
 
- (defn gp-over-cluster [population n]
+(defn gp-over-cluster [population n]
   (let [machines  (find-useable-machines con/ALL-MACHINES)
         from-machines (send-population machines population)
         generation (sort-by :fitness >
