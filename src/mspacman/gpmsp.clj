@@ -91,13 +91,11 @@
     tournament-selection (tournament-selection TOURNAMENT-SIZE population)))
 
 (defn select-random-node [tree]
-  (if (or (symbol? tree)
-          (number? tree)
-          (>= 1 (count tree)))
+  (if (not (seq? tree))
     (zip/seq-zip tree)
     (loop [loc (zip/seq-zip tree)
-          val nil
-          n 1]
+          val loc
+          n 2] ;start at two as first one is set as val
      (cond (zip/end? loc)
            ,val
            (or (dzip/leftmost? loc) (nil? (zip/node loc)))
@@ -110,17 +108,13 @@
                    (inc n))))))
 
 (defn reproduction [parents]
-  (let [node-parent-1 (select-random-node (first parents))
-        node-parent-2 (select-random-node (second parents))
+  (let [parent-node-1 (select-random-node (first parents))
+        parent-node-2 (select-random-node (second parents))
         reproduce #(zip/root
-                    (zip/replace (if (or (zip/branch? %1)
-                                         (symbol? (zip/root %1))
-                                         (number? (zip/root %1)))
-                                   %1
-                                   (zip/up %1))
+                    (zip/replace %1
                                  (zip/node %2)))]
-    (list (reproduce node-parent-1 node-parent-2)
-          (reproduce node-parent-2 node-parent-1))))
+    (vector (reproduce parent-node-1 parent-node-2)
+            (reproduce parent-node-2 parent-node-1))))
 
 (defn find-relevant-expr [loc]
   (let [l (zip/node (zip/leftmost loc))
@@ -238,9 +232,9 @@
         from-machines (send-population machines population)
         generation (do (println from-machines)
                        (sort-by :fitness >
-                             (mapcat read-string
+                                (mapcat read-string
                                      (remove nil?
-                                             (map #(if (zero? (:status %))
+                                             (map #(when (zero? (:status %))
                                                      (:stdout %))
                                                   from-machines)))))]
     (newline)
