@@ -67,6 +67,7 @@
         in (:in execp)
         err (:err execp)]
     (await pagent)
+    (print ".")
     (.close in)
     (.close err)
     (.waitFor process)))
