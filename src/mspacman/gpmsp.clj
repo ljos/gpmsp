@@ -67,7 +67,7 @@
                        (dec expr-width))))))))
 
 (defn create-random-individual []
-  (expand (rand-nth ind/FUNCTION-LIST) (rand-int  MAX-STARTING-DEPTH)))
+  (expand (rand-nth ind/FUNCTION-LIST) (rand-int MAX-STARTING-DEPTH)))
 
 (defn create-random-population []
   (take SIZE-OF-POPULATION (repeatedly #(create-random-individual))))
@@ -132,11 +132,9 @@
 
 (defn mutation [tree]
   (let [original (select-random-node tree)
-        replacement (if (or (symbol? tree)
-                            (number? tree)
-                            (=  (count tree)))
-                      (expand (rand-nth ind/FUNCTION-LIST) (rand-int MUTATION-DEPTH))
-                      (expand (find-relevant-expr original) (rand-int MUTATION-DEPTH)))]
+        replacement (if (and (seq? tree) (not (zip/branch? original)))
+                      (expand (find-relevant-expr original) (rand-int MUTATION-DEPTH))
+                      (expand (rand-nth ind/FUNCTION-LIST) (rand-int MUTATION-DEPTH)))]
     (zip/root
      (zip/replace original replacement))))
 
@@ -152,11 +150,11 @@
                         ,(mutation (:program (selection population)))
                         :else
                         (:program (selection population)))]
-        (recur (if (seq? indiv)
+        (recur (if (vector? indiv)
                  (- indivs 2)
                  (dec indivs))
-               (rand)
-               (if (seq? indiv)
+               (rand)               
+               (if (vector? indiv)
                  (concat acc indiv)
                  (conj acc indiv)))))))
 
