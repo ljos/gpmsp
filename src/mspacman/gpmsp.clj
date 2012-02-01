@@ -232,7 +232,6 @@
                                 population)))))))
 
  (defn gp-over-cluster [population n]
-  (println "Started")
   (let [machines  (find-useable-machines con/ALL-MACHINES)
         from-machines (send-population machines population)
         generation (sort-by :fitness >
