@@ -59,7 +59,6 @@
               (fn [exec-process]
                 (assoc exec-process :stderr (str (:stderr exec-process)
                                                  (join "\r\n" (doall (line-seq err)))))))
-    (println "Everything sent.")
     pagent))
 
 (defn- await-process [pagent]
@@ -75,11 +74,9 @@
 (defn run-task [pagent]
   (let [execp @pagent
         status (await-process pagent)]
-    (do (println (str "Finshed job at " (:machine execp)))
-        (assoc execp :status status))))
+    (assoc execp :status status)))
 
 (defn send-to-machine [machine task]
-  (println (str "Starting " task " at " machine))
   (spawn machine
          (into-array String
                      ["ssh"
