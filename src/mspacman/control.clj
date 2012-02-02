@@ -87,7 +87,7 @@
                       "-q"
                       "-o ConnectTimeout=2"
                       "-o StrictHostKeyChecking=no"
-                      "-o PasswordAuthentication no"
+                      "-o PasswordAuthentication=no"
                       (format "bjo013@%s" machine)
                       task])))
 
