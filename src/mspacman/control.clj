@@ -68,7 +68,6 @@
         in (:in execp)
         err (:err execp)]
     (await pagent)
-    (print ".")
     (.close in)
     (.close err)
     (.waitFor process)))
@@ -76,11 +75,10 @@
 (defn run-task [pagent]
   (let [execp @pagent
         status (await-process pagent)]
-    (println (str "Finshed job at " (:machine execp)))
+    (print ".")
     (assoc execp :status status)))
 
 (defn send-to-machine [machine task]
-  (println (str "Starting " task " at " machine))
   (spawn machine
          (into-array String
                      ["ssh"
