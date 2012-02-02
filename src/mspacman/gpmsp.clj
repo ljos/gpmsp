@@ -126,7 +126,7 @@
             'expr+
             (nth expr n))]
     (case c 
-      (expr expr+) (rand-nth ind/FUNCTION-LIST)
+      (expr expr? expr+) (rand-nth ind/FUNCTION-LIST)
       entity (rand-nth ind/ENTITY-LIST)
       item (rand-nth ind/ITEM-LIST))))
 
