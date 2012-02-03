@@ -132,7 +132,8 @@
 
 (defn mutation [tree]
   (let [original (select-random-node tree)
-        replacement (if (and (seq? tree) (not (zip/branch? original)))
+        replacement (if (and (seq? tree)
+                             (not (zip/branch? original)))
                       (expand (find-relevant-expr original) (rand-int MUTATION-DEPTH))
                       (expand (rand-nth ind/FUNCTION-LIST) (rand-int MUTATION-DEPTH)))]
     (zip/root
