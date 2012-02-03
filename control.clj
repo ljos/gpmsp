@@ -136,7 +136,7 @@
               "mn190155" "mn190156"
               "mn190157"])
 
-(deftast :get-host "Gets gostname" []
+(deftask :get-host "Gets gostname" []
   (ssh (run "hostname")))
 
 (deftask :run-gp "Runs gp on the cluster" []
