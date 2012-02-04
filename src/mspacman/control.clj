@@ -75,7 +75,7 @@
 (defn run-task [pagent]
   (let [execp @pagent
         status (await-process pagent)]
-    (print ".")
+    (doall (print (str (:machine pagent) " ")))
     (assoc execp :status status)))
 
 (defn send-to-machine [machine task]
