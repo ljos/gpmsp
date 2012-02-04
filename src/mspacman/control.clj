@@ -75,10 +75,11 @@
 (defn run-task [pagent]
   (let [execp @pagent
         status (await-process pagent)]
-    (doall (print (str (:machine pagent) " ")))
+    (println (str "Finshed job at " (:machine execp)))
     (assoc execp :status status)))
 
 (defn send-to-machine [machine task]
+  (println (str "Starting " task " at " machine))
   (spawn machine
          (into-array String
                      ["ssh"
