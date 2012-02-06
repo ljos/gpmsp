@@ -268,4 +268,5 @@
                        (create-random-population))
                   0))
   ([start-pop start-n]
-     (run-cluster start-pop start-n)))
+     (run-cluster (slurp start-pop)
+                  start-n)))
