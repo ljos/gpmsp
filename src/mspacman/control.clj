@@ -6,8 +6,8 @@
 
 (defstruct ExecProcess :machine :process :in :err :stdout :stderr :status)
 
-(def ALL-MACHINES [;;"mn121033"
-                   "mn121034"	
+(def ALL-MACHINES [;"mn121033"
+                   ;"mn121034"	
                    "mn121035" "mn121036"
                    "mn121037" "mn121038"
                    "mn121039" "mn121040"	
