@@ -268,5 +268,5 @@
                        (create-random-population))
                   0))
   ([start-pop start-n]
-     (run-cluster (slurp start-pop)
+     (run-cluster (read-string (slurp start-pop))
                   start-n)))
