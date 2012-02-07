@@ -267,6 +267,6 @@
      (run-cluster (map #(struct individual % 0)
                        (create-random-population))
                   0))
-  ([start-pop start-n]
+  ([start-pop]
      (run-cluster (read-string (slurp start-pop))
-                  (read-string start-n))))
+                  0)))
