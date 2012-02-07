@@ -253,7 +253,7 @@
   (println "Started")
   (let [elitism (* SIZE-OF-POPULATION ELITISM-RATE)]
     (loop [population (gp-over-cluster startp 0)
-           n (inc startp)]
+           n (inc startn)]
       (if (< n NUMBER-OF-GENERATIONS)
         (recur (gp-over-cluster (concat (take elitism population)
                                         (map #(struct individual %  0)
@@ -267,6 +267,6 @@
      (run-cluster (map #(struct individual % 0)
                        (create-random-population))
                   0))
-  ([start-pop]
+  ([start-pop start-n]
      (run-cluster (read-string (slurp start-pop))
-                  0)))
+                  start-n)))
