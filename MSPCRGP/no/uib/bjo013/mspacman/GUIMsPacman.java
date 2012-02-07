@@ -171,6 +171,82 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 			t.throttle();
 		}
 	}
+
+	public void keyPressed(int keyCode) {
+		m.keyPress(keyCode);
+	}
+
+	public void keyReleased(int keyCode) {
+		m.keyRelease(keyCode);
+	}
+
+	public long getScore() {
+		return getScore(0x43f7, ((cottage.machine.Pacman) m).md.getREGION_CPU());
+	}
+
+	private long getScore(int offset, int[] mem) {
+		final int ZERO_CHAR = 0x00;
+		final int BLANK_CHAR = 0x40;
+
+		long score = 0;
+
+		// calculate the score
+		for (int i = 0; i < 7; i++) {
+			int c = mem[offset + i];
+			if (c == 0x00 || c == BLANK_CHAR) {
+				c = ZERO_CHAR;
+			}
+			c -= ZERO_CHAR;
+			score += (c * Math.pow(10, i));
+		}
+
+		return (score > 9999999) ? 0 : score;
+	}
+
+	public synchronized void stopMSP() {
+		this.stop = true;
+	}
+	
+	@Override
+	public boolean isGameOver() {
+		return ((cottage.machine.Pacman) m).md.getREGION_CPU()[0x403B] == 67;
+	}
+
+	@Override
+	public void postPaint(Graphics g) {
+		if (paused) {
+		} else if (showFPS) {
+			StringBuffer buf = new StringBuffer();
+			String fs = Integer.toString(t.getFrameSkip());
+			String afs = Float.toString(t.getAverageFPS());
+			if (t.isAutoFrameSkip())
+				fs = "AUTO(" + fs + ")";
+			buf.append(t.getFPS()).append("/").append(t.getTargetFPS())
+					.append("/").append(afs);
+			buf.append("  thr:").append(t.isEnabled());
+			buf.append("  sl:").append(t.getSleep());
+			buf.append("  fs:").append(fs);
+			jef.video.Console.drawTextLine(g, 1, 12, buf.toString());
+		} else if (showTXT) {
+			jef.video.Console.drawText(g);
+		}
+	}
+
+	/**
+	 * Get a numeric parameter from the HTML page holding the applet. If the
+	 * parameter is not (correctly) defined in the HTML page, -1 is returned.
+	 */
+	private final int getPar(String parStr) {
+		int returnValue = -1;
+		try {
+			parStr = getParameter(parStr);
+			if (parStr != null) {
+				returnValue = Integer.parseInt(parStr);
+			}
+		} catch (Exception e) {
+		}
+		return returnValue;
+	}
 	
 	public int[] getEntity(int colour) {
 		if (colour == 16776960) {
@@ -203,6 +279,65 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 		for (int wall : walls) {
 			if (getPixel(x, y + 10) == wall) {
 				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean checkForEntity(int entityatxy, int dir, int x, int y) {
+		if(entityatxy != 16776960) { //ghosts
+			switch(dir) {
+			case 0: //left
+				for (int i = x; i > 0; --i) {
+					if (checkForWallX(i, y)) {
+						break;
+					}
+					if (containsMsPacman(i, y)) {
+						return true;
+					}
+				}
+				break;
+			case 1: //up
+				for (int i = y; i > 0; --i) {
+					if (checkForWallY(x, i)) {
+						break;
+					}
+					if (containsMsPacman(x, i)) {
+						return true;
+					}
+				}
+				break;
+			case 2: //right
+				for (int i = x; i < 224; ++i) {
+					if (checkForWallX(i, y)) {
+						break;
+					}
+					if (containsMsPacman(x + i, y)) {
+						return true;
+					}
+				}
+				break;
+			case 3: //down
+				for (int i = y; i < 288; ++i) {
+					if (checkForWallY(x, i)) {
+						break;
+					}
+					if (containsMsPacman(x, i)) {
+						return true;
+					}
+				}
+				break;
+			}
+		} else { //mspacman
+			switch(dir) {
+			case 0: //left
+				return checkForGhostLeft(x, y);
+			case 1: //up
+				return checkForGhostUp(x, y);
+			case 2: //right
+				return checkForGhostRight(x, y);
+			case 3: //down
+				return checkForGhostDown(x, y);
 			}
 		}
 		return false;
@@ -296,28 +431,33 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 				&& getPixel(x + 10, y + 1) != ghost
 				&& getPixel(x + 1, y + 6) != ghost
 				&& getPixel(x + 1, y + 7) == ghost
-				&& getPixel(x + 14, y + 6) != ghost && getPixel(x + 14, y + 7) == ghost);
+				&& getPixel(x + 14, y + 6) != ghost 
+				&& getPixel(x + 14, y + 7) == ghost);
+	}
+	
+	public boolean containsMsPacman(int x, int y) {
+		return (getPixel(x + 10, y + 5) == 16776960
+				&& getPixel(x + 11, y + 3) == 2171358
+				&& getPixel(x + 12, y + 4) == 2171358
+				&& getPixel(x + 11, y + 4) == 16711680 
+				&& getPixel(x + 12, y + 3) == 16711680)
+				|| (getPixel(x + 5, y + 5) == 16776960
+				        && getPixel(x + 4, y + 3) == 2171358
+						&& getPixel(x + 3, y + 4) == 2171358
+						&& getPixel(x + 4, y + 4) == 16711680 
+						&& getPixel(x + 3, y + 3) == 16711680)
+				|| (getPixel(x + 5, y + 10) == 16776960
+						&& getPixel(x + 4, y + 12) == 2171358
+						&& getPixel(x + 3, y + 11) == 2171358
+						&& getPixel(x + 4, y + 11) == 16711680 
+						&& getPixel(x + 3, y + 12) == 16711680);
 	}
 
 	@Override
 	public int[] getMsPacman() {
 		for (int y = 27; y < 260; ++y) {
 			for (int x = 0; x < 216; ++x) {
-				if ((getPixel(x + 10, y + 5) == 16776960
-						&& getPixel(x + 11, y + 3) == 2171358
-						&& getPixel(x + 12, y + 4) == 2171358
-						&& getPixel(x + 11, y + 4) == 16711680 && getPixel(
-						x + 12, y + 3) == 16711680)
-						|| (getPixel(x + 5, y + 5) == 16776960
-								&& getPixel(x + 4, y + 3) == 2171358
-								&& getPixel(x + 3, y + 4) == 2171358
-								&& getPixel(x + 4, y + 4) == 16711680 && getPixel(
-								x + 3, y + 3) == 16711680)
-						|| (getPixel(x + 5, y + 10) == 16776960
-								&& getPixel(x + 4, y + 12) == 2171358
-								&& getPixel(x + 3, y + 11) == 2171358
-								&& getPixel(x + 4, y + 11) == 16711680 && getPixel(
-								x + 3, y + 12) == 16711680)) {
+				if (containsMsPacman(x , y)) {
 					return new int[] { x, y };
 				}
 			}
@@ -329,14 +469,7 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 	public int[] getGhost(int ghost) {
 		for (int y = 27; y < 253; ++y) {
 			for (int x = 0; x < 216; ++x) {
-				if (getPixel(x + 5, y + 1) != ghost
-						&& getPixel(x + 6, y + 1) == ghost
-						&& getPixel(x + 9, y + 1) == ghost
-						&& getPixel(x + 10, y + 1) != ghost
-						&& getPixel(x + 1, y + 6) != ghost
-						&& getPixel(x + 1, y + 7) == ghost
-						&& getPixel(x + 14, y + 6) != ghost
-						&& getPixel(x + 14, y + 7) == ghost) {
+				if (containsGhost(ghost, x, y)) {
 					return new int[] { x, y };
 				}
 			}
@@ -418,81 +551,5 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 		}
 
 		return new int[] { -1, -1 };
-	}
-
-	public void keyPressed(int keyCode) {
-		m.keyPress(keyCode);
-	}
-
-	public void keyReleased(int keyCode) {
-		m.keyRelease(keyCode);
-	}
-
-	public long getScore() {
-		return getScore(0x43f7, ((cottage.machine.Pacman) m).md.getREGION_CPU());
-	}
-
-	private long getScore(int offset, int[] mem) {
-		final int ZERO_CHAR = 0x00;
-		final int BLANK_CHAR = 0x40;
-
-		long score = 0;
-
-		// calculate the score
-		for (int i = 0; i < 7; i++) {
-			int c = mem[offset + i];
-			if (c == 0x00 || c == BLANK_CHAR) {
-				c = ZERO_CHAR;
-			}
-			c -= ZERO_CHAR;
-			score += (c * Math.pow(10, i));
-		}
-
-		return (score > 9999999) ? 0 : score;
-	}
-
-	public synchronized void stopMSP() {
-		this.stop = true;
-	}
-	
-	@Override
-	public boolean isGameOver() {
-		return ((cottage.machine.Pacman) m).md.getREGION_CPU()[0x403B] == 67;
-	}
-
-	@Override
-	public void postPaint(Graphics g) {
-		if (paused) {
-		} else if (showFPS) {
-			StringBuffer buf = new StringBuffer();
-			String fs = Integer.toString(t.getFrameSkip());
-			String afs = Float.toString(t.getAverageFPS());
-			if (t.isAutoFrameSkip())
-				fs = "AUTO(" + fs + ")";
-			buf.append(t.getFPS()).append("/").append(t.getTargetFPS())
-					.append("/").append(afs);
-			buf.append("  thr:").append(t.isEnabled());
-			buf.append("  sl:").append(t.getSleep());
-			buf.append("  fs:").append(fs);
-			jef.video.Console.drawTextLine(g, 1, 12, buf.toString());
-		} else if (showTXT) {
-			jef.video.Console.drawText(g);
-		}
-	}
-
-	/**
-	 * Get a numeric parameter from the HTML page holding the applet. If the
-	 * parameter is not (correctly) defined in the HTML page, -1 is returned.
-	 */
-	private final int getPar(String parStr) {
-		int returnValue = -1;
-		try {
-			parStr = getParameter(parStr);
-			if (parStr != null) {
-				returnValue = Integer.parseInt(parStr);
-			}
-		} catch (Exception e) {
-		}
-		return returnValue;
 	}
 }

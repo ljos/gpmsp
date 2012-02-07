@@ -114,25 +114,25 @@
   (when (and (= (type entity) clojure.lang.Atom)
              (some #(= (:name @entity) %) ENTITY-LIST))
     (let [xy (-> msp (.getEntity (:colour @entity)))]
-      (-> msp (.checkForGhostLeft (first xy) (second xy))))))
-
-(defn msp-check-area-rightof [entity]
-  (when (and (= (type entity) clojure.lang.Atom)
-             (some #(= (:name @entity) %) ENTITY-LIST))
-    (let [xy (-> msp (.getEntity (:colour @entity)))]
-      (-> msp (.checkForGhostRight (first xy) (second xy))))))
+      (-> msp (.checkForEntity (:colour @entity) 0 (first xy) (second xy))))))
 
 (defn msp-check-area-above [entity]
   (when (and (= (type entity) clojure.lang.Atom)
              (some #(= (:name @entity) %) ENTITY-LIST))
     (let [xy (-> msp (.getEntity (:colour @entity)))]
-      (-> msp (.checkForGhostUp (first xy) (second xy))))))
+      (-> msp (.checkForEntity (:colour @entity) 1 (first xy) (second xy))))))
+
+(defn msp-check-area-rightof [entity]
+  (when (and (= (type entity) clojure.lang.Atom)
+             (some #(= (:name @entity) %) ENTITY-LIST))
+    (let [xy (-> msp (.getEntity (:colour @entity)))]
+      (-> msp (.checkForEntity (:colour @entity) 2 (first xy) (second xy))))))
 
 (defn msp-check-area-below [entity]
   (when (and (= (type entity) clojure.lang.Atom)
              (some #(= (:name @entity) %) ENTITY-LIST))
     (let [xy (-> msp (.getEntity (:colour @entity)))]
-      (-> msp (.checkForGhostDown (first xy) (second xy))))))
+      (-> msp (.checkForEntity (:colour @entity) 3 (first xy) (second xy))))))
 
 (defn msp-relative-distance [entity item]
   (when (and (= (type entity) clojure.lang.Atom)
@@ -141,8 +141,11 @@
              (some #(= % (:name @item)) ITEM-LIST))
     (let [k (keyword (:name @item))]
       (k (swap! entity
-                assoc k
-                (-> msp (.relativeDistance (:colour @entity) (:colour @item))))))))
+                assoc
+                k
+                (-> msp
+                    (.relativeDistance (:colour @entity)
+                                           (:colour @item))))))))
 
 (defn msp-closer? [entity item]
   (when (and (= (type entity) clojure.lang.Atom)
