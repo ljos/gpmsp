@@ -269,4 +269,4 @@
                   0))
   ([start-pop start-n]
      (run-cluster (read-string (slurp start-pop))
-                  start-n)))
+                  (read-string start-n))))
