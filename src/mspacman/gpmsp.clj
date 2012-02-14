@@ -52,13 +52,15 @@
               acc
               (let [term (first terms)
                     exp (case term
-                          (expr expr+) (expand (rand-nth ind/FUNCTION-LIST)
-                                               (dec depth))
-                          expr? (if (< (rand) EXPR?-RATE)
-                                  (expand (rand-nth ind/FUNCTION-LIST)
-                                          (dec depth))
-                                  ())
-                          (atomize term))]
+                          (expr expr+)
+                          ,(expand (rand-nth ind/FUNCTION-LIST)
+                                   (dec depth))
+                          expr?
+                          ,(if (< (rand) EXPR?-RATE)
+                             (expand (rand-nth ind/FUNCTION-LIST)
+                                     (dec depth))
+                             ())
+                          ,(atomize term))]
                 (recur (if (and (= term 'expr+)
                                 (> expr-width 0))
                          terms
@@ -254,6 +256,7 @@
   (let [elitism (* SIZE-OF-POPULATION ELITISM-RATE)]
     (loop [population (gp-over-cluster startp 0)
            n (inc startn)]
+      (con/logon-all)
       (if (< n NUMBER-OF-GENERATIONS)
         (recur (gp-over-cluster (concat (take elitism population)
                                         (map #(struct individual %  0)
