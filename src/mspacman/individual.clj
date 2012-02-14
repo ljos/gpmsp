@@ -173,7 +173,6 @@
     (binding [msp (new NUIMsPacman signal)]
       (let [thread (new Thread msp)]
         (.start thread)
-        (Thread/sleep (rand-int 10))
         (loop [score 0
                times 0]
           (if (or (<= tries times)
@@ -181,13 +180,13 @@
                        (= (/ score times) 120)))
             (do (locking msp
                   (.stopMSP msp))
-                (.setPriority thread Thread/MAX_PRIORITY)
                 (.join thread)                
                 (int (/ score times)))
             (do (.await (nth signal times))
                 (recur (+ score
                           (do (while (not (.isGameOver msp))
-                                (move-in-direction (eval `~code)))
+                                (move-in-direction
+                                 (eval `~code)))
                               (.getScore msp)))
                        (inc times)))))))))
 

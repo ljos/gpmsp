@@ -48,6 +48,11 @@
                    "mn190156" "mn190157"
                    ])
 
+(defn logon-all []
+  (println "Creating new kerberos tickets.")
+  (.waitFor (.exec *runtime* "~/.scripts/logon_all"))
+  (println "Finshed creating new kerberos tickets."))
+
 (defn- spawn
   [machine cmdarray]
   (let [process (.exec *runtime* cmdarray)
