@@ -168,8 +168,9 @@
   direction)
 
 (defn fitness [tries code]
-  (let [signal (into-array (repeatedly (inc tries)
-                                       #(new CountDownLatch 1)))]
+  (let [signal (into-array
+                (repeatedly (inc tries)
+                            #(new CountDownLatch 1)))]
     (binding [msp (new NUIMsPacman signal)]
       (let [thread (new Thread msp)]
         (.start thread)
