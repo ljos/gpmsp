@@ -211,7 +211,7 @@
                (doall
                 (map con/run-task
                      (doall
-                      (map #(con/send-to-machine %  (format "expect ~/.scripts/expect_thing %s bjo013 ~/.scripts/check_for_user;" %))
+                      (map #(con/send-to-machine %  (format "expect ~/.scripts/expect_thing %s bjo013 '~/.scripts/check_for_user;exit'" %))
                            machines)))))))
 
 (defn- send-population [machines population]
@@ -220,7 +220,7 @@
         (doall
          (map #(con/send-to-machine
                 %1
-                (format "expect ~/.scripts/expect_thing %s bjo013 'cd mspacman; %s \"%s\" 2>&1 | tee ~/log/$(hostname -s | tr [:upper:] [:lower:]).log'"
+                (format "expect ~/.scripts/expect_thing %s bjo013 'cd mspacman; %s \"%s\" 2>&1 | tee ~/log/$(hostname -s | tr [:upper:] [:lower:]).log;exit;'"
                         (str %1)
                         "~/.lein/bin/lein trampoline run -m mspacman.gpmsp/run-gen"
                         (apply list %2)))
