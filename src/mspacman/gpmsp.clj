@@ -209,18 +209,17 @@
 (defn- find-useable-machines [machines]
   (let [out (map :machine
                  (filter #(zero? (:exit %))
-                         (map #(do (println "checking on " %)
-                                   (let [out (shell/sh "expect_thing" % "check_for_user")]
-                                     (println "checked on " %)
-                                     (assoc out :machine %)))
+                         (pmap #(assoc (shell/sh "expect_thing" % "check_for_user")
+                                 :machine %)
                               machines)))]
+    (println "Available machines: " out)
     out))
 
 (defn- send-population [machines population]
   (let [out (doall (:out
                     (pmap #(shell/sh "expect_thing"
                                      %
-                                     (format "cd mspacman; %s '%s'; %s"
+                                     (format "cd mspacman; %s '%s' %s"
                                              "~/.lein/bin/lein trampoline run -m mspacman.gpmsp/run-gen"
                                              (apply list %2)
                                              "2>&1|tee ~/log/$(hostname -s|tr [A-Z] [a-z]).log"))
