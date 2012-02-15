@@ -207,13 +207,13 @@
                                    (read-string input)))))
 
 (defn- find-useable-machines [machines]
-  (map :machine
-       (filter #(zero? (:exit %))
-               (doall
-                (map #(do (println (str "Started" %))
-                          (shell/sh "expect_thing" % "check_for_user")
-                          (str "finshed" %))
-                     machines)))))
+  (let [out (map :machine
+                 (filter #(zero? (:exit %))
+                         (map #(assoc (shell/sh "expect_thing" % "check_for_user")
+                                 :machine %)
+                              machines)))]
+    (println out)
+    out))
 
 (defn- send-population [machines population]
   (re-find #"(?<=\r\n).*(?=\r\n)"
