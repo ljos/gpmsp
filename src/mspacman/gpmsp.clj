@@ -209,10 +209,10 @@
 (defn- find-useable-machines [machines]
   (let [out (map :machine
                  (filter #(zero? (:exit %))
-                         (pmap #(do (print % " ")
-                                    (assoc (shell/sh "expect_thing" % "check_for_user")
-                                      :machine %))
-                               machines)))]
+                         (doall (pmap #(do (print % " ")
+                                           (assoc (shell/sh "expect_thing" % "check_for_user")
+                                             :machine %))
+                                      machines))))]
     (println)
     out))
 
