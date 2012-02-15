@@ -214,15 +214,16 @@
                      machines)))))
 
 (defn- send-population [machines population]
-  (doall
-   (map #(shell/sh (format "expect_thing %s cd mspacman; %s '%s' 2>&1|tee ~/log/$(hostname -s|tr [A-Z] [a-z]).log"
-                  %1
-                  "~/.lein/bin/lein trampoline run -m mspacman.gpmsp/run-gen"
-                  (apply list %2)))
-        machines
-        (partition (int (/ SIZE-OF-POPULATION
-                           (count machines)))
-                   population))))
+  (re-find #"(?<=\r\n).*(?=\r\n)"
+           (:out
+            (map #(shell/sh (format "expect_thing %s cd mspacman; %s '%s' 2>&1|tee ~/log/$(hostname -s|tr [A-Z] [a-z]).log"
+                                    %1
+                                    "~/.lein/bin/lein trampoline run -m mspacman.gpmsp/run-gen"
+                                    (apply list %2)))
+                 machines
+                 (partition (int (/ SIZE-OF-POPULATION
+                                    (count machines)))
+                            population)))))
 
 (defn gp-over-cluster [population n]
   (let [machines  (find-useable-machines con/ALL-MACHINES)
