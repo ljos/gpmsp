@@ -220,7 +220,8 @@
         (doall
          (map #(con/send-to-machine
                 %1
-                (format "cd mspacman; %s '%s' 2>&1 | tee ~/log/$(hostname -s | tr [:upper:] [:lower:]).log"
+                (format "expect ~/.scripts/expect_thing %s bjo013 'cd mspacman; %s \"%s\" 2>&1 | tee ~/log/$(hostname -s | tr [:upper:] [:lower:]).log'"
+                        (str %1)
                         "~/.lein/bin/lein trampoline run -m mspacman.gpmsp/run-gen"
                         (apply list %2)))
               machines
@@ -256,7 +257,6 @@
   (let [elitism (* SIZE-OF-POPULATION ELITISM-RATE)]
     (loop [population (gp-over-cluster startp 0)
            n (inc startn)]
-      (con/logon-all)
       (if (< n NUMBER-OF-GENERATIONS)
         (recur (gp-over-cluster (concat (take elitism population)
                                         (map #(struct individual %  0)
