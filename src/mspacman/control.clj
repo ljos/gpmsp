@@ -48,11 +48,6 @@
                    "mn190156" "mn190157"
                    ])
 
-(defn logon-all []
-  (println "Creating new kerberos tickets.")
-  (.waitFor (.exec *runtime* "sh ~/.scripts/logon_all"))
-  (println "Finshed creating new kerberos tickets."))
-
 (defn- spawn
   [machine cmdarray]
   (let [process (.exec *runtime* cmdarray)
@@ -90,13 +85,7 @@
   (println (str "Starting " task " at " machine))
   (spawn machine
          (into-array String
-                     ["ssh"
-                      "-q"
-                      "-o ConnectTimeout=2"
-                      "-o StrictHostKeyChecking=no"
-                      "-o PasswordAuthentication=no"
-                      (format "bjo013@%s" machine)
-                      task])))
+                     [task])))
 
 (defn cluster-kill []
   (let [out (doall
