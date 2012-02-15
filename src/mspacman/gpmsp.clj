@@ -219,10 +219,10 @@
   (let [out (doall (:out
                     (pmap #(shell/sh "expect_thing"
                                      %
-                                     (format "\"cd mspacman;%s '%s' %s"
+                                     (format "cd mspacman; %s '%s'; %s"
                                              "~/.lein/bin/lein trampoline run -m mspacman.gpmsp/run-gen"
                                              (apply list %2)
-                                             "2>&1|tee ~/log/$(hostname -s|tr [A-Z] [a-z]).log\""))
+                                             "2>&1|tee ~/log/$(hostname -s|tr [A-Z] [a-z]).log"))
                           machines
                           (partition (int (/ SIZE-OF-POPULATION
                                              (count machines)))
