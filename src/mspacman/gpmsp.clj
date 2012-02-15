@@ -210,13 +210,15 @@
   (map :machine
        (filter #(zero? (:exit %))
                (doall
-                (map #(shell/sh (format "/Home/stud8/bjo013/.scripts/expect_thing %s /Home/stud8/bjo013/.scripts/check_for_user" %))
+                (map #(shell/sh "expect_thing" % "check_for_user")
                      machines)))))
 
 (defn- send-population [machines population]
   (re-find #"(?<=\r\n).*(?=\r\n)"
            (:out
-            (map #(shell/sh (format "expect_thing %s cd mspacman; %s '%s' 2>&1|tee ~/log/$(hostname -s|tr [A-Z] [a-z]).log"
+            (map #(shell/sh "expect_thing"
+                            %
+                            (format "cd mspacman ; %s '%s' 2>&1|tee ~/log/$(hostname -s|tr [A-Z] [a-z]).log"
                                     %1
                                     "~/.lein/bin/lein trampoline run -m mspacman.gpmsp/run-gen"
                                     (apply list %2)))
