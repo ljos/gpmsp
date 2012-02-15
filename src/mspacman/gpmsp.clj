@@ -212,7 +212,7 @@
                          (pmap #(assoc (shell/sh "expect_thing" % "check_for_user")
                                  :machine %)
                               machines)))]
-    (println ("Available machines: " out))
+    (println "Available machines: " out)
     out))
 
 (defn- send-population [machines population]
