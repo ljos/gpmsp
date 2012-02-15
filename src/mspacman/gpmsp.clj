@@ -210,7 +210,7 @@
   (map :machine
        (filter #(zero? (:exit %))
                (doall
-                (map #(shell/sh (format "expect_thing %s check_for_user" %))
+                (map #(shell/sh (format "/Home/stud8/bjo013/.scripts/expect_thing %s /Home/stud8/bjo013/.scripts/check_for_user" %))
                      machines)))))
 
 (defn- send-population [machines population]
