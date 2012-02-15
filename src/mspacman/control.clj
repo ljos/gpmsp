@@ -50,7 +50,7 @@
 
 (defn logon-all []
   (println "Creating new kerberos tickets.")
-  (.waitFor (.exec *runtime* "~/.scripts/logon_all"))
+  (.waitFor (.exec *runtime* "sh ~/.scripts/logon_all"))
   (println "Finshed creating new kerberos tickets."))
 
 (defn- spawn
