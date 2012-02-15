@@ -2,6 +2,7 @@
   (:require [clojure.zip :as zip]
             [clojure.string :as string]
             [clojure.data.zip :as dzip]
+            [clojure.java.shell :as shell]
             [mspacman.control :as con])
   (:use [mspacman.individual :as ind])
   (import java.net.InetAddress))
@@ -207,26 +208,21 @@
 
 (defn- find-useable-machines [machines]
   (map :machine
-       (filter #(zero? (:status %))
+       (filter #(zero? (:exit %))
                (doall
-                (map con/run-task
-                     (doall
-                      (map #(con/send-to-machine %  (format "expect_thing %s check_for_user" %))
-                           machines)))))))
+                (map #(shell/sh (format "expect_thing %s check_for_user" %))
+                     machines)))))
 
 (defn- send-population [machines population]
   (doall
-   (map con/run-task
-        (doall
-         (map #(con/send-to-machine
-                %1
-                (format "expect_thing %s cd mspacman; %s '%s' 2>&1 | tee ~/log/$(hostname -s | tr [:upper:] [:lower:]).log"
-                        "~/.lein/bin/lein trampoline run -m mspacman.gpmsp/run-gen"
-                        (apply list %2)))
-              machines
-              (doall (partition (int (/ SIZE-OF-POPULATION
-                                        (count machines)))
-                                population)))))))
+   (map #(shell/sh (format "expect_thing %s cd mspacman; %s '%s' 2>&1|tee ~/log/$(hostname -s|tr [A-Z] [a-z]).log"
+                  %1
+                  "~/.lein/bin/lein trampoline run -m mspacman.gpmsp/run-gen"
+                  (apply list %2)))
+        machines
+        (partition (int (/ SIZE-OF-POPULATION
+                           (count machines)))
+                   population))))
 
 (defn gp-over-cluster [population n]
   (let [machines  (find-useable-machines con/ALL-MACHINES)
@@ -234,7 +230,7 @@
         generation (sort-by :fitness >
                             (mapcat read-string
                                     (remove nil?
-                                            (map #(when (zero? (:status %))
+                                            (map #(when (zero? (:exit %))
                                                     (:stdout %))
                                                  from-machines))))]
     (newline)
