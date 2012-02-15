@@ -210,7 +210,9 @@
   (map :machine
        (filter #(zero? (:exit %))
                (doall
-                (map #(shell/sh "expect_thing" % "check_for_user")
+                (map #(do (println (str "Started" %))
+                          (shell/sh "expect_thing" % "check_for_user")
+                          (str "finshed" %))
                      machines)))))
 
 (defn- send-population [machines population]
