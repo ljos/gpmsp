@@ -211,7 +211,7 @@
                (doall
                 (map con/run-task
                      (doall
-                      (map #(con/send-to-machine %  (format "expect_thing %s ~/.scripts/check_for_user" %))
+                      (map #(con/send-to-machine %  (format "expect_thing %s check_for_user" %))
                            machines)))))))
 
 (defn- send-population [machines population]
