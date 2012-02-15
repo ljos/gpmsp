@@ -11,7 +11,7 @@
   :program
   :fitness)
 
-(def SIZE-OF-POPULATION 500)
+(def SIZE-OF-POPULATION 100)
 (def ELITISM-RATE 0.05)
 (def NUMBER-OF-GENERATIONS 1000)
 (def MAX-STARTING-DEPTH 10)
@@ -209,25 +209,25 @@
 (defn- find-useable-machines [machines]
   (let [out (map :machine
                  (filter #(zero? (:exit %))
-                         (map #(assoc (shell/sh "expect_thing" % "check_for_user")
+                         (pmap #(assoc (shell/sh "expect_thing" % "check_for_user")
                                  :machine %)
                               machines)))]
-    (println out)
+    (println ("Available machines: " out))
     out))
 
 (defn- send-population [machines population]
   (re-find #"(?<=\r\n).*(?=\r\n)"
-           (:out
-            (map #(shell/sh "expect_thing"
-                            %
-                            (format "cd mspacman ; %s '%s' 2>&1|tee ~/log/$(hostname -s|tr [A-Z] [a-z]).log"
-                                    %1
-                                    "~/.lein/bin/lein trampoline run -m mspacman.gpmsp/run-gen"
-                                    (apply list %2)))
-                 machines
-                 (partition (int (/ SIZE-OF-POPULATION
-                                    (count machines)))
-                            population)))))
+           (doall (:out
+                   (pmap #(shell/sh "expect_thing"
+                                    %
+                                    (format "cd mspacman ; %s '%s' 2>&1|tee ~/log/$(hostname -s|tr [A-Z] [a-z]).log"
+                                            %1
+                                            "~/.lein/bin/lein trampoline run -m mspacman.gpmsp/run-gen"
+                                            (apply list %2)))
+                         machines
+                         (partition (int (/ SIZE-OF-POPULATION
+                                            (count machines)))
+                                    population))))))
 
 (defn gp-over-cluster [population n]
   (let [machines  (find-useable-machines con/ALL-MACHINES)
