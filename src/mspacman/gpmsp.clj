@@ -209,10 +209,11 @@
 (defn- find-useable-machines [machines]
   (let [out (map :machine
                  (filter #(zero? (:exit %))
-                         (pmap #(assoc (shell/sh "expect_thing" % "check_for_user")
-                                 :machine %)
+                         (map #(do (println "checking on " %)
+                                   (let [out (shell/sh "expect_thing" % "check_for_user")]
+                                     (println "checked on " %)
+                                     (assoc out :machine %)))
                               machines)))]
-    (println "Available machines: " out)
     out))
 
 (defn- send-population [machines population]
