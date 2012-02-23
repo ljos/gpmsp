@@ -56,6 +56,15 @@ public interface Machine {
 	 */
 	public BitMap refresh(boolean render);
 
+	/**
+	 * Returns a BitMap representing the emulated display.
+	 */
+	//public BitMap getDisplay();
+
+	/**
+	 * Enable/disable sound
+	 */
+	public void setSound(boolean enable);
 
 	/**
 	 * Reset the machine (hard or soft).

@@ -1,5 +1,6 @@
 package cottage.mame;
 
+import jef.map.MemoryWriteAddress;
 import jef.video.VideoConstants;
 
 /**
@@ -55,6 +56,19 @@ public interface MAMEConstants extends VideoConstants {
 	static final int MRA_BANK6 	= 8;
 	static final int MRA_BANK7 	= 9;
 	static final int MRA_BANK8 	= 10;
+
+	// Memory Write handler IDs
+	static final int MWA_RAM = MemoryWriteAddress.MWA_RAM;
+	static final int MWA_ROM = MemoryWriteAddress.MWA_ROM;
+	static final int MWA_NOP = MemoryWriteAddress.MWA_NOP;
+	static final int MWA_BANK1 = MemoryWriteAddress.MWA_BANK1;
+	static final int MWA_BANK2 = MemoryWriteAddress.MWA_BANK2;
+	static final int MWA_BANK3 = MemoryWriteAddress.MWA_BANK3;
+	static final int MWA_BANK4 = MemoryWriteAddress.MWA_BANK4;
+	static final int MWA_BANK5 = MemoryWriteAddress.MWA_BANK5;
+	static final int MWA_BANK6 = MemoryWriteAddress.MWA_BANK6;
+	static final int MWA_BANK7 = MemoryWriteAddress.MWA_BANK7;
+	static final int MWA_BANK8 = MemoryWriteAddress.MWA_BANK8;
 	
 	// VBlank durations
 	static final int DEFAULT_60HZ_VBLANK_DURATION = 0;

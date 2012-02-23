@@ -35,7 +35,7 @@ public class Cottage extends GfxProducer {
 	boolean doubled = false;
 	boolean scale2x = false;
 	boolean scanlines = false;
-	boolean sound = false;
+	boolean sound = true;
 
 	boolean stop = false;
 
@@ -102,6 +102,9 @@ public class Cottage extends GfxProducer {
 	public void main(int w, int h) {
 		String driver = "";
 
+		System.out.println("CottAGE version " + VERSION + " using JEF version "
+				+ jef.Version.VERSION + ".");
+
 		try {
 			base_URL = new URL(
 					"file://localhost/Users/bjarte/Documents/workspace/mspacman/bin/");
@@ -150,6 +153,8 @@ public class Cottage extends GfxProducer {
 		pixel = null;
 		jef.video.Console.init(w, h, this);
 
+		m.setSound(sound);
+
 		if (!doubled && !scale2x) {
 			pixel = m.refresh(true).getPixels();
 		} else {
@@ -167,6 +172,7 @@ public class Cottage extends GfxProducer {
 		while (!stop) {
 			if (!paused) {
 				update(m.refresh(true));
+				System.out.println(((cottage.machine.Pacman) m).md.getREGION_CPU()[0x43F8]);
 			}
 			t.throttle();
 		}
