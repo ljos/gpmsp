@@ -149,8 +149,6 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 		pixel = null;
 		jef.video.Console.init(w, h, this);
 
-		m.setSound(sound);
-
 		if (!doubled && !scale2x) {
 			pixel = m.refresh(true).getPixels();
 		} else {

@@ -10,7 +10,7 @@ import no.uib.bjo013.mspacman.GUIMsPacman;
 public class GUIMsPacmanTest {
 
 	public static void main(String[] args) throws Exception {
-		GUIMsPacman[] cs = new GUIMsPacman[7];
+		GUIMsPacman[] cs = new GUIMsPacman[1];
 		for (int i = 0; i < cs.length; ++i) {
 			GUIMsPacman c = new GUIMsPacman();
 			c.setSize(224, 288 + 22); // I think the + 22 is because of the top bar.

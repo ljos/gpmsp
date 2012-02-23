@@ -33,7 +33,6 @@ import jef.cpuboard.CpuBoard;
 import jef.cpuboard.CpuDriver;
 import jef.map.InterruptHandler;
 import jef.map.WriteHandler;
-import jef.sound.SoundEmulation;
 import jef.video.BitMap;
 
 /**
@@ -55,16 +54,11 @@ public class BasicMachine implements Machine {
 	/** as defined in the CpuDrivers which are defined in the MachineDriver */
 	public CpuBoard[] cb;
 
-	/** manages all sound emulation */
-	public SoundEmulation se;
-
 	/** how many timeslices one frames has to be divided in */
 	protected int slicesPerFrame;
 
 	protected int currentSlice = 0;
 
-	/** defines if sound is to be emulated */
-	protected boolean soundEnabled = true;
 
 	/** non maskable interrupts can be enabled/disabled on machine level */
 	public boolean nmi_interrupt_enabled = true;
@@ -124,19 +118,8 @@ public class BasicMachine implements Machine {
 			cd[c].cpu.reset();
 		}
 
-		if (slicesPerFrame == 0)
+		if (slicesPerFrame == 0) {
 			slicesPerFrame = 1;
-
-		// ----------------------------------------
-		// Initialize Sound emulation
-		// ----------------------------------------
-		se = new SoundEmulation();
-		if (md.soundChips != null) {
-			se.init(
-				md.soundChips,
-				jef.util.Config.SOUND_SAMPLING_FREQ,
-				jef.util.Config.SOUND_BUFFER_SIZE,
-				md.fps);
 		}
 
 		// ----------------------------------------
@@ -154,22 +137,6 @@ public class BasicMachine implements Machine {
 		// Initialize Machine
 		// ----------------------------------------
 		md.init.exec();
-	}
-
-	/**
-	 * Enables or disables sound
-	 */
-	@Override
-	public void setSound(boolean enable) {
-		this.soundEnabled = enable;
-		if (md.soundChips != null) {
-			for (int c = 0; c < md.soundChips.length; c++) {
-				if (soundEnabled)
-					md.soundChips[c].enable();
-				else
-					md.soundChips[c].disable();
-			}
-		}
 	}
 
 	/**
@@ -305,7 +272,7 @@ public class BasicMachine implements Machine {
 												  // give them their timeslice
 												  // and cause an interrupt whene needed.
 
-				if (!cd[c].isAudioCpu || (soundEnabled && cd[c].isAudioCpu)) {
+				if (!cd[c].isAudioCpu) {
 
 					int cyclesPerFrame = cd[c].frq / md.fps;
 					int cyclesPerTimeSlice = cyclesPerFrame / slicesPerFrame;
@@ -334,9 +301,6 @@ public class BasicMachine implements Machine {
 			}
 
 		}
-
-		// UPDATE SOUND
-		se.update();
 
 		// UPDATE INPUT (for Impulse Events)
 		updateInput();
