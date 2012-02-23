@@ -9,7 +9,6 @@ import jef.video.Eof_callback;
 import jef.video.Get_tile_info;
 import jef.video.GfxDecodeInfo;
 import jef.video.GfxManager;
-import jef.video.TileMap;
 import jef.video.Vh_convert_color_proms;
 import jef.video.Vh_refresh;
 import jef.video.Vh_start;
@@ -148,90 +147,6 @@ public class MAMEVideo implements VideoEmulator,Vh_convert_color_proms,Eof_callb
 		curflags = flags;
 	}
 
-	public TileMap tilemap_create(Get_tile_info tile_get_info,int get_memory_offset, int type, int tile_width, int tile_height, int num_cols, int num_rows) {
-		return new TileMap(tile_get_info,get_memory_offset,type,tile_width,tile_height,num_cols,num_rows);
-	}
-
-	public void tilemap_set_transparent_pen(TileMap tilemap, int pen) {
-		tilemap.pen = pen;
-	}
-
-	public void tilemap_mark_tile_dirty(TileMap tilemap, int memory_offset) {
-	}
-
-	public void tilemap_mark_all_tiles_dirty(TileMap tilemap) {
-	}
-
-	public void tilemap_draw(BitMap dest, int[] cliprect, TileMap tilemap, int flags, int priority) {
-		int i,j,k,l;
-		int tile_index;
-		int tile_data;
-		int tile_code;
-		int tile_color;
-		int[] GFX;
-		int nbtiles_per_row = tilemap.cols;
-		int tile_width = tilemap.width;
-		int tile_height = tilemap.height;
-		boolean transparent = ((tilemap.type & TILEMAP_TRANSPARENT)!=0);
-		int yofs;
-		int xofs;
-		int ofs;
-		int tdata;
-		int pen = 0;
-		int row_start,row_end;
-		int col_start,col_end;
-
-		if (transparent)
-			pen = tilemap.pen;
-
-		row_start = visible[2]/tile_height;
-		row_end = (visible[3]+1)/tile_height;
-
-		col_start = visible[0]/tile_width;
-		col_end = (visible[1]+1)/tile_width;
-
-		/* Draw tilemap */
-
-		yofs = 0;
-		for(j=row_start; j<row_end; j++) {
-			xofs = 0;
-			for(i=col_start; i<col_end; i++) {
-				tile_index = nbtiles_per_row*j+i;
-				tilemap.tile_info.get_tile_info(tile_index);
-
-				GFX = GFX_REGIONS[curgfx];
-
-				tile_code = curcode * (gdi[curgfx].gfx.bytes >> 3) ;
-				tile_color = curcolor << gdi[curgfx].gfx.planes;
-
-				ofs = yofs + xofs;
-
-				if (transparent) {
-					for(k=0; k<tile_height; k++) {
-						for(l=0; l<tile_width; ) {
-							tile_data = GFX[tile_code++];
-							tdata = ((tile_data>>4)&0x0F);
-							if (tdata!=pen) pixels[ofs + l] = palette[tile_color + tdata]; l++;
-							tdata = (tile_data&0x0F);
-							if (tdata!=pen) pixels[ofs + l] = palette[tile_color + tdata]; l++;
-						}
-						ofs += width;
-					}
-				} else {
-					for(k=0; k<tile_height; k++) {
-						for(l=0; l<tile_width; ) {
-							tile_data = GFX[tile_code++];
-							pixels[ofs + l] = palette[tile_color + ((tile_data>>4)&0x0F)]; l++;
-							pixels[ofs + l] = palette[tile_color + (tile_data&0x0F)]; l++;
-						}
-						ofs += width;
-					}
-				}
-				xofs += tile_width;
-			}
-			yofs += width * tile_height;
-		}
-	}
 
 	public ReadHandler paletteram_r() { return new Paletteram_r(); }
 	public class Paletteram_r implements ReadHandler {

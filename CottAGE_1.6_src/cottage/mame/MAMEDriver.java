@@ -3,8 +3,6 @@ package cottage.mame;
 import java.net.URL;
 
 import jef.cpu.Cpu;
-import jef.cpu.I8080;
-import jef.cpu.M6809;
 import jef.cpu.Z80;
 import jef.cpuboard.CpuDriver;
 import jef.machine.Machine;
@@ -14,13 +12,10 @@ import jef.map.IOWritePort;
 import jef.map.InitHandler;
 import jef.map.InputPort;
 import jef.map.InterruptHandler;
-import jef.map.MemoryReadAddress;
-import jef.map.MemoryWriteAddress;
 import jef.map.NoFunction;
 import jef.map.ReadHandler;
 import jef.map.VoidFunction;
 import jef.map.WriteHandler;
-import jef.sound.SoundChipEmulator;
 import jef.util.RomLoader;
 import jef.video.Eof_callback;
 import jef.video.GfxDecodeInfo;
@@ -51,7 +46,6 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 	public int[] properties = new int[0x10];
 
 	private int[][] REGIONS = new int[21][];
-	private int cur_region = 0;
 
 	private InputPort[] inps = new InputPort[10];
 	private int inp_count = 0;
@@ -71,12 +65,6 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 	
 	private int soundLatch = 0;
 
-	private MemoryReadAddress[] mra = new MemoryReadAddress[8];
-	private int mra_count = 0;
-
-	private MemoryWriteAddress[] mwa = new MemoryWriteAddress[8];
-	private int mwa_count = 0;
-
 	private IOReadPort[] ior = new IOReadPort[8];
 	private int ior_count = 0;
 
@@ -91,7 +79,6 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 	private CpuDriver[] cpus = new CpuDriver[8];
 	private int cpu_count = 0;
 
-	private SoundChipEmulator[] soundChips = new SoundChipEmulator[8];
 	private int snd_count = 0;
 
 //	private String GAMEmanufacturer = "";
@@ -113,7 +100,6 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 
 	protected static final VoidFunction NOP = new NoFunction();
 	protected static final GfxDecodeInfo[] NO_GFX_DECODE_INFO = null;
-	protected static final SoundChipEmulator[] noSound = null;
 
 	protected class Soundlatch_r implements ReadHandler {
 		@Override
@@ -163,7 +149,6 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 		base_URL = url;
 		DriverName = fname;
 
-		cur_region = 0;
 		inp_count = 0;
 		gdi_count = 0;
 		cpu_count = 0;
@@ -201,10 +186,6 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 	@Override
 	public String getGameInfo() {
 		return "AbstractDriver supports nothing at all ;o)";
-	}
-
-	protected void cpu_setbank(int b, int address) {
-		mra[b - 1].setBankAddress(b, address);
 	}
 
 	protected void Helpers(int name, int valname, int size, int valsize) {
@@ -246,69 +227,6 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 				break;
 		}
 	}
-	protected void	install_mem_read_handler(int cpu, int from, int until, ReadHandler memRead) {
-		mra[cpu].set(from, until, memRead);
-	}
-	protected void MR_START() {
-		mra[mra_count++] = new MemoryReadAddress(REGIONS[cur_region - 1]);
-	}
-
-	protected void MR_ADD(int from, int until, ReadHandler memRead) {
-		mra[mra_count - 1].set(from, until, memRead);
-	}
-
-	protected void MR_START(int from, int until, ReadHandler memRead) {
-		MR_START();
-		MR_ADD(from, until, memRead);
-	}
-
-	protected void MR_ADD(int from, int until, int type) {
-		mra[mra_count - 1].setMR(from, until, type);
-	}
-
-	protected void MR_START(int from, int until, int type) {
-		MR_START();
-		MR_ADD(from, until, type);
-	}
-
-	protected void MW_START() {
-		mwa[mwa_count++] = new MemoryWriteAddress(REGIONS[cur_region - 1]);
-	}
-
-	protected void MW_ADD(int from, int until, WriteHandler memWrite) {
-		mwa[mwa_count - 1].set(from, until, memWrite);
-	}
-
-	protected void MW_START(int from, int until, WriteHandler memWrite) {
-		MW_START();
-		MW_ADD(from, until, memWrite);
-	}
-
-	protected void MW_ADD(int from, int until, WriteHandler memWrite, int helper, int helper_size) {
-		mwa[mwa_count - 1].set(from, until, memWrite);
-		Helpers(helper, from, helper_size, until + 1 - from);
-	}
-
-	protected void MW_START(int from, int until, WriteHandler memWrite, int helper, int helper_size) {
-		MW_START();
-		MW_ADD(from, until, memWrite, helper, helper_size);
-	}
-
-	protected void MW_ADD(int from, int until, WriteHandler memWrite, int helper) {
-		mwa[mwa_count - 1].set(from, until, memWrite);
-		Helpers(helper, from, -1, 0);
-	}
-
-	protected void MW_ADD(int from, int until, WriteHandler memWrite, int[] helper) {
-		mwa[mwa_count - 1].set(from, until, memWrite);
-		helper[0] = from;
-	}
-
-	protected void MW_ADD(int from, int until, int type, int[] helper, int[] helper_size) {
-		mwa[mwa_count - 1].setMW(from, until, type);
-		helper[0] = from;
-		helper_size[0] = until + 1 - from;
-	}
 
 	protected void MW_ADD(
 		int from,
@@ -316,48 +234,8 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 		WriteHandler memWrite,
 		int[] helper,
 		int[] helper_size) {
-		mwa[mwa_count - 1].set(from, until, memWrite);
 		helper[0] = from;
 		helper_size[0] = until + 1 - from;
-	}
-
-	protected void MW_START(int from, int until, WriteHandler memWrite, int helper) {
-		MW_START();
-		MW_ADD(from, until, memWrite, helper);
-	}
-
-	protected void MW_ADD(int from, int until, int type) {
-		mwa[mwa_count - 1].setMW(from, until, type);
-	}
-
-	protected void MW_START(int from, int until, int type) {
-		MW_START();
-		MW_ADD(from, until, type);
-	}
-
-	protected void MW_ADD(int from, int until, int type, int helper) {
-		mwa[mwa_count - 1].setMW(from, until, type);
-		Helpers(helper, from, -1, 0);
-	}
-
-	protected void MW_ADD(int from, int until, int type, int[] helper) {
-		mwa[mwa_count - 1].setMW(from, until, type);
-		helper[0] = from;
-	}
-
-	protected void MW_START(int from, int until, int type, int helper) {
-		MW_START();
-		MW_ADD(from, until, type, helper);
-	}
-
-	protected void MW_ADD(int from, int until, int type, int helper, int helper_size) {
-		mwa[mwa_count - 1].setMW(from, until, type);
-		Helpers(helper, from, helper_size, until + 1 - from);
-	}
-
-	protected void MW_START(int from, int until, int type, int helper, int helper_size) {
-		MW_START();
-		MW_ADD(from, until, type, helper, helper_size);
 	}
 
 	protected void PR_START() {
@@ -408,8 +286,6 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 		cpus[cpu_count] =
 			new CpuDriver(cpu, frq, null, null, ior[cpu_count], iow[cpu_count], null, 0);
 		cpu_count++;
-
-		cur_region++;
 	}
 	
 	protected void MDRV_VIDEO_EOF(Eof_callback eof_callback) {
@@ -424,15 +300,6 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 			case Z80 :
 				cpu = new Z80();
 				break;
-			case I8080 :
-				cpu = new I8080();
-				break;
-			case M6809 :
-				cpu = new M6809();
-				break;
-			/*case M68000 :
-				cpu = new M68k();
-				break;*/
 		}
 
 		MDRV_CPU_ADD(cpu, frq);
@@ -445,15 +312,6 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 			case 0 :
 				cpu = new Z80();
 				break;
-			case 1 :
-				cpu = new I8080();
-				break;
-			case 2 :
-				cpu = new M6809();
-				break;
-			/*case M68000 :
-				cpu = new M68k();
-				break;*/
 		}
 
 		cpu.setTag(tag);
@@ -476,16 +334,6 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 
 	protected void MDRV_CPU_FLAGS(int flags) {
 		cpus[cpu_count - 1].isAudioCpu = ((flags & CPU_AUDIO_CPU) != 0);
-	}
-
-	protected void MDRV_SOUND_ADD(SoundChipEmulator soundChip) {
-		soundChips[snd_count] = soundChip;
-		snd_count++;
-	}
-
-	protected void MDRV_CPU_MEMORY(boolean mread, boolean mwrite) {
-		cpus[cpu_count - 1].mra = mra[cpu_count - 1];
-		cpus[cpu_count - 1].mwa = mwa[cpu_count - 1];
 	}
 
 	protected void MDRV_CPU_PORTS(boolean ioread, boolean iowrite) {
@@ -522,13 +370,8 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 			for (int i = 0; i < cpu_count; i++)
 				cpuDriver[i] = cpus[i];
 
-			SoundChipEmulator[] sce = new SoundChipEmulator[snd_count];
-			for (int i = 0; i < snd_count; i++)
-				sce[i] = soundChips[i];
-
 			if (!bInfo) {
 				System.out.println("cpus :" + cpuDriver.length);
-				System.out.println("sndchips :" + sce.length);
 			}
 
 			md =
@@ -550,8 +393,7 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 					null,
 					null,
 					null,
-					null,
-					sce);
+					null);
 
 			/* Update RAM addresses */
 			if (Fvideoram != -1)
@@ -747,7 +589,6 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 			this.driver_prod = man;
 			this.driver_name = nam;
 			this.driver_clone = null;
-			this.driver_sound = (md.soundChips != noSound) ? true : false;
 			md.ROT = rot;
 		}
 	}
@@ -772,7 +613,6 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 			this.driver_prod = man;
 			this.driver_name = nam;
 			this.driver_clone = parent;
-			this.driver_sound = (md.soundChips != noSound) ? true : false;
 			md.ROT = rot;
 		}
 	}
