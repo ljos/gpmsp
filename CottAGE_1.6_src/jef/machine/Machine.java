@@ -62,11 +62,6 @@ public interface Machine {
 	//public BitMap getDisplay();
 
 	/**
-	 * Enable/disable sound
-	 */
-	public void setSound(boolean enable);
-
-	/**
 	 * Reset the machine (hard or soft).
 	 */
 	public void reset(boolean hard);

@@ -3,8 +3,6 @@ package cottage.mame;
 import java.net.URL;
 
 import jef.cpu.Cpu;
-import jef.cpu.I8080;
-import jef.cpu.M6809;
 import jef.cpu.Z80;
 import jef.cpuboard.CpuDriver;
 import jef.machine.Machine;
@@ -20,7 +18,6 @@ import jef.map.NoFunction;
 import jef.map.ReadHandler;
 import jef.map.VoidFunction;
 import jef.map.WriteHandler;
-import jef.sound.SoundChipEmulator;
 import jef.util.RomLoader;
 import jef.video.Eof_callback;
 import jef.video.GfxDecodeInfo;
@@ -42,7 +39,6 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 	public String driver_prod;
 	public String driver_date;
 	public String driver_clone;
-	public boolean driver_sound;
 	public boolean bInfo = false;
 
 	public URL base_URL;
@@ -91,9 +87,6 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 	private CpuDriver[] cpus = new CpuDriver[8];
 	private int cpu_count = 0;
 
-	private SoundChipEmulator[] soundChips = new SoundChipEmulator[8];
-	private int snd_count = 0;
-
 //	private String GAMEmanufacturer = "";
 //	private String GAMEname = "";
 
@@ -113,7 +106,6 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 
 	protected static final VoidFunction NOP = new NoFunction();
 	protected static final GfxDecodeInfo[] NO_GFX_DECODE_INFO = null;
-	protected static final SoundChipEmulator[] noSound = null;
 
 	protected class Soundlatch_r implements ReadHandler {
 		@Override
@@ -418,23 +410,7 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 	}
 	
 	protected void MDRV_CPU_ADD(int type, int frq) {
-		Cpu cpu = null;
-
-		switch (type) {
-			case Z80 :
-				cpu = new Z80();
-				break;
-			case I8080 :
-				cpu = new I8080();
-				break;
-			case M6809 :
-				cpu = new M6809();
-				break;
-			/*case M68000 :
-				cpu = new M68k();
-				break;*/
-		}
-
+		Cpu cpu = new Z80();
 		MDRV_CPU_ADD(cpu, frq);
 	}
 
@@ -445,15 +421,6 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 			case 0 :
 				cpu = new Z80();
 				break;
-			case 1 :
-				cpu = new I8080();
-				break;
-			case 2 :
-				cpu = new M6809();
-				break;
-			/*case M68000 :
-				cpu = new M68k();
-				break;*/
 		}
 
 		cpu.setTag(tag);
@@ -476,11 +443,6 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 
 	protected void MDRV_CPU_FLAGS(int flags) {
 		cpus[cpu_count - 1].isAudioCpu = ((flags & CPU_AUDIO_CPU) != 0);
-	}
-
-	protected void MDRV_SOUND_ADD(SoundChipEmulator soundChip) {
-		soundChips[snd_count] = soundChip;
-		snd_count++;
 	}
 
 	protected void MDRV_CPU_MEMORY(boolean mread, boolean mwrite) {
@@ -522,13 +484,8 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 			for (int i = 0; i < cpu_count; i++)
 				cpuDriver[i] = cpus[i];
 
-			SoundChipEmulator[] sce = new SoundChipEmulator[snd_count];
-			for (int i = 0; i < snd_count; i++)
-				sce[i] = soundChips[i];
-
 			if (!bInfo) {
 				System.out.println("cpus :" + cpuDriver.length);
-				System.out.println("sndchips :" + sce.length);
 			}
 
 			md =
@@ -550,8 +507,7 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 					null,
 					null,
 					null,
-					null,
-					sce);
+					null);
 
 			/* Update RAM addresses */
 			if (Fvideoram != -1)
@@ -747,7 +703,6 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 			this.driver_prod = man;
 			this.driver_name = nam;
 			this.driver_clone = null;
-			this.driver_sound = (md.soundChips != noSound) ? true : false;
 			md.ROT = rot;
 		}
 	}
@@ -772,7 +727,6 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 			this.driver_prod = man;
 			this.driver_name = nam;
 			this.driver_clone = parent;
-			this.driver_sound = (md.soundChips != noSound) ? true : false;
 			md.ROT = rot;
 		}
 	}
@@ -945,7 +899,6 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 			this.driver_prod = man;
 			this.driver_name = nam;
 			this.driver_clone = parent;
-			this.driver_sound = (snd_count > 0) ? true : false;
 			md.ROT = rot;
 		}
 	}
