@@ -153,8 +153,6 @@ public class Cottage extends GfxProducer {
 		pixel = null;
 		jef.video.Console.init(w, h, this);
 
-		m.setSound(sound);
-
 		if (!doubled && !scale2x) {
 			pixel = m.refresh(true).getPixels();
 		} else {
@@ -172,7 +170,6 @@ public class Cottage extends GfxProducer {
 		while (!stop) {
 			if (!paused) {
 				update(m.refresh(true));
-				System.out.println(((cottage.machine.Pacman) m).md.getREGION_CPU()[0x43F8]);
 			}
 			t.throttle();
 		}

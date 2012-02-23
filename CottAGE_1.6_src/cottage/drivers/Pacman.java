@@ -147,9 +147,6 @@ import jef.map.ReadMap;
 import jef.map.VoidFunction;
 import jef.map.WriteHandler;
 import jef.map.WriteMap;
-import jef.sound.SoundChipEmulator;
-import jef.sound.chip.AY8910;
-import jef.sound.chip.Namco;
 import jef.video.Eof_callback;
 import jef.video.GfxDecodeInfo;
 import jef.video.GfxLayout;
@@ -188,14 +185,6 @@ public class Pacman extends MAMEDriver implements Driver, MAMEConstants {
 		0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F
 	};
 
-    Namco	namco = new Namco ( REGION_CPU1,
-								3,
-								3072000/32,
-								sound_prom );
-
-	AY8910	ay8910 = new AY8910 ( 	1,			  /* 1 chip */
-									14318000/8 ); /* 1.78975 MHz ??? */
-
 	InputPort[] in = new InputPort[4];
 
 	ReadHandler		input_port_0_r;
@@ -217,9 +206,7 @@ public class Pacman extends MAMEDriver implements Driver, MAMEConstants {
 	InterruptHandler nmi_interrupt			= m.pacman_nmi_interrupt(m);
 	WriteHandler	 interrupt_enable_w		= m.interrupt_enable_w(m);
 	WriteHandler	 interrupt_vector_w		= m.interrupt_vector_w(m);
-	WriteHandler	 pengo_sound_w			= namco.pengo_sound_w(0x5040);
-	WriteHandler	 AY8910_write_port_0_w  = ay8910.AY8910_write_port_0_w();
-	WriteHandler	 AY8910_control_port_0_w= ay8910.AY8910_control_port_0_w();
+
 	ReadHandler		 theglob_decrypt_rom	= m.theglob_decrypt_rom(m);
 	ReadHandler		 MRA_BANK1				= m.MRA_BANK1(m,REGION_CPU1);
 	VoidFunction	 theglob_init_machine	= m.theglob_init_machine(m,REGION_CPU1);
@@ -281,7 +268,6 @@ public class Pacman extends MAMEDriver implements Driver, MAMEConstants {
 		mwa.setMW( 0x4ff0, 0x4fff, MWA_RAM );
 		mwa.set( 0x5000, 0x5000, interrupt_enable_w );
 		mwa.setMW( 0x5002, 0x5002, MWA_NOP );
-		mwa.set( 0x5040, 0x505f, pengo_sound_w );
 		mwa.setMW( 0x5060, 0x506f, MWA_RAM );
 		mwa.setMW( 0x8000, 0xbfff, MWA_ROM );	/* Ms. Pac-Man / Ponpoko only */
 		mwa.set( 0xc000, 0xc3ff, videoram_w ); /* mirror address for video ram, */
@@ -410,14 +396,12 @@ public class Pacman extends MAMEDriver implements Driver, MAMEConstants {
 	public MachineDriver machine_driver_pacman() {
 
 		CpuDriver[] cpuDriver = new CpuDriver[1];
-		SoundChipEmulator[] soundChip = new SoundChipEmulator[1];
-
+		
 		cpuDriver[0] = new CpuDriver( new Z80(),
 										18432000/6,	/* 3.072 Mhz */
 										readmem(), writemem(), readport(), writeport(),
 										pacman_interrupt, 1 );
 
-		soundChip[0] = namco;
 
 		int[] visibleArea = { 0*8, 36*8-1, 0*8, 28*8-1 };
 
@@ -440,9 +424,7 @@ public class Pacman extends MAMEDriver implements Driver, MAMEConstants {
 			noCallback,
 			pacman_vh_start,
 			generic_vh_stop,
-			pengo_vh_screenrefresh,
-
-			soundChip
+			pengo_vh_screenrefresh
 		);
 	}
 

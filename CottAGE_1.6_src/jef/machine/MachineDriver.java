@@ -37,7 +37,6 @@ import jef.cpuboard.CpuDriver;
 import jef.map.InputPort;
 import jef.map.NoFunction;
 import jef.map.VoidFunction;
-import jef.sound.SoundChipEmulator;
 import jef.video.Eof_callback;
 import jef.video.GfxDecodeInfo;
 import jef.video.Vh_convert_color_proms;
@@ -138,9 +137,6 @@ public class MachineDriver {
 	/** Function called at every redraw of the emulated screen */
 	public Vh_refresh 	vh_screenrefresh;
 
-	/** Reference to the SoundChipEmulator(s) */
-	public SoundChipEmulator[] soundChips;
-
 	/** Reference to the InputPort(s) */
 	public InputPort[] input;
 
@@ -167,8 +163,7 @@ public class MachineDriver {
 							Eof_callback eof_callback,
 							Vh_start vh_start,
 							Vh_stop vh_stop,
-							Vh_refresh vh_screenrefresh,
-							SoundChipEmulator[] sound) {
+							Vh_refresh vh_screenrefresh) {
 
 		this.cpuDriver	= cpuDriver;
 		this.fps	 	= fps;
@@ -187,7 +182,6 @@ public class MachineDriver {
 		this.vh_start	= vh_start;
 		this.vh_stop	= vh_stop;
 		this.vh_screenrefresh = vh_screenrefresh;
-		this.soundChips = sound;
 		this.ve 		= ve;
 	}
 
@@ -207,8 +201,7 @@ public class MachineDriver {
 							Eof_callback eof_callback,
 							Vh_start vh_start,
 							Vh_stop vh_stop,
-							Vh_refresh vh_screenrefresh,
-							SoundChipEmulator[] sound) {
+							Vh_refresh vh_screenrefresh) {
 
 		this.cpuDriver	= cpuDriver;
 		this.fps	 	= fps;
@@ -227,7 +220,6 @@ public class MachineDriver {
 		this.vh_start	= vh_start;
 		this.vh_stop	= vh_stop;
 		this.vh_screenrefresh = vh_screenrefresh;
-		this.soundChips = sound;
 	}
 
 	public MachineDriver(CpuDriver[] cpuDriver,
@@ -373,14 +365,6 @@ public class MachineDriver {
 
 	public Vh_refresh getVhRefresh() {
 		return this.vh_screenrefresh;
-	}
-
-	public void setSoundChips(SoundChipEmulator[] soundChips) {
-		this.soundChips = soundChips;
-	}
-
-	public SoundChipEmulator[] getSoundChips() {
-		return this.soundChips;
 	}
 
 	public void setInputPorts(InputPort[] p) {

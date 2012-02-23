@@ -33,7 +33,6 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 	boolean doubled = false;
 	boolean scale2x = false;
 	boolean scanlines = false;
-	boolean sound = true;
 
 	boolean stop = false;
 
@@ -118,10 +117,6 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 			scale2x = getParameter("SCALE2X").equals("Yes");
 		} catch (Exception e) {
 		}
-		try {
-			sound = false;
-		} catch (Exception e) {
-		}
 
 		int sLineBuf = getPar("LINEBUFFER");
 		if (sLineBuf == -1)
@@ -148,8 +143,6 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 
 		pixel = null;
 		jef.video.Console.init(w, h, this);
-
-		m.setSound(sound);
 
 		if (!doubled && !scale2x) {
 			pixel = m.refresh(true).getPixels();
