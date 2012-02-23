@@ -44,6 +44,7 @@ public class NUIMsPacman implements MsPacman {
 		CottageDriver d = new CottageDriver();
 
 		m = (Pacman) d.getMachine(base_URL, driver);
+		m.setSound(sound);
 
 		pixel = new int[m.refresh(true).getPixels().length];
 
