@@ -91,24 +91,16 @@
   (Thread/sleep 10))
 
 (defn msp-move-left []
-  (do (-> msp (.keyPressed KeyEvent/VK_LEFT))
-      (Thread/sleep 50)
-      (-> msp (.keyReleased KeyEvent/VK_LEFT))))
+  (-> msp (.keyPressed KeyEvent/VK_LEFT)))
 
 (defn msp-move-right []
-  (do (-> msp (.keyPressed KeyEvent/VK_RIGHT))
-      (Thread/sleep 50)
-      (-> msp (.keyReleased KeyEvent/VK_RIGHT))))
+  (-> msp (.keyPressed KeyEvent/VK_RIGHT)))
 
 (defn msp-move-up []
-  (do (-> msp (.keyPressed KeyEvent/VK_UP))
-      (Thread/sleep 50)
-      (-> msp (.keyReleased KeyEvent/VK_UP))))
+  (-> msp (.keyPressed KeyEvent/VK_UP)))
 
 (defn msp-move-down []
-  (do (-> msp (.keyPressed KeyEvent/VK_DOWN))
-      (Thread/sleep 50)
-      (-> msp (.keyReleased KeyEvent/VK_DOWN))))
+  (-> msp (.keyPressed KeyEvent/VK_DOWN)))
 
 (defn msp-check-area-leftof [entity]
   (when (and (= (type entity) clojure.lang.Atom)
