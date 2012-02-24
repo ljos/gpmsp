@@ -127,7 +127,6 @@ public class Throttle {
 		throttle = true;
 		autoFS = true;
 		fskip = 0;
-		throttleStep = DEFAULT_THROTTLE_STEP;
 		frameNumber = 0;
 		recalcCount = 0;
 		sumFPS = 0;
@@ -169,7 +168,7 @@ public class Throttle {
 	 */
 	public void throttle() {
 		// Try slow down to the machine's original speed
-		if(throttle & ((frameNumber % throttleStep) == 0)) {
+		if(throttle && ((frameNumber % throttleStep) == 0)) {
 			try {
 				Thread.sleep( sleep );
 			} catch(Exception e) {
