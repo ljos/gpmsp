@@ -228,6 +228,14 @@ public class BasicMachine implements Machine {
 			md.input[i].keyRelease(keyCode);
 		}
 	}
+	
+	@Override
+	public void writeInput(int data) {
+		for (int i = 0; i < md.input.length; i++) {
+			md.input[i].write(data);
+		}
+	}
+
 
 	/**
 	 * Update InputPorts (for impulse events)
@@ -301,7 +309,7 @@ public class BasicMachine implements Machine {
 		}
 
 		// UPDATE INPUT (for Impulse Events)
-		updateInput();
+		//updateInput();
 		return backBuffer;
 	}
 

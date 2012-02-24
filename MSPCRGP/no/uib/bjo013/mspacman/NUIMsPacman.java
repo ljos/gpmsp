@@ -448,13 +448,39 @@ public class NUIMsPacman implements MsPacman {
 	}
 
 	@Override
-	public void keyPressed(int keyCode) {
-		m.keyPress(keyCode);
+	public void keyPressed(int code) {
+		switch (code) { 
+		case KeyEvent.VK_UP:
+			m.writeInput(254);
+			break;
+		case KeyEvent.VK_LEFT:
+			m.writeInput(253);
+			break;
+		case KeyEvent.VK_RIGHT:
+			m.writeInput(251);
+			break;
+		case KeyEvent.VK_DOWN:
+			m.writeInput(247);
+			break;
+		default:
+			m.keyPress(code);
+			break;
+		} 
 	}
 
 	@Override
-	public void keyReleased(int keyCode) {
-		m.keyRelease(keyCode);
+	public void keyReleased(int code) {
+		switch (code) {
+		case KeyEvent.VK_UP:
+		case KeyEvent.VK_LEFT:
+		case KeyEvent.VK_RIGHT:
+		case KeyEvent.VK_DOWN:
+			//m.writeInput(255);
+			break;
+		default:
+			m.keyRelease(code);
+			break; 
+		}
 	}
 
 	@Override

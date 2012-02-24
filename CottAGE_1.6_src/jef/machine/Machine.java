@@ -75,6 +75,8 @@ public interface Machine {
 	 * Handle key release events.
 	 */
 	public void keyRelease(int keyCode);
+	
+	public void writeInput(int data);
 
 	/**
 	 * Returns a property value

@@ -83,14 +83,40 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 				showFPS = !showFPS;
 				break;
 
-			default:
-				m.keyPress(code);
+			default: //255=nothing, 254=up, 253=left, 251=right, 247=down
+				switch (code) { 
+				case KeyEvent.VK_UP:
+					m.writeInput(254);
+					break;
+				case KeyEvent.VK_LEFT:
+					m.writeInput(253);
+					break;
+				case KeyEvent.VK_RIGHT:
+					m.writeInput(251);
+					break;
+				case KeyEvent.VK_DOWN:
+					m.writeInput(247);
+					break;
+				default:
+					m.keyPress(code);
+					break;
+				} 
 				break;
 			}
 			break;
 
 		case KeyEvent.KEY_RELEASED:
-			m.keyRelease(code);
+			switch (code) {
+			case KeyEvent.VK_UP:
+			case KeyEvent.VK_LEFT:
+			case KeyEvent.VK_RIGHT:
+			case KeyEvent.VK_DOWN:
+				//m.writeInput(255);
+				break;
+			default:
+				m.keyRelease(code);
+				break; 
+			}
 			break;
 		}
 	}
@@ -164,13 +190,41 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 			t.throttle();
 		}
 	}
-
-	public void keyPressed(int keyCode) {
-		m.keyPress(keyCode);
+	
+	@Override
+	public void keyPressed(int code) {
+		switch (code) { 
+		case KeyEvent.VK_UP:
+			m.writeInput(254);
+			break;
+		case KeyEvent.VK_LEFT:
+			m.writeInput(253);
+			break;
+		case KeyEvent.VK_RIGHT:
+			m.writeInput(251);
+			break;
+		case KeyEvent.VK_DOWN:
+			m.writeInput(247);
+			break;
+		default:
+			m.keyPress(code);
+			break;
+		} 
 	}
 
-	public void keyReleased(int keyCode) {
-		m.keyRelease(keyCode);
+	@Override
+	public void keyReleased(int code) {
+		switch (code) {
+		case KeyEvent.VK_UP:
+		case KeyEvent.VK_LEFT:
+		case KeyEvent.VK_RIGHT:
+		case KeyEvent.VK_DOWN:
+			//m.writeInput(255);
+			break;
+		default:
+			m.keyRelease(code);
+			break; 
+		}
 	}
 
 	public long getScore() {

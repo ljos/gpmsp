@@ -105,8 +105,9 @@ public class MemoryReadAddressMap implements ReadMap {
     @Override
 	public int read(int address) {
         ReadHandler rh = map.get(new Integer(address));
-        if (rh == null) return memRead.read(address);
-        else {
+        if (rh == null) {
+        	return memRead.read(address);
+        } else {
             //System.out.println(rh);
             return rh.read(address);
         }
