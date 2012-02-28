@@ -7,9 +7,7 @@
   (:use [mspacman.individual :as ind])
   (import java.net.InetAddress))
 
-(defstruct individual
-  :program
-  :fitness)
+(defstruct individual :program :fitness)
 
 (def SIZE-OF-POPULATION 50)
 (def ELITISM-RATE 0.05)
@@ -154,7 +152,7 @@
                         ,(mutation (:program (selection population)))
                         :else
                         (:program (selection population)))]
-        (recur (if (vector? indiv)
+        (recur (if (vector? indiv) ;;If this is the case then we have reproduction
                  (- indivs 2)
                  (dec indivs))
                (rand)               
@@ -201,77 +199,7 @@
      (println (format "Started at generation %s." nb-gen))
      (gp-go (run-generation (read-string (slurp gen-file))) (read-string nb-gen))))
 
-(defn run-gen [input]
+(defn run-fitness-on [individuals]
   (use 'mspacman.individual)
   (sort-by :fitness > (doall (pmap #(assoc % :fitness (ind/fitness FITNESS-RUNS (:program %)))
-                                   (read-string input)))))
-
-(defn- find-useable-machines [machines]
-  (let [out (map :machine
-                 (filter #(zero? (:exit %))
-                         (doall (pmap #(do (print % " ")
-                                           (assoc (shell/sh "expect_thing" % "check_for_user")
-                                             :machine %))
-                                      machines))))]
-    (println)
-    out))
-
-(defn- send-population [machines population]
-  (let [out (doall 
-             (pmap #(shell/sh "expect_thing"
-                              %
-                              (format "cd mspacman; %s '%s' %s"
-                                      "~/.lein/bin/lein trampoline run -m mspacman.gpmsp/run-gen"
-                                      (apply list %2)
-                                      "2>&1|tee ~/log/$(hostname -s|tr [A-Z] [a-z]).log"))
-                   machines
-                   (partition (int (/ SIZE-OF-POPULATION
-                                      (count machines)))
-                              population)))]
-    (println out)
-    out))
-
-(defn gp-over-cluster [population n]
-  (let [machines  (find-useable-machines con/ALL-MACHINES)
-        from-machines (send-population machines population)
-        generation (sort-by :fitness >
-                            (mapcat read-string
-                                    (remove nil?
-                                            (map #(when (zero? (:exit %))
-                                                    (:stdout %))
-                                                 from-machines))))]
-    (newline)
-    (println 'generation n)
-    (spit (format "%s/generations/%s_generation_%tL.txt"
-                  (System/getProperty "user.home")
-                  (string/lower-case (.getHostName (InetAddress/getLocalHost)))
-                  n)
-          (str generation))
-    (println (map #(:fitness %) generation)
-             "average:"
-             (int (/ (reduce + (map #(:fitness %) generation))
-                     (count generation))))
-    (newline)
-    generation))
-
-(defn- run-cluster [startp startn]
-  (println "Started")
-  (let [elitism (* SIZE-OF-POPULATION ELITISM-RATE)]
-    (loop [population (gp-over-cluster startp 0)
-           n (inc startn)]
-      (if (< n NUMBER-OF-GENERATIONS)
-        (recur (gp-over-cluster (concat (take elitism population)
-                                        (map #(struct individual %  0)
-                                             (recombination elitism population)))
-                                n)
-               (inc n))
-        (shutdown-agents)))))
-
-(defn start-gp-cluster
-  ([]
-     (run-cluster (map #(struct individual % 0)
-                       (create-random-population))
-                  0))
-  ([start-pop]
-     (run-cluster (read-string (slurp start-pop))
-                  0)))
+                                   individuals))))
