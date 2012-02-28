@@ -27,13 +27,7 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 
 	/** booleans **/
 	boolean showFPS = false;
-	boolean showTXT = false;
 	boolean paused = false;
-
-	boolean doubled = false;
-	boolean scale2x = false;
-	boolean scanlines = false;
-
 	boolean stop = false;
 
 	/** reference to the driver **/
@@ -135,24 +129,6 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 			driver = "mspacman";
 		} catch (Exception e) {
 		}
-		try {
-			doubled = getParameter("DOUBLE").equals("Yes");
-		} catch (Exception e) {
-		}
-		try {
-			scale2x = getParameter("SCALE2X").equals("Yes");
-		} catch (Exception e) {
-		}
-
-		int sLineBuf = getPar("LINEBUFFER");
-		if (sLineBuf == -1)
-			sLineBuf = 4096;
-		jef.util.Config.SOUND_BUFFER_SIZE = sLineBuf;
-
-		int sSampFrq = getPar("SAMPLINGRATE");
-		if (sSampFrq == -1)
-			sSampFrq = 22050;
-		jef.util.Config.SOUND_SAMPLING_FREQ = sSampFrq;
 
 		main = this;
 
@@ -163,18 +139,12 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 		pixel = new int[w * h];
 		update(pixel);
 
-		showTXT = true;
 		m = d.getMachine(base_URL, driver);
-		showTXT = false;
 
 		pixel = null;
 		jef.video.Console.init(w, h, this);
-
-		if (!doubled && !scale2x) {
-			pixel = m.refresh(true).getPixels();
-		} else {
-			pixel = new int[m.refresh(true).getPixels().length * 4];
-		}
+		
+		pixel = m.refresh(true).getPixels();
 
 		enableEvents(AWTEvent.KEY_EVENT_MASK);
 
@@ -274,25 +244,7 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 			buf.append("  sl:").append(t.getSleep());
 			buf.append("  fs:").append(fs);
 			jef.video.Console.drawTextLine(g, 1, 12, buf.toString());
-		} else if (showTXT) {
-			jef.video.Console.drawText(g);
-		}
-	}
-
-	/**
-	 * Get a numeric parameter from the HTML page holding the applet. If the
-	 * parameter is not (correctly) defined in the HTML page, -1 is returned.
-	 */
-	private final int getPar(String parStr) {
-		int returnValue = -1;
-		try {
-			parStr = getParameter(parStr);
-			if (parStr != null) {
-				returnValue = Integer.parseInt(parStr);
-			}
-		} catch (Exception e) {
-		}
-		return returnValue;
+		} 
 	}
 	
 	public int[] getEntity(int colour) {
