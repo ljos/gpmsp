@@ -6,10 +6,9 @@
   :dev-dependencies [[control "0.2.3-SNAPSHOT"]]
   :java-source-path [["CottAGE_1.6_src/"]
                      ["MSPCRGP/"]]
-  :jvm-opts [ "-Xmx3G"
+  :jvm-opts ["-Xmx3G"
               "-Xms2G"
               "-Xmn1G"
               "-XX:+UseConcMarkSweepGC"
-              "-Djava.awt.headless=true"
-              ]
+              "-Djava.awt.headless=true"]
   :main mspacman.core)
