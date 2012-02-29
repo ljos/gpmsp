@@ -6,6 +6,7 @@
            (java.io InputStreamReader OutputStreamWriter PrintWriter OutputStream)))
 
 (defn- run-fitness [ins outs]
+  (println "Run-fitness")
   (binding [*out* (OutputStreamWriter. outs)
             *err* (PrintWriter. ^OutputStream outs true)]
     (let [rdr (LineNumberingPushbackReader. (InputStreamReader. ins))
@@ -13,6 +14,7 @@
       (prn (gp/run-fitness-on inds)))))
 
 (defn- test-server [ins outs]
+  (println "Test-server")
   (binding [*out* (OutputStreamWriter. outs)
             *err* (PrintWriter. ^OutputStream outs true)]
     (prn (:exit (shell/sh "check_for_user")))))
