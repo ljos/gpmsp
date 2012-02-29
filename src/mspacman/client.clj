@@ -49,21 +49,22 @@
 
 (defn- find-useable-machines [machines]
   (letfn [(has-user? [machine]
-            
-            (let [socket (Socket. (format "%s.klientdrift.uib.no" machine) 50001)
-                  rdr (LineNumberingPushbackReader.
-                       (InputStreamReader.
-                        (.getInputStream socket)))]
-              (try
-                (when (zero? (read-string (.readLine rdr)))
-                  machine)
-                (catch Exception e (println (.getMessage e)))
-                (finally
-                 (when-not (.isClosed socket)
-                   (doto socket
-                     (.shutdownInput)
-                     (.shutdownOutput)
-                     (.close)))))))]
+            (try
+              (let [socket (Socket. (format "%s.klientdrift.uib.no" machine) 50001)
+                    rdr (LineNumberingPushbackReader.
+                         (InputStreamReader.
+                          (.getInputStream socket)))]
+                (try
+                  (when (zero? (read-string (.readLine rdr)))
+                    machine)
+                  (catch Exception e (println (.getMessage e)))
+                  (finally
+                   (when-not (.isClosed socket)
+                     (doto socket
+                       (.shutdownInput)
+                      (.shutdownOutput)
+                      (.close))))))
+              (catch Exception e (println (.getMessage e)))))]
     (filter has-user? ALL-MACHINES)))
 
 (defn- send-population [machines population]
