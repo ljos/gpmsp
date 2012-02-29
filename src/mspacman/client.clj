@@ -65,7 +65,7 @@
                       (.shutdownOutput)
                       (.close))))))
               (catch Exception e (println (.printStackTrace e)))))]
-    (filter has-user? ALL-MACHINES)))
+    (filter has-user? machines)))
 
 (defn- send-population [machines population]
   (let [out (doall 
