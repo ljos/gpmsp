@@ -85,9 +85,7 @@
                              (.shutdownOutput)
                              (.close))))))
                    machines
-                   (partition (int (/ gp/SIZE-OF-POPULATION
-                                      (count machines)))
-                              population)))]
+                   population))]
     (println out)
     out))
 
