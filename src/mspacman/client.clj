@@ -1,8 +1,9 @@
 (ns mspacman.client
-  (:import (java.net Socket)
-           (java.io InputStreamReader OutputStreamWriter)
-           (clojure.lang LineNumberingPushbackReader))
-  (:require [mspacman.gpmsp :as gp]))
+  (:import (java.net Socket InetAddress)
+          (java.io InputStreamReader OutputStreamWriter)
+          (clojure.lang LineNumberingPushbackReader))
+  (:require [mspacman.gpmsp :as gp]
+            [clojure.string :as string]))
 
 (def ALL-MACHINES [;"mn121033"
                    "mn121034"	
@@ -81,7 +82,7 @@
                              (.shutdownOutput)
                              (.close))))))
                    machines
-                   (partition (int (/ SIZE-OF-POPULATION
+                   (partition (int (/ gp/SIZE-OF-POPULATION
                                       (count machines)))
                               population)))]
     (println out)
@@ -112,7 +113,7 @@
            n (inc startn)]
       (if (< n gp/NUMBER-OF-GENERATIONS)
         (recur (gp-over-cluster (concat (take elitism population)
-                                        (map #(struct individual %  0)
+                                        (map #(struct gp/individual %  0)
                                              (gp/recombination elitism population)))
                                 n)
                (inc n))
