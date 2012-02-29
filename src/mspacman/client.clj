@@ -55,7 +55,7 @@
                        (InputStreamReader.
                         (.getInputStream socket)))]
               (try
-                (when (zero? (.getLine rdr))
+                (when (zero? (.readLine rdr))
                   machine)
                 (finally
                  (when-not (.isClosed socket)
