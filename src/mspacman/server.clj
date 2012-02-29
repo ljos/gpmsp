@@ -8,7 +8,7 @@
 (defn- run-fitness [ins outs]
   (println "Run-fitness")
   (let [rdr (LineNumberingPushbackReader. (InputStreamReader. ins))
-        inds (.readLine rdr)
+        inds (read-string (.readLine rdr))
         out (do (println inds (list? inds))
                 (str (gp/run-fitness-on inds)))]
     (println out)
