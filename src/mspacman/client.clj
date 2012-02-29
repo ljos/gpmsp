@@ -76,7 +76,7 @@
                           wtr (OutputStreamWriter.
                                (.getOutputStream socket))]
                       (try
-                        (println %1 %2)
+                        (println %1 (str %2))
                         (.write wtr (str %2) 0 (count (str %2)))
                         (.readLine rdr)
                         (finally
