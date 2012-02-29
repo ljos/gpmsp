@@ -75,6 +75,7 @@
                                (.getOutputStream socket))]
                       (try
                         (.write wtr (str %2) 0 (count (str %2)))
+                        (.readLine rdr)
                         (finally
                          (when-not (.isClosed socket)
                            (doto socket
