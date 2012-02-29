@@ -18,5 +18,5 @@
     (prn (:exit (shell/sh "check_for_user")))))
 
 (defn start-server []
-  (create-server 50000 run-fitness)
-  (create-server 50001 test-server))
+  (socket/create-server 50000 run-fitness)
+  (socket/create-server 50001 test-server))
