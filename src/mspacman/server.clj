@@ -7,10 +7,13 @@
 
 (defn- run-fitness [ins outs]
   (println "Run-fitness")
-  (binding [*out* (OutputStreamWriter. outs)]
-    (let [rdr (LineNumberingPushbackReader. (InputStreamReader. ins))
-          inds (.readLine rdr)]
-      (prn (gp/run-fitness-on inds)))))
+  (let [wrt (OutputStreamWriter. outs)
+        rdr (LineNumberingPushbackReader. (InputStreamReader. ins))
+        inds (.readLine rdr)
+        out (do (println inds)
+                (str (gp/run-fitness-on inds)))]
+    (println out)
+    (.write out 0 (len out))))
 
 (defn- test-server [ins outs]
   (println "Test-server")
