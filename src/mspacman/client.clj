@@ -55,6 +55,7 @@
                           (.getInputStream socket)))]
                (when (zero? (.getLine rdr))
                  machine)
+               (catch Exception e (.getMessage e))
                (finally
                 (when-not (.isClosed)
                  (doto socket
@@ -73,6 +74,7 @@
                                (.getOutputStream socket))]
                       (try
                         (.write wtr (str %2) 0 (count (str %2)))
+                        (catch Exception e (.getMessage e))
                         (finally
                          (when-not (.isClosed)
                            (doto socket
