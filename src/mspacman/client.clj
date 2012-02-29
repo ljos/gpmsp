@@ -1,5 +1,6 @@
 (ns mspacman.client
-  (:import (java.net Socket InputStreamReader OutputStreamWriter)
+  (:import (java.net Socket)
+           (java.io InputStreamReader OutputStreamWriter)
            (clojure.lang LineNumberingPushbackReader))
   (:require [mspacman.gpmsp :as gp]))
 
