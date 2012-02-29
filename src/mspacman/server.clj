@@ -6,10 +6,10 @@
            (java.io InputStreamReader OutputStreamWriter PrintWriter)))
 
 (defn- run-fitness [ins outs]
-  (binding [rdr (LineNumberingPushbackReader. (InputStreamReader. ins))
-            *out* (OutputStreamWriter. outs)
+  (binding [*out* (OutputStreamWriter. outs)
             *err* (PrintWriter. ^OutputStream outs true)]
-    (let [inds (.getLine rdr)]
+    (let [rdr (LineNumberingPushbackReader. (InputStreamReader. ins))
+          inds (.getLine rdr)]
       (prn (gp/run-fitness-on inds)))))
 
 (defn- test-server [ins outs]
