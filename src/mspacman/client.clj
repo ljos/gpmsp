@@ -50,7 +50,7 @@
 (defn- find-useable-machines [machines]
   (letfn [(has-user? [machine]
             
-            (let [socket (Socket. (format "%s.klientdrift.uib.no" machine) 50000)
+            (let [socket (Socket. (format "%s.klientdrift.uib.no" machine) 50001)
                   rdr (LineNumberingPushbackReader.
                        (InputStreamReader.
                         (.getInputStream socket)))]
