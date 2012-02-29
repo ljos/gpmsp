@@ -57,7 +57,7 @@
                 (when (zero? (.getLine rdr))
                   machine)
                 (finally
-                 (when-not (.isClosed)
+                 (when-not (.isClosed socket)
                    (doto socket
                      (.shutdownInput)
                      (.shutdownOutput)
@@ -75,7 +75,7 @@
                       (try
                         (.write wtr (str %2) 0 (count (str %2)))
                         (finally
-                         (when-not (.isClosed)
+                         (when-not (.isClosed socket)
                            (doto socket
                              (.shutdownInput)
                              (.shutdownOutput)
