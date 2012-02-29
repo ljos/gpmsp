@@ -1,6 +1,7 @@
 (ns mspacman.core
   (:require [mspacman.gpmsp :as gp]
-            [mspacman.individual :as ind]))
+            [mspacman.individual :as ind])
+  (:use [mspacman.client :as client]))
 
 (defn -main [& args]
   (cond (empty? args)
