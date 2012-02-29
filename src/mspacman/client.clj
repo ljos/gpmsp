@@ -57,37 +57,40 @@
                 (try
                   (when (zero? (read-string (.readLine rdr)))
                     machine)
-                  (catch Exception e (println (.getMessage e)))
+                  (catch Exception e (do (println (.getMessage e)) nil))
                   (finally
                    (when-not (.isClosed socket)
                      (doto socket
                        (.shutdownInput)
                       (.shutdownOutput)
                       (.close))))))
-              (catch Exception e (println (.printStackTrace e)))))]
+              (catch Exception e (do (println (.getMessage e)) nil))))]
     (filter has-user? machines)))
 
 (defn- send-population [machines population]
   (apply concat
          (doall 
-          (pmap #(let [socket (Socket. (format "%s.klientdrift.uib.no" %1) 50000)
-                       rdr (LineNumberingPushbackReader.
-                            (InputStreamReader.
-                             (.getInputStream socket)))]
-                   (try
-                     (println %1 %2)
-                     (binding [*out* (OutputStreamWriter.
-                                      (.getOutputStream socket))]
-                       (prn %2))
-                     (read-string (.readLine rdr))
-                     (finally
-                      (when-not (.isClosed socket)
-                        (doto socket
-                          (.shutdownInput)
-                          (.shutdownOutput)
-                          (.close))))))
+          (pmap #(try
+                   (let [socket (Socket. (format "%s.klientdrift.uib.no" %1) 50000)
+                        rdr (LineNumberingPushbackReader.
+                             (InputStreamReader.
+                              (.getInputStream socket)))]
+                    (try
+                      (println %1 %2)
+                      (binding [*out* (OutputStreamWriter.
+                                       (.getOutputStream socket))]
+                        (prn %2))
+                      (read-string (.readLine rdr))
+                      (finally
+                       (when-not (.isClosed socket)
+                         (doto socket
+                           (.shutdownInput)
+                           (.shutdownOutput)
+                           (.close))))))
+                   (catch Exception e (do (println (.getMessage e)) nil)))
                 machines
-                population))))
+                (partition (int (/ (count population) (count machines)))
+                           population)))))
 
 (defn gp-over-cluster [population n]
   (let [machines  (find-useable-machines ALL-MACHINES)
