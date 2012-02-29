@@ -64,7 +64,7 @@
                        (.shutdownInput)
                       (.shutdownOutput)
                       (.close))))))
-              (catch Exception e (println (.getMessage e)))))]
+              (catch Exception e (println (.getStackTrace e)))))]
     (filter has-user? ALL-MACHINES)))
 
 (defn- send-population [machines population]
