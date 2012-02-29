@@ -9,7 +9,7 @@
   (binding [*out* (OutputStreamWriter. outs)
             *err* (PrintWriter. ^OutputStream outs true)]
     (let [rdr (LineNumberingPushbackReader. (InputStreamReader. ins))
-          inds (.getLine rdr)]
+          inds (.readLine rdr)]
       (prn (gp/run-fitness-on inds)))))
 
 (defn- test-server [ins outs]
@@ -18,5 +18,5 @@
     (prn (:exit (shell/sh "check_for_user")))))
 
 (defn start-server []
-  (socket/create-server 50000 run-fitness)
-  (socket/create-server 50001 test-server))
+  [(socket/create-server 50000 run-fitness)
+   (socket/create-server 50001 test-server)])
