@@ -74,10 +74,10 @@
                                (InputStreamReader.
                                 (.getInputStream socket)))]
                       (try
-                        (println %1 (str %2))
+                        (println %1 %2)
                         (binding [*out* (OutputStreamWriter.
                                          (.getOutputStream socket))]
-                          (prn (str %2)))
+                          (prn %2))
                         (.readLine rdr)
                         (finally
                          (when-not (.isClosed socket)
