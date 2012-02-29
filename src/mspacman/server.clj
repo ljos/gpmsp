@@ -13,7 +13,7 @@
         out (do (println inds)
                 (str (gp/run-fitness-on inds)))]
     (println out)
-    (.write out 0 (len out))))
+    (.write out 0 (count out))))
 
 (defn- test-server [ins outs]
   (println "Test-server")
