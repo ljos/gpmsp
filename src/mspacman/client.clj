@@ -61,8 +61,8 @@
                    (doto socket
                      (.shutdownInput)
                      (.shutdownOutput)
-                     (.close)))))))])
-  (filter has-user? ALL-MACHINES))
+                     (.close)))))))]
+    (filter has-user? ALL-MACHINES)))
 
 (defn- send-population [machines population]
   (let [out (doall 
