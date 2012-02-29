@@ -57,6 +57,7 @@
               (try
                 (when (zero? (read-string (.readLine rdr)))
                   machine)
+                (catch Exception e (println (.getMessage e)))
                 (finally
                  (when-not (.isClosed socket)
                    (doto socket
