@@ -69,7 +69,7 @@
 
 (defn- send-population [machines population]
   (let [out (doall 
-             (pmap #(let [socket (.Socket (format "%s.klientdrift.uib.no" %1) 50000)
+             (pmap #(let [socket (Socket. (format "%s.klientdrift.uib.no" %1) 50000)
                           rdr (LineNumberingPushbackReader.
                                (InputStreamReader.
                                 (.getInputStream socket)))
