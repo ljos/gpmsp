@@ -68,27 +68,26 @@
     (filter has-user? machines)))
 
 (defn- send-population [machines population]
-  (let [out (doall 
-             (pmap #(let [socket (Socket. (format "%s.klientdrift.uib.no" %1) 50000)
-                          rdr (LineNumberingPushbackReader.
-                               (InputStreamReader.
-                                (.getInputStream socket)))]
-                      (try
-                        (println %1 %2)
-                        (binding [*out* (OutputStreamWriter.
-                                         (.getOutputStream socket))]
-                          (prn %2))
-                        (.readLine rdr)
-                        (finally
-                         (when-not (.isClosed socket)
-                           (doto socket
-                             (.shutdownInput)
-                             (.shutdownOutput)
-                             (.close))))))
-                   machines
-                   population))]
-    (println out)
-    out))
+  (apply concat
+         (doall 
+          (pmap #(let [socket (Socket. (format "%s.klientdrift.uib.no" %1) 50000)
+                       rdr (LineNumberingPushbackReader.
+                            (InputStreamReader.
+                             (.getInputStream socket)))]
+                   (try
+                     (println %1 %2)
+                     (binding [*out* (OutputStreamWriter.
+                                      (.getOutputStream socket))]
+                       (prn %2))
+                     (read-string (.readLine rdr))
+                     (finally
+                      (when-not (.isClosed socket)
+                        (doto socket
+                          (.shutdownInput)
+                          (.shutdownOutput)
+                          (.close))))))
+                machines
+                population))))
 
 (defn gp-over-cluster [population n]
   (let [machines  (find-useable-machines ALL-MACHINES)
