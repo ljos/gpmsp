@@ -72,12 +72,12 @@
              (pmap #(let [socket (Socket. (format "%s.klientdrift.uib.no" %1) 50000)
                           rdr (LineNumberingPushbackReader.
                                (InputStreamReader.
-                                (.getInputStream socket)))
-                          wtr (OutputStreamWriter.
-                               (.getOutputStream socket))]
+                                (.getInputStream socket)))]
                       (try
                         (println %1 (str %2))
-                        (.write wtr (str %2) 0 (count (str %2)))
+                        (binding [*out* (OutputStreamWriter.
+                                         (.getOutputStream socket))]
+                          (prn (str %2)))
                         (.readLine rdr)
                         (finally
                          (when-not (.isClosed socket)
