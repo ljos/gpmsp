@@ -3,7 +3,7 @@
             [clojure.contrib.server-socket :as socket]
             [mspacman.gpmsp :as gp])
   (:import (clojure.lang LineNumberingPushbackReader)
-           (java.io InputStreamReader OutputStreamWriter PrintWriter)))
+           (java.io InputStreamReader OutputStreamWriter PrintWriter OutputStream)))
 
 (defn- run-fitness [ins outs]
   (binding [*out* (OutputStreamWriter. outs)
