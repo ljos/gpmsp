@@ -64,7 +64,7 @@
                        (.shutdownInput)
                       (.shutdownOutput)
                       (.close))))))
-              (catch Exception e (do (println (.getMessage e)) nil))))]
+              (catch Exception e nil)))]
     (filter has-user? machines)))
 
 (defn- send-population [machines population]
@@ -87,7 +87,7 @@
                            (.shutdownInput)
                            (.shutdownOutput)
                            (.close))))))
-                   (catch Exception e (do (println (.getMessage e)) nil)))
+                   (catch Exception e nil))
                 machines
                 (partition (int (/ (count population) (count machines)))
                            population)))))
