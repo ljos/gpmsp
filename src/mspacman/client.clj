@@ -76,7 +76,6 @@
                              (InputStreamReader.
                               (.getInputStream socket)))]
                     (try
-                      (println %1 %2)
                       (binding [*out* (OutputStreamWriter.
                                        (.getOutputStream socket))]
                         (prn %2))
