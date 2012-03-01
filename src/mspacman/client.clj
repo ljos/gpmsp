@@ -93,7 +93,8 @@
 
 (defn gp-over-cluster [population n]
   (let [machines  (find-useable-machines ALL-MACHINES)
-        from-machines (send-population machines population)
+        from-machines (do (println machines)
+                          (send-population machines population))
         generation (sort-by :fitness > from-machines)]
     (newline)
     (println 'generation n)
