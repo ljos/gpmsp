@@ -69,17 +69,17 @@
 
 (defn- send-inds-to-mahine [individuals machine]
   (try
-    (let [socket (Socket. (format "%s.klientdrift.uib.no" %1) 50000)
+    (let [socket (Socket. (format "%s.klientdrift.uib.no" machine) 50000)
           rdr (LineNumberingPushbackReader.
                (InputStreamReader.
                 (.getInputStream socket)))]
       (try
-        (println (str "Sending to " %1))
+        (println (str "Sending to " machine))
         (binding [*out* (OutputStreamWriter.
                          (.getOutputStream socket))]
-          (prn %2))
+          (prn individuals))
         (read-string (.readLine rdr))
-        (println (str "Recieved from" %1))
+        (println (str "Recieved from" machine))
         (finally
          (when-not (.isClosed socket)
            (doto socket
