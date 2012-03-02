@@ -92,12 +92,13 @@
   (apply concat
          (map deref
               (map await
-                   (map #(let [ag (agent %2)]
-                           (send-off ag (fn [m] (send-inds-to-mahine %1 m)))
-                           ag)
-                        (partition (int (/ (count population) (count machines)))
-                                   population)
-                        machines)))))
+                   (doall
+                    (map #(let [ag (agent %2)]
+                            (send-off ag (fn [m] (send-inds-to-mahine %1 m)))
+                            ag)
+                         (partition (int (/ (count population) (count machines)))
+                                    population)
+                         machines))))))
 
 (defn gp-over-cluster [population n]
   (let [machines  (find-useable-machines ALL-MACHINES)
