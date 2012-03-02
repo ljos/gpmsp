@@ -90,10 +90,14 @@
 
 (defn- send-population [machines population]
   (apply concat
-         (doall (pmap send-inds-to-mahine
-                      (partition (int (/ (count population) (count machines)))
-                                 population)
-                      machines))))
+         (map deref
+              (map await
+                   (map #(let [ag (agent %2)]
+                           (send-off ag (fn [m] (send-inds-to-mahine %1 m)))
+                           m)
+                        (partition (int (/ (count population) (count machines)))
+                                   population)
+                        machines)))))
 
 (defn gp-over-cluster [population n]
   (let [machines  (find-useable-machines ALL-MACHINES)
