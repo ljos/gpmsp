@@ -94,7 +94,7 @@
               (map await
                    (map #(let [ag (agent %2)]
                            (send-off ag (fn [m] (send-inds-to-mahine %1 m)))
-                           m)
+                           ag)
                         (partition (int (/ (count population) (count machines)))
                                    population)
                         machines)))))
