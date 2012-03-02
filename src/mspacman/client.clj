@@ -67,31 +67,33 @@
               (catch Exception e nil)))]
     (filter has-user? machines)))
 
+(defn- send-inds-to-mahine [individuals machine]
+  (try
+    (let [socket (Socket. (format "%s.klientdrift.uib.no" %1) 50000)
+          rdr (LineNumberingPushbackReader.
+               (InputStreamReader.
+                (.getInputStream socket)))]
+      (try
+        (println (str "Sending to " %1))
+        (binding [*out* (OutputStreamWriter.
+                         (.getOutputStream socket))]
+          (prn %2))
+        (read-string (.readLine rdr))
+        (println (str "Recieved from" %1))
+        (finally
+         (when-not (.isClosed socket)
+           (doto socket
+             (.shutdownInput)
+             (.shutdownOutput)
+             (.close))))))
+    (catch Exception e nil)))
+
 (defn- send-population [machines population]
   (apply concat
-         (doall
-          (pmap #(try
-                   (let [socket (Socket. (format "%s.klientdrift.uib.no" %1) 50000)
-                        rdr (LineNumberingPushbackReader.
-                             (InputStreamReader.
-                              (.getInputStream socket)))]
-                     (try
-                       (println (str "Sending to " %1))
-                      (binding [*out* (OutputStreamWriter.
-                                       (.getOutputStream socket))]
-                        (prn %2))
-                      (read-string (.readLine rdr))
-                      (println (str "Recieved from" %1))
-                      (finally
-                       (when-not (.isClosed socket)
-                         (doto socket
-                           (.shutdownInput)
-                           (.shutdownOutput)
-                           (.close))))))
-                   (catch Exception e nil))
-                machines
-                (partition (int (/ (count population) (count machines)))
-                           population)))))
+         (doall (pmap send-inds-to-mahine
+                      (partition (int (/ (count population) (count machines)))
+                                 population)
+                      machines))))
 
 (defn gp-over-cluster [population n]
   (let [machines  (find-useable-machines ALL-MACHINES)
