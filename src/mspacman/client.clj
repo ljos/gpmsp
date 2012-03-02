@@ -69,17 +69,19 @@
 
 (defn- send-population [machines population]
   (apply concat
-         (doall 
+         (doall
           (pmap #(try
                    (let [socket (Socket. (format "%s.klientdrift.uib.no" %1) 50000)
                         rdr (LineNumberingPushbackReader.
                              (InputStreamReader.
                               (.getInputStream socket)))]
-                    (try
+                     (try
+                       (println (str "Sending to " %1))
                       (binding [*out* (OutputStreamWriter.
                                        (.getOutputStream socket))]
                         (prn %2))
                       (read-string (.readLine rdr))
+                      (println (str "Recieved from" %1))
                       (finally
                        (when-not (.isClosed socket)
                          (doto socket
