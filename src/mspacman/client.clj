@@ -74,12 +74,12 @@
                (InputStreamReader.
                 (.getInputStream socket)))]
       (try
-        (println (str "Sending to " machine))
+        (print (str "Sending to " machine " "))
         (binding [*out* (OutputStreamWriter.
                          (.getOutputStream socket))]
           (prn individuals))
         (read-string (.readLine rdr))
-        (println (str "Recieved from" machine))
+        (print (str "Recieved from" machine " "))
         (finally
          (when-not (.isClosed socket)
            (doto socket
