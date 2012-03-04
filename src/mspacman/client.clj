@@ -51,7 +51,7 @@
 
 (defn- find-useable-machines [machines]
   (letfn [(has-user? [machine]
-            (do (println "has user?" machine))
+            (do (print "has user?" machine " "))
             (try
               (let [socket (doto (Socket.)
                              (.connect (InetSocketAddress. (format "%s.klientdrift.uib.no" machine)
@@ -94,10 +94,11 @@
 
 (defn- send-population [machines population]
   (mapcat deref
-          (map #(future (send-inds-to-mahine %1 %2))
-               (partition (int (/ (count population) (count machines)))
-                          population)
-               machines)))
+          (doall
+           (map #(future (send-inds-to-mahine %1 %2))
+                (partition (int (/ (count population) (count machines)))
+                           population)
+                machines))))
 
 (defn gp-over-cluster [population n]
   (let [machines  (find-useable-machines ALL-MACHINES)
