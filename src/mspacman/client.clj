@@ -79,8 +79,8 @@
                          (.getOutputStream socket))]
           (prn individuals))
         (read-string (.readLine rdr))
-        (print (str "Recieved from" machine " "))
         (finally
+         (print (str "Recieved from" machine " "))
          (when-not (.isClosed socket)
            (doto socket
              (.shutdownInput)
@@ -89,16 +89,13 @@
     (catch Exception e nil)))
 
 (defn- send-population [machines population]
-  (apply concat
-         (map deref
-              (map await
-                   (doall
-                    (map #(let [ag (agent %2)]
-                            (send-off ag (fn [m] (send-inds-to-mahine %1 m)))
-                            ag)
-                         (partition (int (/ (count population) (count machines)))
-                                    population)
-                         machines))))))
+  (mapcat (comp deref #(do (await %) %))
+          (map #(let [ag (agent %2)]
+                  (send-off ag (fn [m] (send-inds-to-mahine %1 m)))
+                  ag)
+               (partition (int (/ (count population) (count machines)))
+                          population)
+               machines)))
 
 (defn gp-over-cluster [population n]
   (let [machines  (find-useable-machines ALL-MACHINES)
