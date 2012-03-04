@@ -89,10 +89,8 @@
     (catch Exception e nil)))
 
 (defn- send-population [machines population]
-  (mapcat (comp deref #(do (await %) %))
-          (map #(let [ag (agent %2)]
-                  (send-off ag (fn [m] (send-inds-to-mahine %1 m)))
-                  ag)
+  (mapcat deref
+          (map #(future (send-inds-to-mahine %1 %2))
                (partition (int (/ (count population) (count machines)))
                           population)
                machines)))
