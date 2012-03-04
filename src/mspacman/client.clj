@@ -49,6 +49,7 @@
 
 (defn- find-useable-machines [machines]
   (letfn [(has-user? [machine]
+            (do (println "has user?" machine))
             (try
               (let [socket (Socket. (format "%s.klientdrift.uib.no" machine) 50001)
                     rdr (LineNumberingPushbackReader.
@@ -65,7 +66,7 @@
                       (.shutdownOutput)
                       (.close))))))
               (catch Exception e nil)))]
-    (filter has-user? machines)))
+    (doall (filter has-user? machines))))
 
 (defn- send-inds-to-mahine [individuals machine]
   (try
