@@ -1,5 +1,5 @@
 (ns mspacman.client
-  (:import (java.net Socket InetAddress)
+  (:import (java.net Socket InetAddress InetSocketAddress)
           (java.io InputStreamReader OutputStreamWriter)
           (clojure.lang LineNumberingPushbackReader))
   (:require [mspacman.gpmsp :as gp]
@@ -51,10 +51,11 @@
   (letfn [(has-user? [machine]
             (do (println "has user?" machine))
             (try
-              (let [socket (Socket. (format "%s.klientdrift.uib.no" machine) 50001)
-                    rdr (LineNumberingPushbackReader.
-                         (InputStreamReader.
-                          (.getInputStream socket)))]
+              (let [socket (doto (Socket.)
+                             (.connect (InetSocketAddress. (format "%s.klientdrift.uib.no" machine)
+                                                           50001)
+                                       2000))
+                    rdr (LineNumberingPushbackReader. (InputStreamReader. (.getInputStream socket)))]
                 (try
                   (when (zero? (read-string (.readLine rdr)))
                     machine)
