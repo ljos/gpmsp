@@ -10,11 +10,10 @@
 
 (ns ^{:author "Craig McDaniel",
       :doc "Server socket library - includes REPL on socket"}
-  clojure.contrib.server-socket
+  mspacman.serversocket
   (:import (java.net InetAddress ServerSocket Socket SocketException)
            (java.io InputStreamReader OutputStream OutputStreamWriter PrintWriter)
-           (clojure.lang LineNumberingPushbackReader))
-  (:use [clojure.main :only (repl)]))
+           (clojure.lang LineNumberingPushbackReader)))
 
 (defn- on-thread [f]
   (doto (Thread. ^Runnable f) 
@@ -72,22 +71,3 @@
 
 (defn connection-count [server]
   (count @(:connections server)))
-
-;;;; 
-;;;; REPL on a socket
-;;;; 
-
-(defn- socket-repl [ins outs]
-  (binding [*in* (LineNumberingPushbackReader. (InputStreamReader. ins))
-            *out* (OutputStreamWriter. outs)
-            *err* (PrintWriter. ^OutputStream outs true)]
-    (repl)))
-
-(defn create-repl-server 
-  "create a repl on a socket"
-  ([port backlog ^InetAddress bind-addr] 
-     (create-server port socket-repl backlog bind-addr))
-  ([port backlog] 
-     (create-server port socket-repl backlog))
-  ([port] 
-     (create-server port socket-repl)))
