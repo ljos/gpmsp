@@ -1,6 +1,6 @@
 (ns mspacman.server
   (:require [clojure.java.shell :as shell]
-            [clojure.contrib.server-socket :as socket]
+            [mspacman.serversocket :as socket]
             [mspacman.gpmsp :as gp])
   (:import (clojure.lang LineNumberingPushbackReader)
            (java.io InputStreamReader OutputStreamWriter PrintWriter OutputStream)))
