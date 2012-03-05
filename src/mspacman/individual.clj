@@ -25,10 +25,8 @@
                   move-right
                   move-up
                   move-down
-                  (msp-sleep)
                   int)
-                ITEM-LIST
-                ENTITY-LIST))
+                ITEM-LIST))
 
 (def FUNCTION-LIST (concat
                     '((do expr+)
