@@ -137,9 +137,9 @@
      (run-cluster (map #(struct gp/individual % 0)
                        (gp/create-random-population))
                   0))
-  ([start-pop]
+  ([start-pop start-gen]
      (run-cluster (loop [popu (read-string (slurp start-pop))]
                     (if (= (count popu) gp/SIZE-OF-POPULATION)
                       popu
                       (recur (conj popu (first popu)))))
-                  0)))
+                  (read-string start-gen))))
