@@ -198,7 +198,7 @@
           (Thread/sleep 7000)
           (loop [score 0
                  t tries]
-            (if (= t 0)
+            (if (zero? t)
               (do (-> msp  (.stop true))
                   (-> frame .dispose)
                   (int (/ score tries)))

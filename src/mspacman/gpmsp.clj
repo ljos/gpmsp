@@ -61,7 +61,7 @@
                              ())
                           ,(atomize term))]
                 (recur (if (and (= term 'expr+)
-                                (> expr-width 0))
+                                (pos? expr-width))
                          terms
                          (rest terms))
                        (concat acc (list exp))
@@ -92,7 +92,7 @@
     tournament-selection (tournament-selection TOURNAMENT-SIZE population)))
 
 (defn select-random-node [tree]
-  (if (not (seq? tree))
+  (if-not (seq? tree)
     (zip/seq-zip tree)
     (loop [loc (zip/seq-zip tree)
           val loc
@@ -144,7 +144,7 @@
   (loop [indivs (- SIZE-OF-POPULATION elitism)
          r (rand)
          acc '()]
-    (if (< indivs 0)
+    (if (neg? indivs)
       acc
       (let [indiv (cond (< r REPRODUCTION-RATE)
                         ,(reproduction (repeatedly 2 #(:program (selection population))))
