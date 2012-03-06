@@ -123,7 +123,7 @@
 (defn- run-cluster [startp startn]
   (println "Started")
   (let [elitism (* gp/SIZE-OF-POPULATION gp/ELITISM-RATE)]
-    (loop [population (gp-over-cluster startp 0)
+    (loop [population (gp-over-cluster startp startn)
            n (inc startn)]
       (if (< n gp/NUMBER-OF-GENERATIONS)
         (recur (gp-over-cluster (concat (take elitism population)
