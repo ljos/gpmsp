@@ -146,7 +146,7 @@
     (let [k (keyword (:name @item))
           prev-d (k @entity)
           new-d (msp-relative-distance entity item)]
-      (or (nil? (k entity))
+      (or (nil? prev-d)
           (< prev-d new-d)))))
 
 (defn move-in-direction [direction]
