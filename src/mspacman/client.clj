@@ -49,6 +49,13 @@
                    ;;"mn190156" "mn190157"
                    ])
 
+(defn- shutdown-socket [socket]
+  (when-not (.isClosed socket)
+    (doto socket
+      (.shutdownInput)
+      (.shutdownOutput)
+      (.close))))
+
 (defn- find-usable-machines [machines]
   {:post [(seq %)]}
   (letfn [(has-user? [machine]
@@ -64,11 +71,7 @@
                     machine)
                   (catch Exception e (do (println (.getMessage e)) nil))
                   (finally
-                   (when-not (.isClosed socket)
-                     (doto socket
-                       (.shutdownInput)
-                      (.shutdownOutput)
-                      (.close))))))
+                   (shutdown-socket socket))))
               (catch Exception e nil)))]
     (doall (filter has-user? machines))))
 
@@ -86,11 +89,7 @@
         (read-string (.readLine rdr))
         (finally
          (do (print (str "Recieved from" machine " ")))
-         (when-not (.isClosed socket)
-           (doto socket
-             (.shutdownInput)
-             (.shutdownOutput)
-             (.close))))))
+         (shutdown-socket socket))))
     (catch Exception e nil)))
 
 (defn- send-population [machines population]
