@@ -30,6 +30,7 @@
 
 (def FUNCTION-LIST (concat
                     '((do expr+)
+                      (msp-closer? entity item)
                       (msp-relative-distance entity item)
                       (msp-check-area-below entity)
                       (msp-check-area-above entity)
@@ -50,7 +51,7 @@
 (def inky  (atom {:name 'inky :colour 65502}))
 (def sue (atom {:name 'sue :colour 16758855}))
 (def pills (atom {:name 'pills :colour 14606046}))
-(def walkway (atom {::name 'walkway :colour 0}))
+(def walkway (atom {:name 'walkway :colour 0}))
 
 (def move-left 'move-left)
 (def move-right 'move-right)
