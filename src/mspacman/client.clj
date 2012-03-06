@@ -49,7 +49,8 @@
                    ;;"mn190156" "mn190157"
                    ])
 
-(defn- find-useable-machines [machines]
+(defn- find-usable-machines [machines]
+  {:post [(seq %)]}
   (letfn [(has-user? [machine]
             (do (print "has user?" machine " "))
             (try
@@ -101,7 +102,7 @@
                 machines))))
 
 (defn gp-over-cluster [population n]
-  (let [machines  (find-useable-machines ALL-MACHINES)
+  (let [machines  (find-usable-machines ALL-MACHINES)
         from-machines (do (println machines)
                           (send-population machines population))
         generation (sort-by :fitness > from-machines)]
