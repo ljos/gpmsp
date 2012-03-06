@@ -18,7 +18,7 @@
 (def REPRODUCTION-RATE 0.70)
 (def MUTATION-DEPTH 10)
 (def RAND-INT-RATE 0.25)
-(def EXPR?-RATE 0.80)
+(def EXPR?-RATE 0.50)
 (def FITNESS-RUNS 10)
 
 (def SELECTION 'fitness-proportionate)
@@ -153,7 +153,7 @@
                         :else
                         (:program (selection population)))]
         (recur (if (vector? indiv) ;;If this is the case then we have reproduction
-                 (- indivs 2)
+                 (- indivs 2)      ;;and that means two new indivs
                  (dec indivs))
                (rand)               
                (if (vector? indiv)
