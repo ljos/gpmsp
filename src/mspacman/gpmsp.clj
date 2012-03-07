@@ -205,5 +205,18 @@
 
 (defn run-fitness-on [individuals]
   (use 'mspacman.individual)
-  (sort-by :fitness > (pmap #(assoc % :fitness (ind/fitness FITNESS-RUNS (:program %)))
-                            individuals)))
+  (sort-by :fitness >
+           (loop [inds individuals
+                  out []]
+             (if (empty? inds)
+               out
+               (let [f (future (assoc (first individuals)
+                                 :fitness
+                                 (ind/fitness FITNESS-RUNS
+                                              (:program (first individuals)))))
+                     s (future (assoc (second individuals)
+                                 :fitness
+                                 (ind/fitness FITNESS-RUNS
+                                              (:program (second individuals)))))]
+                 (recur (nnext inds)
+                        (conj out @f @s)))))))
