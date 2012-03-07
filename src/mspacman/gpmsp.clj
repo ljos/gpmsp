@@ -129,6 +129,7 @@
         c (if (= (second expr) 'expr+)
             'expr+
             (nth expr n))]
+    (println c)
     (case c 
       (expr expr? expr+) (rand-nth ind/FUNCTION-LIST)
       bool (rand-nth ind/BOOL-LIST)
