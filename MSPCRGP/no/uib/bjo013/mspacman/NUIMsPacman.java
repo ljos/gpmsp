@@ -15,6 +15,7 @@ public class NUIMsPacman implements MsPacman {
 	private Pacman m;
 	private Throttle t;
 	private boolean stop = false;
+	private boolean pause = false;
 
 	private final CountDownLatch[] signal;
 
@@ -34,12 +35,6 @@ public class NUIMsPacman implements MsPacman {
 
 		String driver = "mspacman";
 
-		int sLineBuf = 4096;
-		jef.util.Config.SOUND_BUFFER_SIZE = sLineBuf;
-
-		int sSampFrq = 22050;
-		jef.util.Config.SOUND_SAMPLING_FREQ = sSampFrq;
-
 		CottageDriver d = new CottageDriver();
 
 		m = (Pacman) d.getMachine(base_URL, driver);
@@ -49,7 +44,7 @@ public class NUIMsPacman implements MsPacman {
 		pixel = m.refresh(true).getPixels();
 
 		t = new Throttle(m.getProperty(Machine.FPS));
-		t.enable(true);
+		t.enable(false);
 
 		int i = 3;
 		while (i > 0) { //finding if the game is at start screen.
@@ -95,7 +90,12 @@ public class NUIMsPacman implements MsPacman {
 		++latch;
 		
 		while (shouldContinue()) { //running game
-			m.refresh(true);
+			if(!pause) {
+				for(int j = 0; j < 5; j++) {
+					m.refresh(true);
+				}
+				pause = true;
+			}
 			t.throttle();
 			if (this.isGameOver() && shouldContinue()) {
 				for (;;) { //finding if the game is past ended screen
@@ -450,6 +450,9 @@ public class NUIMsPacman implements MsPacman {
 	@Override
 	public void keyPressed(int code) {
 		switch (code) { 
+		case KeyEvent.VK_P:
+			pause = !pause;
+			break;
 		case KeyEvent.VK_UP:
 			m.writeInput(254);
 			break;
