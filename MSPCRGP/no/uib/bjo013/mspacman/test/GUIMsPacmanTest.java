@@ -2,6 +2,7 @@ package no.uib.bjo013.mspacman.test;
 
 import java.awt.BorderLayout;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Semaphore;
 
 import javax.swing.JFrame;
 
@@ -10,9 +11,9 @@ import no.uib.bjo013.mspacman.GUIMsPacman;
 public class GUIMsPacmanTest {
 
 	public static void main(String[] args) throws Exception {
-		CountDownLatch[] signal = { new CountDownLatch(1),
+	/*	CountDownLatch[] signal = { new CountDownLatch(1),
 				new CountDownLatch(1), new CountDownLatch(1) };
-		GUIMsPacman c = new GUIMsPacman(signal);
+		GUIMsPacman c = new GUIMsPacman(signal, new Semaphore(1));
 		c.setSize(224, 288 + 22); // I think the + 22 is because of the top bar.
 
 		JFrame app = new JFrame("Ms. Pacman");
@@ -36,6 +37,6 @@ public class GUIMsPacmanTest {
 			c.stopMSP();
 		}
 		t.join();
-		System.out.println(t.isAlive());
+		System.out.println(t.isAlive()); */
 	}
 }
