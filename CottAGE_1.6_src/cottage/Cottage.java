@@ -110,6 +110,8 @@ public class Cottage extends GfxProducer {
 
 		case KeyEvent.KEY_RELEASED:
 			switch (code) {
+			case KeyEvent.VK_P:
+				break;
 			case KeyEvent.VK_UP:
 			case KeyEvent.VK_LEFT:
 			case KeyEvent.VK_RIGHT:
@@ -153,16 +155,6 @@ public class Cottage extends GfxProducer {
 		} catch (Exception e) {
 		}
 
-		int sLineBuf = getPar("LINEBUFFER");
-		if (sLineBuf == -1)
-			sLineBuf = 4096;
-		jef.util.Config.SOUND_BUFFER_SIZE = sLineBuf;
-
-		int sSampFrq = getPar("SAMPLINGRATE");
-		if (sSampFrq == -1)
-			sSampFrq = 22050;
-		jef.util.Config.SOUND_SAMPLING_FREQ = sSampFrq;
-
 		main = this;
 
 		CottageDriver d = new CottageDriver();
@@ -179,11 +171,7 @@ public class Cottage extends GfxProducer {
 		pixel = null;
 		jef.video.Console.init(w, h, this);
 
-		if (!doubled && !scale2x) {
-			pixel = m.refresh(true).getPixels();
-		} else {
-			pixel = new int[m.refresh(true).getPixels().length * 4];
-		}
+		pixel = m.refresh(true).getPixels();
 
 		enableEvents(AWTEvent.KEY_EVENT_MASK);
 
@@ -223,21 +211,5 @@ public class Cottage extends GfxProducer {
 		} else if (showTXT) {
 			jef.video.Console.drawText(g);
 		}
-	}
-
-	/**
-	 * Get a numeric parameter from the HTML page holding the applet. If the
-	 * parameter is not (correctly) defined in the HTML page, -1 is returned.
-	 */
-	private final int getPar(String parStr) {
-		int returnValue = -1;
-		try {
-			parStr = getParameter(parStr);
-			if (parStr != null) {
-				returnValue = Integer.parseInt(parStr);
-			}
-		} catch (Exception e) {
-		}
-		return returnValue;
 	}
 }
