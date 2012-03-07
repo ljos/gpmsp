@@ -44,7 +44,7 @@
                       (if bool expr expr?)
                       (msp- expr expr)
                       (msp+ expr expr))
-                    BOOLEAN-LIST))
+                    BOOL-LIST))
 
 (def mspacman (atom {:name 'mspacman :colour 16776960}))
 (def blinky (atom {:name 'blinky :colour 16711680}))
