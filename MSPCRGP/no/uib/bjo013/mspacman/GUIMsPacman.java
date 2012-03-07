@@ -1,20 +1,17 @@
 package no.uib.bjo013.mspacman;
 
-import java.awt.AWTEvent;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.net.URL;
+import java.util.concurrent.CountDownLatch;
 
 import jef.machine.Machine;
 import jef.util.Throttle;
 import jef.video.GfxProducer;
 import cottage.CottageDriver;
+import cottage.machine.Pacman;
 
 public class GUIMsPacman extends GfxProducer implements MsPacman {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 8867847222040282809L;
 
 	/** pixel buffer **/
@@ -23,110 +20,29 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 	/** TXT stuff **/
 	public static GUIMsPacman main;
 
-	URL base_URL;
-
 	/** booleans **/
-	boolean showFPS = false;
-	boolean paused = false;
+	boolean pause = false;
 	boolean stop = false;
 
 	/** reference to the driver **/
-	Machine m;
+	private Pacman m;
 	Throttle t;
+	
+	private final CountDownLatch[] signal;
 
-	@Override
-	protected void processKeyEvent(KeyEvent e) {
-		int code = e.getKeyCode();
-		switch (e.getID()) {
-
-		case KeyEvent.KEY_PRESSED:
-			switch (code) {
-
-			case KeyEvent.VK_P:
-				paused = !paused;
-				break;
-
-			case KeyEvent.VK_ESCAPE:
-				m.reset(false);
-				break;
-
-			case KeyEvent.VK_7:
-				if (t.getFrameSkip() > 0) {
-					t.setFrameSkip(t.getFrameSkip() - 1);
-					t.enableAutoFrameSkip(false);
-				} else {
-					t.enableAutoFrameSkip(true);
-				}
-				break;
-
-			case KeyEvent.VK_8:
-				if (t.isAutoFrameSkip()) {
-					t.enableAutoFrameSkip(false);
-					t.setFrameSkip(0);
-				} else if (t.getFrameSkip() < 12) {
-					t.setFrameSkip(t.getFrameSkip() + 1);
-					t.enableAutoFrameSkip(false);
-				}
-				break;
-
-			case KeyEvent.VK_9:
-				t.enable(!t.isEnabled());
-				break;
-
-			case KeyEvent.VK_0:
-				showFPS = !showFPS;
-				break;
-
-			default: //255=nothing, 254=up, 253=left, 251=right, 247=down
-				switch (code) { 
-				case KeyEvent.VK_UP:
-					m.writeInput(254);
-					break;
-				case KeyEvent.VK_LEFT:
-					m.writeInput(253);
-					break;
-				case KeyEvent.VK_RIGHT:
-					m.writeInput(251);
-					break;
-				case KeyEvent.VK_DOWN:
-					m.writeInput(247);
-					break;
-				default:
-					m.keyPress(code);
-					break;
-				} 
-				break;
-			}
-			break;
-
-		case KeyEvent.KEY_RELEASED:
-			switch (code) {
-			case KeyEvent.VK_UP:
-			case KeyEvent.VK_LEFT:
-			case KeyEvent.VK_RIGHT:
-			case KeyEvent.VK_DOWN:
-				//m.writeInput(255);
-				break;
-			default:
-				m.keyRelease(code);
-				break; 
-			}
-			break;
-		}
+	public GUIMsPacman(CountDownLatch[] signal) {
+		this.signal = signal;
 	}
 
 	@Override
 	public void main(int w, int h) {
-		String driver = "";
+		String driver = "mspacman";
 		
+		URL base_URL=null;
 		try {
 			base_URL = new URL(
 					String.format("file://localhost/%s/.mspacman/", 
 							System.getProperty("user.home")));
-		} catch (Exception e) {
-		}
-		try {
-			driver = "mspacman";
 		} catch (Exception e) {
 		}
 
@@ -139,31 +55,121 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 		pixel = new int[w * h];
 		update(pixel);
 
-		m = d.getMachine(base_URL, driver);
+		m = (Pacman) d.getMachine(base_URL, driver);
 
-		pixel = null;
 		jef.video.Console.init(w, h, this);
 		
+		pixel = new int[w * h];
+		update(pixel);
+		
+		pixel = new int[m.refresh(true).getPixels().length];
+
 		pixel = m.refresh(true).getPixels();
 
-		enableEvents(AWTEvent.KEY_EVENT_MASK);
-
-		requestFocus();
-
 		t = new Throttle(m.getProperty(Machine.FPS));
-		t.enable(true);
+		t.enable(false);
 
-		while (!stop) {
-			if (!paused) {
-				update(m.refresh(true));
+		int i = 3;
+		while (i > 0) { //finding if the game is at start screen.
+			update(m.refresh(true));
+			t.throttle();
+			if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x43F8] == 0) {
+				--i;
+			} else if (i < 3) {
+				++i;
+			}
+		}
+
+		Thread tj = new Thread(new SendKeys()); //sending keys for starting the game
+		tj.start();
+		
+		for (long j = 0;; ++j) { //waiting for ready message to appear
+			update(m.refresh(true));
+			t.throttle();
+			if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 82) {
+				break;
+			}
+			if(j % 30 == 0) {
+				new Thread(new SendKeys()).start();
+			}
+		}
+
+		for (;;) { // waiting for ready message to disappear
+			update(m.refresh(true));
+			t.throttle();
+			if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 64) {
+				break;
+			}
+		}
+		
+		try {
+			tj.join();
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+		
+		int latch = 0;
+		signal[latch].countDown();
+		++latch;
+		
+		while (shouldContinue()) { //running game
+			if(!pause) {
+				for(int j = 0; j < 5; j++) {
+					update(m.refresh(true));
+				}
+				pause = true;
 			}
 			t.throttle();
+			if (this.isGameOver() && shouldContinue()) {
+				for (;;) { //finding if the game is past ended screen
+					update(m.refresh(true));
+					t.throttle();
+					if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] != 77) {
+						break;
+					}
+				}
+				Thread th = new Thread(new SendKeys());
+				th.start();
+				
+				for (long j = 0;; ++j) { //waiting for ready message to appear
+					update(m.refresh(true));
+					t.throttle();
+					if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 82) {
+						break;
+					}
+					if(j % 50 == 0) {
+						new Thread(new SendKeys()).start();
+					}
+				}
+
+				for (;;) { // waiting for ready message to disappear
+					update(m.refresh(true));
+					t.throttle();
+					if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 64) {
+						break;
+					}
+				}
+				
+				try {
+					th.join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} 
+				signal[latch].countDown();
+				++latch;
+			}
+		}
+		for(CountDownLatch l : signal) {
+			l.countDown();
 		}
 	}
 	
 	@Override
 	public void keyPressed(int code) {
 		switch (code) { 
+		case KeyEvent.VK_P:
+			pause = !pause;
+			break;
 		case KeyEvent.VK_UP:
 			m.writeInput(254);
 			break;
@@ -220,10 +226,6 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 		return (score > 9999999) ? 0 : score;
 	}
 
-	public synchronized void stopMSP() {
-		this.stop = true;
-	}
-	
 	@Override
 	public boolean isGameOver() {
 		return ((cottage.machine.Pacman) m).md.getREGION_CPU()[0x403B] == 67;
@@ -231,20 +233,8 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 
 	@Override
 	public void postPaint(Graphics g) {
-		if (paused) {
-		} else if (showFPS) {
-			StringBuffer buf = new StringBuffer();
-			String fs = Integer.toString(t.getFrameSkip());
-			String afs = Float.toString(t.getAverageFPS());
-			if (t.isAutoFrameSkip())
-				fs = "AUTO(" + fs + ")";
-			buf.append(t.getFPS()).append("/").append(t.getTargetFPS())
-					.append("/").append(afs);
-			buf.append("  thr:").append(t.isEnabled());
-			buf.append("  sl:").append(t.getSleep());
-			buf.append("  fs:").append(fs);
-			jef.video.Console.drawTextLine(g, 1, 12, buf.toString());
-		} 
+		if (pause) {
+		}
 	}
 	
 	public int[] getEntity(int colour) {
@@ -550,5 +540,110 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 		}
 
 		return new int[] { -1, -1 };
+	}
+	
+	@Override
+	protected void processKeyEvent(KeyEvent e) {
+		int code = e.getKeyCode();
+		switch (e.getID()) {
+
+		case KeyEvent.KEY_PRESSED:
+			switch (code) {
+
+			case KeyEvent.VK_P:
+				pause = !pause;
+				break;
+
+			case KeyEvent.VK_ESCAPE:
+				m.reset(false);
+				break;
+
+			case KeyEvent.VK_7:
+				if (t.getFrameSkip() > 0) {
+					t.setFrameSkip(t.getFrameSkip() - 1);
+					t.enableAutoFrameSkip(false);
+				} else {
+					t.enableAutoFrameSkip(true);
+				}
+				break;
+
+			case KeyEvent.VK_8:
+				if (t.isAutoFrameSkip()) {
+					t.enableAutoFrameSkip(false);
+					t.setFrameSkip(0);
+				} else if (t.getFrameSkip() < 12) {
+					t.setFrameSkip(t.getFrameSkip() + 1);
+					t.enableAutoFrameSkip(false);
+				}
+				break;
+
+			case KeyEvent.VK_9:
+				t.enable(!t.isEnabled());
+				break;
+
+			default: //255=nothing, 254=up, 253=left, 251=right, 247=down
+				switch (code) { 
+				case KeyEvent.VK_UP:
+					m.writeInput(254);
+					break;
+				case KeyEvent.VK_LEFT:
+					m.writeInput(253);
+					break;
+				case KeyEvent.VK_RIGHT:
+					m.writeInput(251);
+					break;
+				case KeyEvent.VK_DOWN:
+					m.writeInput(247);
+					break;
+				default:
+					m.keyPress(code);
+					break;
+				} 
+				break;
+			}
+			break;
+
+		case KeyEvent.KEY_RELEASED:
+			switch (code) {
+			case KeyEvent.VK_UP:
+			case KeyEvent.VK_LEFT:
+			case KeyEvent.VK_RIGHT:
+			case KeyEvent.VK_DOWN:
+				//m.writeInput(255);
+				break;
+			default:
+				m.keyRelease(code);
+				break; 
+			}
+			break;
+		}
+	}
+	
+	public synchronized void stopMSP() {
+		this.stop = true;
+		t.enable(false);	
+	}
+	
+	public synchronized boolean shouldContinue() {
+		return !stop;
+	}
+	
+	private class SendKeys implements Runnable {
+		@Override
+		public void run() {
+			try {
+				Thread.sleep(100);
+				m.keyPress(KeyEvent.VK_5);
+				Thread.sleep(100);
+				m.keyRelease(KeyEvent.VK_5);
+				Thread.sleep(100);
+				m.keyPress(KeyEvent.VK_1);
+				Thread.sleep(100);
+				m.keyRelease(KeyEvent.VK_1);
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();	
+			}
+		}
 	}
 }
