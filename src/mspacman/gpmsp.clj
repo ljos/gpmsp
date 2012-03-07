@@ -71,7 +71,7 @@
                        (dec expr-width))))))))
 
 (defn create-random-individual []
-  (expand (rand-nth ind/FUNCTION-LIST) (rand-int MAX-STARTING-DEPTH)))
+  (expand '(if boolean expr expr?) (rand-int MAX-STARTING-DEPTH)))
 
 (defn create-random-population []
   (take SIZE-OF-POPULATION (repeatedly #(create-random-individual))))
