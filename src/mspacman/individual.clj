@@ -176,8 +176,7 @@
                   (.stopMSP msp))
                 (.join thread)                
                 (int (/ score times)))
-            (do (println times)
-                (.await (nth signal times))
+            (do (.await (nth signal times))
                 (recur (+ score
                           (do (while (and (not (.isGameOver msp)) (.shouldContinue msp))
                                     (while (not= (.toString (.getState thread)) "WAITING"))
