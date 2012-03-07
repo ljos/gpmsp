@@ -216,6 +216,8 @@ public class Throttle {
 	 */
 	public void enable(boolean enable) {
 		throttle = enable;
+		frameNumber = 0;
+		recalcTiming();
 	}
 
 	/**
