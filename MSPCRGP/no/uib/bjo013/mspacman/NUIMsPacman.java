@@ -18,9 +18,13 @@ public class NUIMsPacman implements MsPacman {
 	private boolean pause = false;
 
 	private final CountDownLatch[] signal;
+	private final Object lock;
+	private Thread parent;
 
-	public NUIMsPacman(CountDownLatch[] signal) {
+	public NUIMsPacman(CountDownLatch[] signal, Object lock, Thread parent) {
 		this.signal = signal;
+		this.lock = lock;
+		this.parent = parent;
 	}
 
 	@Override
@@ -90,13 +94,20 @@ public class NUIMsPacman implements MsPacman {
 		++latch;
 		
 		while (shouldContinue()) { //running game
-			if(!pause) {
-				for(int j = 0; j < 5; j++) {
-					m.refresh(true);
+			synchronized (lock) {
+				try {
+					lock.wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
-				pause = true;
+				for (int j = 0; j < 5; j++) {
+					m.refresh(true);
+					t.throttle();
+				}
+				while(!parent.getState().equals(Thread.State.WAITING));
+				lock.notify();
 			}
-			t.throttle();
+			
 			if (this.isGameOver() && shouldContinue()) {
 				for (;;) { //finding if the game is past ended screen
 					m.refresh(true);

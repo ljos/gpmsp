@@ -27,22 +27,25 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 	/** reference to the driver **/
 	private Pacman m;
 	Throttle t;
-	
-	private final CountDownLatch[] signal;
 
-	public GUIMsPacman(CountDownLatch[] signal) {
+	private final CountDownLatch[] signal;
+	private final Object lock;
+	private Thread parent;
+
+	public GUIMsPacman(CountDownLatch[] signal, Object lock, Thread parent) {
 		this.signal = signal;
+		this.lock = lock;
+		this.parent = parent;
 	}
 
 	@Override
 	public void main(int w, int h) {
 		String driver = "mspacman";
-		
-		URL base_URL=null;
+
+		URL base_URL = null;
 		try {
-			base_URL = new URL(
-					String.format("file://localhost/%s/.mspacman/", 
-							System.getProperty("user.home")));
+			base_URL = new URL(String.format("file://localhost/%s/.mspacman/",
+					System.getProperty("user.home")));
 		} catch (Exception e) {
 		}
 
@@ -58,10 +61,10 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 		m = (Pacman) d.getMachine(base_URL, driver);
 
 		jef.video.Console.init(w, h, this);
-		
+
 		pixel = new int[w * h];
 		update(pixel);
-		
+
 		pixel = new int[m.refresh(true).getPixels().length];
 
 		pixel = m.refresh(true).getPixels();
@@ -70,7 +73,7 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 		t.enable(false);
 
 		int i = 3;
-		while (i > 0) { //finding if the game is at start screen.
+		while (i > 0) { // finding if the game is at start screen.
 			update(m.refresh(true));
 			t.throttle();
 			if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x43F8] == 0) {
@@ -80,16 +83,17 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 			}
 		}
 
-		Thread tj = new Thread(new SendKeys()); //sending keys for starting the game
+		Thread tj = new Thread(new SendKeys()); // sending keys for starting the
+												// game
 		tj.start();
-		
-		for (long j = 0;; ++j) { //waiting for ready message to appear
+
+		for (long j = 0;; ++j) { // waiting for ready message to appear
 			update(m.refresh(true));
 			t.throttle();
 			if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 82) {
 				break;
 			}
-			if(j % 30 == 0) {
+			if (j % 30 == 0) {
 				new Thread(new SendKeys()).start();
 			}
 		}
@@ -101,27 +105,34 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 				break;
 			}
 		}
-		
+
 		try {
 			tj.join();
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
-		
+
 		int latch = 0;
 		signal[latch].countDown();
 		++latch;
-		
-		while (shouldContinue()) { //running game
-			if(!pause) {
-				for(int j = 0; j < 5; j++) {
-					update(m.refresh(true));
+
+		while (shouldContinue()) { // running game
+			synchronized (lock) {
+				try {
+					lock.wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
-				pause = true;
+				for (int j = 0; j < 5; j++) {
+					update(m.refresh(true));
+					t.throttle();
+				}
+				while(!parent.getState().equals(Thread.State.WAITING));
+				lock.notify();
 			}
 			t.throttle();
 			if (this.isGameOver() && shouldContinue()) {
-				for (;;) { //finding if the game is past ended screen
+				for (;;) { // finding if the game is past ended screen
 					update(m.refresh(true));
 					t.throttle();
 					if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] != 77) {
@@ -130,14 +141,14 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 				}
 				Thread th = new Thread(new SendKeys());
 				th.start();
-				
-				for (long j = 0;; ++j) { //waiting for ready message to appear
+
+				for (long j = 0;; ++j) { // waiting for ready message to appear
 					update(m.refresh(true));
 					t.throttle();
 					if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 82) {
 						break;
 					}
-					if(j % 50 == 0) {
+					if (j % 50 == 0) {
 						new Thread(new SendKeys()).start();
 					}
 				}
@@ -149,24 +160,24 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 						break;
 					}
 				}
-				
+
 				try {
 					th.join();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
-				} 
+				}
 				signal[latch].countDown();
 				++latch;
 			}
 		}
-		for(CountDownLatch l : signal) {
+		for (CountDownLatch l : signal) {
 			l.countDown();
 		}
 	}
-	
+
 	@Override
 	public void keyPressed(int code) {
-		switch (code) { 
+		switch (code) {
 		case KeyEvent.VK_P:
 			pause = !pause;
 			break;
@@ -185,7 +196,7 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 		default:
 			m.keyPress(code);
 			break;
-		} 
+		}
 	}
 
 	@Override
@@ -195,11 +206,11 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 		case KeyEvent.VK_LEFT:
 		case KeyEvent.VK_RIGHT:
 		case KeyEvent.VK_DOWN:
-			//m.writeInput(255);
+			// m.writeInput(255);
 			break;
 		default:
 			m.keyRelease(code);
-			break; 
+			break;
 		}
 	}
 
@@ -236,7 +247,7 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 		if (pause) {
 		}
 	}
-	
+
 	public int[] getEntity(int colour) {
 		if (colour == 16776960) {
 			return getMsPacman();
@@ -272,11 +283,11 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 		}
 		return false;
 	}
-	
+
 	public boolean checkForEntity(int entityatxy, int dir, int x, int y) {
-		if(entityatxy != 16776960) { //ghosts
-			switch(dir) {
-			case 0: //left
+		if (entityatxy != 16776960) { // ghosts
+			switch (dir) {
+			case 0: // left
 				for (int i = x; i > 0; --i) {
 					if (checkForWallX(i, y)) {
 						break;
@@ -286,7 +297,7 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 					}
 				}
 				break;
-			case 1: //up
+			case 1: // up
 				for (int i = y; i > 0; --i) {
 					if (checkForWallY(x, i)) {
 						break;
@@ -296,7 +307,7 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 					}
 				}
 				break;
-			case 2: //right
+			case 2: // right
 				for (int i = x; i < 224; ++i) {
 					if (checkForWallX(i, y)) {
 						break;
@@ -306,7 +317,7 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 					}
 				}
 				break;
-			case 3: //down
+			case 3: // down
 				for (int i = y; i < 288; ++i) {
 					if (checkForWallY(x, i)) {
 						break;
@@ -317,15 +328,15 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 				}
 				break;
 			}
-		} else { //mspacman
-			switch(dir) {
-			case 0: //left
+		} else { // mspacman
+			switch (dir) {
+			case 0: // left
 				return checkForGhostLeft(x, y);
-			case 1: //up
+			case 1: // up
 				return checkForGhostUp(x, y);
-			case 2: //right
+			case 2: // right
 				return checkForGhostRight(x, y);
-			case 3: //down
+			case 3: // down
 				return checkForGhostDown(x, y);
 			}
 		}
@@ -420,33 +431,32 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 				&& getPixel(x + 10, y + 1) != ghost
 				&& getPixel(x + 1, y + 6) != ghost
 				&& getPixel(x + 1, y + 7) == ghost
-				&& getPixel(x + 14, y + 6) != ghost 
-				&& getPixel(x + 14, y + 7) == ghost);
+				&& getPixel(x + 14, y + 6) != ghost && getPixel(x + 14, y + 7) == ghost);
 	}
-	
+
 	public boolean containsMsPacman(int x, int y) {
 		return (getPixel(x + 10, y + 5) == 16776960
 				&& getPixel(x + 11, y + 3) == 2171358
 				&& getPixel(x + 12, y + 4) == 2171358
-				&& getPixel(x + 11, y + 4) == 16711680 
-				&& getPixel(x + 12, y + 3) == 16711680)
+				&& getPixel(x + 11, y + 4) == 16711680 && getPixel(x + 12,
+				y + 3) == 16711680)
 				|| (getPixel(x + 5, y + 5) == 16776960
-				        && getPixel(x + 4, y + 3) == 2171358
+						&& getPixel(x + 4, y + 3) == 2171358
 						&& getPixel(x + 3, y + 4) == 2171358
-						&& getPixel(x + 4, y + 4) == 16711680 
-						&& getPixel(x + 3, y + 3) == 16711680)
+						&& getPixel(x + 4, y + 4) == 16711680 && getPixel(
+						x + 3, y + 3) == 16711680)
 				|| (getPixel(x + 5, y + 10) == 16776960
 						&& getPixel(x + 4, y + 12) == 2171358
 						&& getPixel(x + 3, y + 11) == 2171358
-						&& getPixel(x + 4, y + 11) == 16711680 
-						&& getPixel(x + 3, y + 12) == 16711680);
+						&& getPixel(x + 4, y + 11) == 16711680 && getPixel(
+						x + 3, y + 12) == 16711680);
 	}
 
 	@Override
 	public int[] getMsPacman() {
 		for (int y = 27; y < 260; ++y) {
 			for (int x = 0; x < 216; ++x) {
-				if (containsMsPacman(x , y)) {
+				if (containsMsPacman(x, y)) {
 					return new int[] { x, y };
 				}
 			}
@@ -541,7 +551,7 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 
 		return new int[] { -1, -1 };
 	}
-	
+
 	@Override
 	protected void processKeyEvent(KeyEvent e) {
 		int code = e.getKeyCode();
@@ -581,8 +591,8 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 				t.enable(!t.isEnabled());
 				break;
 
-			default: //255=nothing, 254=up, 253=left, 251=right, 247=down
-				switch (code) { 
+			default: // 255=nothing, 254=up, 253=left, 251=right, 247=down
+				switch (code) {
 				case KeyEvent.VK_UP:
 					m.writeInput(254);
 					break;
@@ -598,7 +608,7 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 				default:
 					m.keyPress(code);
 					break;
-				} 
+				}
 				break;
 			}
 			break;
@@ -609,25 +619,25 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 			case KeyEvent.VK_LEFT:
 			case KeyEvent.VK_RIGHT:
 			case KeyEvent.VK_DOWN:
-				//m.writeInput(255);
+				// m.writeInput(255);
 				break;
 			default:
 				m.keyRelease(code);
-				break; 
+				break;
 			}
 			break;
 		}
 	}
-	
+
 	public synchronized void stopMSP() {
 		this.stop = true;
-		t.enable(false);	
+		t.enable(false);
 	}
-	
+
 	public synchronized boolean shouldContinue() {
 		return !stop;
 	}
-	
+
 	private class SendKeys implements Runnable {
 		@Override
 		public void run() {
@@ -642,7 +652,7 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 				m.keyRelease(KeyEvent.VK_1);
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
-				e.printStackTrace();	
+				e.printStackTrace();
 			}
 		}
 	}
