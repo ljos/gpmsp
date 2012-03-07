@@ -5,8 +5,8 @@
 (import javax.swing.JFrame)
 (import java.awt.BorderLayout)
 (import java.awt.event.KeyEvent)
-(import java.util.concurrent.CountDownLatch)
-(import java.util.concurrent.TimeUnit)
+(import '(java.util.concurrent CountDownLatch TimeUnit Semaphore))
+
 
 (def ^:dynamic msp nil)
 
@@ -162,8 +162,9 @@
 (defn fitness [tries code]
   (let [signal (into-array
                 (repeatedly (inc tries)
-                            #(new CountDownLatch 1)))]
-    (binding [msp (new NUIMsPacman signal)]
+                            #(new CountDownLatch 1)))
+        lock (new Object)]
+    (binding [msp (new NUIMsPacman signal lock (Thread/currentThread))]
       (let [thread (new Thread msp)]
         (.start thread)
         (loop [score 0
@@ -175,23 +176,28 @@
                   (.stopMSP msp))
                 (.join thread)                
                 (int (/ score times)))
-            (do (.await (nth signal times))
+            (do (println times)
+                (.await (nth signal times))
                 (recur (+ score
                           (do (while (and (not (.isGameOver msp)) (.shouldContinue msp))
-                                    (let [start (. System (nanoTime))]
-                                      (move-in-direction (eval `~code))
-                                      (if (< 250 (/ (double (- (. System (nanoTime)) start))
-                                                    1000000.0))
-                                        (.stopMSP msp)))
-                                    (-> msp (.keyPressed KeyEvent/VK_P))) 
+                                    (while (not= (.toString (.getState thread)) "WAITING"))
+                                    (locking lock
+                                      (let [start (. System (nanoTime))]
+                                       (move-in-direction (eval `~code))
+                                       (if (< 250 (/ (double (- (. System (nanoTime)) start))
+                                                     1000000.0))
+                                         (.stopMSP msp)))
+                                      (.notify lock)
+                                      (.wait lock))) 
                                   (.getScore msp)))
                        (inc times)))))))))
 
 (defn fitness-graphic [tries code]
   (let [signal (into-array
                 (repeatedly (inc tries)
-                            #(new CountDownLatch 1)))]
-    (binding [msp (doto (new GUIMsPacman signal)
+                            #(new CountDownLatch 1)))
+        lock (new Object)]
+    (binding [msp (doto (new GUIMsPacman signal lock (Thread/currentThread))
                     (.setSize 224 (+ 288 22)))]
       (let [frame (doto (new JFrame)
                     (.setDefaultCloseOperation
@@ -216,11 +222,14 @@
                 (do (.await (nth signal times))
                     (recur (+ score
                               (do (while (and (not (.isGameOver msp)) (.shouldContinue msp))
-                                    (let [start (. System (nanoTime))]
-                                      (move-in-direction (eval `~code))
-                                      (if (< 250 (/ (double (- (. System (nanoTime)) start))
-                                                    1000000.0))
-                                        (.stopMSP msp)))
-                                    (-> msp (.keyPressed KeyEvent/VK_P))) 
+                                    (while (not= (.toString (.getState thread)) "WAITING"))
+                                    (locking lock
+                                      (let [start (. System (nanoTime))]
+                                       (move-in-direction (eval `~code))
+                                       (if (< 250 (/ (double (- (. System (nanoTime)) start))
+                                                     1000000.0))
+                                         (.stopMSP msp)))
+                                      (.notify lock)
+                                      (.wait lock))) 
                                   (.getScore msp)))
                         (inc times))))))))))
