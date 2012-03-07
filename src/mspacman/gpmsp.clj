@@ -71,7 +71,7 @@
                        (dec expr-width))))))))
 
 (defn create-random-individual []
-  (expand '(if (msp-check-area-leftof mspacman) move-down move-right) (rand-int MAX-STARTING-DEPTH)))
+  (expand (rand-nth ind/FUNCTION-LIST) (rand-int MAX-STARTING-DEPTH)))
 
 (defn create-random-population []
   (take SIZE-OF-POPULATION (repeatedly #(create-random-individual))))
