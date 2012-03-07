@@ -10,7 +10,6 @@
   (let [rdr (LineNumberingPushbackReader. (InputStreamReader. ins))
         inds (read-string (.readLine rdr))
         out (gp/run-fitness-on inds)]
-    (println out)
     (binding [*out* (OutputStreamWriter. outs)]
       (prn out))))
 
