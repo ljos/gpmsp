@@ -136,7 +136,7 @@
                 k
                 (-> msp
                     (.relativeDistance (:colour @entity)
-                                           (:colour @item))))))))
+                                       (:colour @item))))))))
 
 (defn msp-closer? [entity item]
   (when (and (= (type entity) clojure.lang.Atom)
@@ -176,42 +176,50 @@
                 (int (/ score times)))
             (do (.await (nth signal times))
                 (recur (+ score
-                          (do (while (not (.isGameOver msp))
-                                (move-in-direction
-                                 (eval `~code)))
-                              (.getScore msp)))
+                          (do (while (and (not (.isGameOver msp)) (.shouldContinue msp))
+                                    (let [start (. System (nanoTime))]
+                                      (move-in-direction (eval `~code))
+                                      (if (< 250 (/ (double (- (. System (nanoTime)) start))
+                                                    1000000.0))
+                                        (.stopMSP msp)))
+                                    (-> msp (.keyPressed KeyEvent/VK_P))) 
+                                  (.getScore msp)))
                        (inc times)))))))))
 
 (defn fitness-graphic [tries code]
-  (binding [msp (doto (new GUIMsPacman)
-                  (.setSize 224 (+ 288 22)))]
-    (let [frame (doto (new JFrame)
-                  (.setDefaultCloseOperation
-                   javax.swing.JFrame/EXIT_ON_CLOSE)
-                  (.setSize 224 (+ 288 22))
-                  (.setLocation 100 0)
-                  (-> .getContentPane
-                      (.add msp java.awt.BorderLayout/CENTER))
-                  (.setVisible Boolean/TRUE))]
-      (do (-> (new Thread msp) .start)
-          (Thread/sleep 7000)
-          (loop [score 0
-                 t tries]
-            (if (zero? t)
-              (do (-> msp  (.stop true))
-                  (-> frame .dispose)
-                  (int (/ score tries)))
-              (recur (+ score
-                        (do (-> msp (.keyPressed KeyEvent/VK_5))
-                            (Thread/sleep 100)
-                            (-> msp (.keyReleased KeyEvent/VK_5))
-                            (Thread/sleep 100)
-                            (-> msp (.keyPressed KeyEvent/VK_1))
-                            (Thread/sleep 100)
-                            (-> msp (.keyReleased KeyEvent/VK_1))
-                            (Thread/sleep 500)
-                            (while (not (-> msp .isGameOver))
-                              (move-in-direction (eval `~code)))
-                            (Thread/sleep 1000)
-                            (-> msp .getScore)))
-                     (dec t))))))))
+  (let [signal (into-array
+                (repeatedly (inc tries)
+                            #(new CountDownLatch 1)))]
+    (binding [msp (doto (new GUIMsPacman signal)
+                    (.setSize 224 (+ 288 22)))]
+      (let [frame (doto (new JFrame)
+                    (.setDefaultCloseOperation
+                     javax.swing.JFrame/EXIT_ON_CLOSE)
+                    (.setSize 224 (+ 288 22))
+                    (.setLocation 100 0)
+                    (-> .getContentPane
+                        (.add msp java.awt.BorderLayout/CENTER))
+                    (.setVisible Boolean/TRUE))
+            thread (new Thread msp)]
+        (do (.start thread)
+            (loop [score 0
+                   times 0]
+              (if (or (<= tries times)
+                      (and (<= 3 times)
+                           (= (/ score times) 120)))
+                (do (locking msp
+                      (.stopMSP msp))
+                    (.join thread)
+                    (.dispose frame)
+                    (int (/ score tries)))
+                (do (.await (nth signal times))
+                    (recur (+ score
+                              (do (while (and (not (.isGameOver msp)) (.shouldContinue msp))
+                                    (let [start (. System (nanoTime))]
+                                      (move-in-direction (eval `~code))
+                                      (if (< 250 (/ (double (- (. System (nanoTime)) start))
+                                                    1000000.0))
+                                        (.stopMSP msp)))
+                                    (-> msp (.keyPressed KeyEvent/VK_P))) 
+                                  (.getScore msp)))
+                        (inc times))))))))))
