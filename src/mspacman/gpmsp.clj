@@ -59,8 +59,8 @@
                              (expand (rand-nth ind/FUNCTION-LIST)
                                      (dec depth))
                              ())
-                          boolean
-                          ,(expand (rand-nth ind/BOOLEAN-LIST)
+                          bool
+                          ,(expand (rand-nth ind/BOOL-LIST)
                                    (dec depth))
                           ,(atomize term))]
                 (recur (if (and (= term 'expr+)
@@ -131,7 +131,7 @@
             (nth expr n))]
     (case c 
       (expr expr? expr+) (rand-nth ind/FUNCTION-LIST)
-      boolean (rand-nth ind/BOOLEAN-LIST)
+      bool (rand-nth ind/BOOL-LIST)
       entity (rand-nth ind/ENTITY-LIST)
       item (rand-nth ind/ITEM-LIST))))
 
