@@ -4,8 +4,7 @@
                  [org.clojure/data.zip "0.1.0"]]
   :java-source-path "./" 
   :jvm-opts ["-Xmx3G"
-              "-Xms2G"
-              "-Xmn1G"
-              "-XX:+UseConcMarkSweepGC"
-              "-Djava.awt.headless=true"]
+             "-Xms2G"
+             "-Xmn1G"
+             "-XX:+UseConcMarkSweepGC"]
   :main mspacman.core)
