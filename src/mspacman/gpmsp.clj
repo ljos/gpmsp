@@ -59,6 +59,9 @@
                              (expand (rand-nth ind/FUNCTION-LIST)
                                      (dec depth))
                              ())
+                          boolean
+                          ,(expand (rand-nth ind/BOOLEAN-LIST)
+                                   (dec depth))
                           ,(atomize term))]
                 (recur (if (and (= term 'expr+)
                                 (pos? expr-width))
@@ -68,7 +71,7 @@
                        (dec expr-width))))))))
 
 (defn create-random-individual []
-  (expand '(if expr expr expr) (rand-int MAX-STARTING-DEPTH)))
+  (expand (rand-nth ind/FUNCTION-LIST) (rand-int MAX-STARTING-DEPTH)))
 
 (defn create-random-population []
   (take SIZE-OF-POPULATION (repeatedly #(create-random-individual))))
