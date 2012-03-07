@@ -181,11 +181,7 @@
                           (do (while (and (not (.isGameOver msp)) (.shouldContinue msp))
                                     (while (not= (.toString (.getState thread)) "WAITING"))
                                     (locking lock
-                                      (let [start (. System (nanoTime))]
-                                       (move-in-direction (eval `~code))
-                                       (if (< 250 (/ (double (- (. System (nanoTime)) start))
-                                                     1000000.0))
-                                         (.stopMSP msp)))
+                                      (move-in-direction (eval `~code))
                                       (.notify lock)
                                       (.wait lock))) 
                                   (.getScore msp)))
