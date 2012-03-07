@@ -29,8 +29,7 @@
                 ITEM-LIST))
 
 (def FUNCTION-LIST (concat
-                    '((do expr+)
-                      (msp-closer? entity item)
+                    '((msp-closer? entity item)
                       (msp-relative-distance entity item)
                       (msp-check-area-below entity)
                       (msp-check-area-above entity)
@@ -43,7 +42,8 @@
                       (msp> expr expr)
                       (msp< expr expr)
                       (or expr expr)
-                      (and expr expr))))
+                      (and expr expr))
+                    ATOM-LIST))
 
 (def mspacman (atom {:name 'mspacman :colour 16776960}))
 (def blinky (atom {:name 'blinky :colour 16711680}))
