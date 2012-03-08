@@ -59,7 +59,6 @@
 (defn- find-usable-machines [machines]
   {:post [(seq %)]}
   (letfn [(has-user? [machine]
-            (do (print "has user?" machine " "))
             (try
               (let [socket (doto (Socket.)
                              (.connect (InetSocketAddress. (format "%s.klientdrift.uib.no" machine)
@@ -82,13 +81,11 @@
                (InputStreamReader.
                 (.getInputStream socket)))]
       (try
-        (do (print (str "Sending to " machine " ")))
         (binding [*out* (OutputStreamWriter.
                          (.getOutputStream socket))]
           (prn individuals))
         (read-string (.readLine rdr))
         (finally
-         (do (print (str "Recieved from" machine " ")))
          (shutdown-socket socket))))
     (catch Exception e nil)))
 
