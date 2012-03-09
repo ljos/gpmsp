@@ -50,7 +50,9 @@ public class Cottage extends GfxProducer {
 
 		case KeyEvent.KEY_PRESSED:
 			switch (code) {
-
+			case KeyEvent.VK_SPACE:
+				update(m.refresh(true));
+				break;
 			case KeyEvent.VK_P:
 				paused = !paused;
 				break;
@@ -99,8 +101,8 @@ public class Cottage extends GfxProducer {
 					break;
 				case KeyEvent.VK_DOWN:
 					m.writeInput(247);
-					break;
-				default:
+					break; 
+				default: 
 					m.keyPress(code);
 					break;
 				} 
@@ -110,8 +112,6 @@ public class Cottage extends GfxProducer {
 
 		case KeyEvent.KEY_RELEASED:
 			switch (code) {
-			case KeyEvent.VK_P:
-				break;
 			case KeyEvent.VK_UP:
 			case KeyEvent.VK_LEFT:
 			case KeyEvent.VK_RIGHT:
@@ -184,6 +184,7 @@ public class Cottage extends GfxProducer {
 		while (!stop) {
 			if (!paused) {
 				update(m.refresh(true));
+				//System.out.println(((BasicMachine) m).readinputport(0));
 			}
 			t.throttle();
 		}
