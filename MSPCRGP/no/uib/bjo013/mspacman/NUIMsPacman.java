@@ -1,21 +1,11 @@
 package no.uib.bjo013.mspacman;
 
-import java.awt.event.KeyEvent;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.concurrent.CountDownLatch;
 
-import jef.machine.Machine;
-import jef.util.Throttle;
-import cottage.CottageDriver;
-import cottage.machine.Pacman;
-
 public class NUIMsPacman implements MsPacman {
-	private int[] pixel;
-	private Pacman m;
-	private Throttle t;
+	private Game g = new Game(false);
+	
 	private boolean stop = false;
-	private boolean pause = false;
 
 	private final CountDownLatch[] signal;
 	private final Object lock;
@@ -29,120 +19,26 @@ public class NUIMsPacman implements MsPacman {
 
 	@Override
 	public void run() {
-		URL base_URL = null;
-		try {
-			base_URL = new URL(String.format("file://localhost/%s/.mspacman/",
-					System.getProperty("user.home")));
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
-
-		String driver = "mspacman";
-
-		CottageDriver d = new CottageDriver();
-
-		m = (Pacman) d.getMachine(base_URL, driver);
-
-		pixel = new int[m.refresh(true).getPixels().length];
-
-		pixel = m.refresh(true).getPixels();
-
-		t = new Throttle(m.getProperty(Machine.FPS));
-		t.enable(false);
-
-		int i = 3;
-		while (i > 0) { //finding if the game is at start screen.
-			m.refresh(true);
-			t.throttle();
-			if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x43F8] == 0) {
-				--i;
-			} else if (i < 3) {
-				++i;
-			}
-		}
-
-		Thread tj = new Thread(new SendKeys()); //sending keys for starting the game
-		tj.start();
-		
-		for (long j = 0;; ++j) { //waiting for ready message to appear
-			m.refresh(true);
-			t.throttle();
-			if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 82) {
-				break;
-			}
-			if(j % 30 == 0) {
-				new Thread(new SendKeys()).start();
-			}
-		}
-
-		for (;;) { // waiting for ready message to disappear
-			m.refresh(true);
-			t.throttle();
-			if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 64) {
-				break;
-			}
-		}
-		
-		try {
-			tj.join();
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
-		}
+		g.initialize();
+		g.startGame();
 		
 		int latch = 0;
 		signal[latch].countDown();
 		++latch;
-		
-		while (shouldContinue()) { //running game
+		while (this.shouldContinue()) { //running game
 			synchronized (lock) {
 				try {
 					lock.wait();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				for (int j = 0; j < 5; j++) {
-					m.refresh(true);
-					t.throttle();
-				}
+				g.update();
 				while(!parent.getState().equals(Thread.State.WAITING));
 				lock.notify();
 			}
 			
-			if (this.isGameOver() && shouldContinue()) {
-				for (;;) { //finding if the game is past ended screen
-					m.refresh(true);
-					t.throttle();
-					if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] != 77) {
-						break;
-					}
-				}
-				Thread th = new Thread(new SendKeys());
-				th.start();
-				
-				for (long j = 0;; ++j) { //waiting for ready message to appear
-					m.refresh(true);
-					t.throttle();
-					if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 82) {
-						break;
-					}
-					if(j % 50 == 0) {
-						new Thread(new SendKeys()).start();
-					}
-				}
-
-				for (;;) { // waiting for ready message to disappear
-					m.refresh(true);
-					t.throttle();
-					if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 64) {
-						break;
-					}
-				}
-				
-				try {
-					th.join();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				} 
+			if (g.isGameOver() && this.shouldContinue()) {
+				g.startGame();
 				signal[latch].countDown();
 				++latch;
 			}
@@ -150,6 +46,48 @@ public class NUIMsPacman implements MsPacman {
 		for(CountDownLatch l : signal) {
 			l.countDown();
 		}
+	}
+	
+	@Override
+	public int[] getPixels() {
+		return g.getPixels();
+	}
+
+	@Override
+	public int getPixel(int x, int y) {
+		return g.getPixel(x, y);
+	}
+	
+	@Override
+	public void keyPressed(int code) {
+		g.keyPressed(code);
+	}
+
+	@Override
+	public void keyReleased(int code) {
+		g.keyReleased(code);
+	}
+
+	@Override
+	public long getScore() {
+		return g.getScore();
+		// score = 0x43f7, highscore = 0x43ed
+	}
+
+	@Override
+	public synchronized void stopMSP() {
+		this.stop = true;
+		g.setThrottle(false);	
+	}
+	
+	@Override
+	public synchronized boolean shouldContinue() {
+		return !stop;
+	}
+
+	@Override
+	public boolean isGameOver() {
+		return g.isGameOver();
 	}
 	
 
@@ -167,18 +105,6 @@ public class NUIMsPacman implements MsPacman {
 		return new int[] { -1, -1 };
 	}
 
-	@Override
-	public int[] getPixels() {
-		return pixel;
-	}
-
-	@Override
-	public int getPixel(int x, int y) {
-		return (x >= 0 && x < 224 && y >= 0 && y < 288) ? pixel[x + y * 224]
-				: -1;
-	}
-
-	@Override
 	public boolean checkForWallX(int x, int y) {
 		int[] walls = { 4700382, 2171358, 65280, 4700311, 16758935, 14606046 };
 		for (int wall : walls) {
@@ -248,7 +174,6 @@ public class NUIMsPacman implements MsPacman {
 		return false;
 	}
 
-	@Override
 	public boolean checkForGhostRight(int x, int y) {
 		int[] ghosts = { 16711680, 16759006, 65502, 16758855 };
 
@@ -266,7 +191,6 @@ public class NUIMsPacman implements MsPacman {
 		return false;
 	}
 
-	@Override
 	public boolean checkForGhostLeft(int x, int y) {
 		int[] ghosts = { 16711680, 16759006, 65502, 16758855 };
 
@@ -283,7 +207,6 @@ public class NUIMsPacman implements MsPacman {
 		return false;
 	}
 
-	@Override
 	public boolean checkForWallY(int x, int y) {
 		int[] walls = { 4700382, 2171358, 65280, 4700311, 16758935, 14606046 };
 		for (int wall : walls) {
@@ -294,7 +217,6 @@ public class NUIMsPacman implements MsPacman {
 		return false;
 	}
 
-	@Override
 	public boolean checkForGhostUp(int x, int y) {
 		int[] ghosts = { 16711680, 16759006, 65502, 16758855 };
 
@@ -311,7 +233,6 @@ public class NUIMsPacman implements MsPacman {
 		return false;
 	}
 
-	@Override
 	public boolean checkForGhostDown(int x, int y) {
 		int[] ghosts = { 16711680, 16759006, 65502, 16758855 };
 
@@ -328,7 +249,6 @@ public class NUIMsPacman implements MsPacman {
 		return false;
 	}
 
-	@Override
 	public boolean containsGhost(int ghost, int x, int y) {
 		return (getPixel(x + 5, y + 1) != ghost
 				&& getPixel(x + 6, y + 1) == ghost
@@ -358,7 +278,6 @@ public class NUIMsPacman implements MsPacman {
 						&& getPixel(x + 3, y + 12) == 16711680);
 	}
 
-	@Override
 	public int[] getMsPacman() {
 		for (int y = 27; y < 260; ++y) {
 			for (int x = 0; x < 216; ++x) {
@@ -370,7 +289,6 @@ public class NUIMsPacman implements MsPacman {
 		return new int[] { -1, -1 };
 	}
 
-	@Override
 	public int[] getGhost(int ghost) {
 		for (int y = 27; y < 253; ++y) {
 			for (int x = 0; x < 216; ++x) {
@@ -383,7 +301,6 @@ public class NUIMsPacman implements MsPacman {
 		return new int[] { -1, -1 };
 	}
 
-	@Override
 	public int relativeDistance(int entity, int item) {
 		int[] ent1 = new int[2];
 		int[] ent2 = new int[2];
@@ -456,102 +373,5 @@ public class NUIMsPacman implements MsPacman {
 		}
 
 		return new int[] { -1, -1 };
-	}
-
-	@Override
-	public void keyPressed(int code) {
-		switch (code) { 
-		case KeyEvent.VK_P:
-			pause = !pause;
-			break;
-		case KeyEvent.VK_UP:
-			m.writeInput(254);
-			break;
-		case KeyEvent.VK_LEFT:
-			m.writeInput(253);
-			break;
-		case KeyEvent.VK_RIGHT:
-			m.writeInput(251);
-			break;
-		case KeyEvent.VK_DOWN:
-			m.writeInput(247);
-			break;
-		default:
-			m.keyPress(code);
-			break;
-		} 
-	}
-
-	@Override
-	public void keyReleased(int code) {
-		switch (code) {
-		case KeyEvent.VK_UP:
-		case KeyEvent.VK_LEFT:
-		case KeyEvent.VK_RIGHT:
-		case KeyEvent.VK_DOWN:
-			//m.writeInput(255);
-			break;
-		default:
-			m.keyRelease(code);
-			break; 
-		}
-	}
-
-	@Override
-	public long getScore() {
-		return getScore(0x43f7, m.md.getREGION_CPU());
-		// score = 0x43f7, highscore = 0x43ed
-	}
-
-	private long getScore(int offset, int[] mem) {
-		final int ZERO_CHAR = 0x00;
-		final int BLANK_CHAR = 0x40;
-
-		long score = 0;
-
-		// calculate the score
-		for (int i = 0; i < 7; i++) {
-			int c = mem[offset + i];
-			if (c == 0x00 || c == BLANK_CHAR)
-				c = ZERO_CHAR;
-			c -= ZERO_CHAR;
-			score += (c * Math.pow(10, i));
-		}
-
-		return (score > 9999999) ? 0 : score;
-	}
-
-	public synchronized void stopMSP() {
-		this.stop = true;
-		t.enable(false);	
-	}
-	
-	public synchronized boolean shouldContinue() {
-		return !stop;
-	}
-
-	@Override
-	public boolean isGameOver() {
-		return ((Pacman) m).md.getREGION_CPU()[0x403B] == 67;
-	}
-	
-
-	private class SendKeys implements Runnable {
-		@Override
-		public void run() {
-			try {
-				Thread.sleep(100);
-				m.keyPress(KeyEvent.VK_5);
-				Thread.sleep(100);
-				m.keyRelease(KeyEvent.VK_5);
-				Thread.sleep(100);
-				m.keyPress(KeyEvent.VK_1);
-				Thread.sleep(100);
-				m.keyRelease(KeyEvent.VK_1);
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				e.printStackTrace();	
-			}
-		}
 	}
 }

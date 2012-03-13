@@ -7,6 +7,7 @@ import java.net.URL;
 
 import jef.machine.Machine;
 import jef.util.Throttle;
+import jef.video.BitMap;
 import jef.video.GfxProducer;
 
 public class Cottage extends GfxProducer {
@@ -51,7 +52,6 @@ public class Cottage extends GfxProducer {
 		case KeyEvent.KEY_PRESSED:
 			switch (code) {
 			case KeyEvent.VK_SPACE:
-				update(m.refresh(true));
 				break;
 			case KeyEvent.VK_P:
 				paused = !paused;
@@ -181,13 +181,19 @@ public class Cottage extends GfxProducer {
 
 		t = new Throttle(m.getProperty(Machine.FPS));
 				
+		BitMap bm = m.refresh(true);
 		while (!stop) {
 			if (!paused) {
-				update(m.refresh(true));
-				//System.out.println(((BasicMachine) m).readinputport(0));
+				m.refresh(true);
+				update(bm);
 			}
 			t.throttle();
 		}
+	}
+	
+	public int getPixel(int x, int y) {
+		return (x >= 0 && x < 224 && y >= 0 && y < 288) ? pixel[x + y * 224]
+				: -1;
 	}
 	
 	@Override

@@ -1,7 +1,7 @@
 (ns mspacman.individual
   (use [clojure.inspector :include (atom?)]))
 
-(import '(no.uib.bjo013.mspacman MsPacman NUIMsPacman GUIMsPacman))
+(import '(no.uib.bjo013.mspacman MsPacman NUIMsPacman GUIMsPacman ExperimentalMsPacman))
 (import javax.swing.JFrame)
 (import java.awt.BorderLayout)
 (import java.awt.event.KeyEvent)
@@ -192,7 +192,7 @@
                 (repeatedly (inc tries)
                             #(new CountDownLatch 1)))
         lock (new Object)]
-    (binding [msp (doto (new GUIMsPacman signal lock (Thread/currentThread))
+    (binding [msp (doto (new ExperimentalMsPacman signal lock (Thread/currentThread))
                     (.setSize 224 (+ 288 22)))]
       (let [frame (doto (new JFrame)
                     (.setDefaultCloseOperation
@@ -201,7 +201,7 @@
                     (.setLocation 100 0)
                     (-> .getContentPane
                         (.add msp java.awt.BorderLayout/CENTER))
-                    (.setVisible Boolean/TRUE))
+                    (.setVisible Boolean/TRUE))x
             thread (new Thread msp)]
         (do (.start thread)
             (loop [score 0

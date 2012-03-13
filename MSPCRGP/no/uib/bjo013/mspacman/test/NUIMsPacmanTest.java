@@ -1,7 +1,4 @@
 package no.uib.bjo013.mspacman.test;
-import java.util.concurrent.CountDownLatch;
-
-import no.uib.bjo013.mspacman.NUIMsPacman;
 
 public class NUIMsPacmanTest {
 	public static void main(String args[]) throws InterruptedException {
