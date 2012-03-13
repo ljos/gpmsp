@@ -20,7 +20,7 @@ public class NUIMsPacman implements MsPacman {
 	@Override
 	public void run() {
 		g.initialize();
-		g.startGame();
+		g.start();
 		
 		int latch = 0;
 		signal[latch].countDown();
@@ -38,7 +38,7 @@ public class NUIMsPacman implements MsPacman {
 			}
 			
 			if (g.isGameOver() && this.shouldContinue()) {
-				g.startGame();
+				g.start();
 				signal[latch].countDown();
 				++latch;
 			}

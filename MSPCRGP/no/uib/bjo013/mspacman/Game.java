@@ -1,11 +1,15 @@
 package no.uib.bjo013.mspacman;
 
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.net.URL;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import jef.machine.Machine;
 import jef.util.Throttle;
 import jef.video.BitMap;
+import no.uib.bjo013.mspacman.map.GameMap;
 import cottage.CottageDriver;
 import cottage.machine.Pacman;
 
@@ -14,6 +18,10 @@ public class Game {
 	private Pacman m;
 	private Throttle t;
 	private BitMap bitmap;
+	
+	private GameMap gm;
+	private Iterator<Point> path;
+	private Point target;
 
 	public Game(boolean throttle) {
 		CottageDriver d = new CottageDriver();
@@ -35,7 +43,7 @@ public class Game {
 	
 	public BitMap initialize() {
 		for (int i = 3; i > 0;) { // finding if the game is at start screen.
-			update();
+			bitmap = m.refresh(true);
 			if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x43F8] == 0) {
 				--i;
 			} else if (i < 3) {
@@ -70,7 +78,7 @@ public class Game {
 				th = new Thread(sendKeys);
 				th.start();
 			}
-			update();
+			bitmap = m.refresh(true);
 			if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 82) {
 				break;
 			}
@@ -85,7 +93,7 @@ public class Game {
 	
 	public BitMap waitForReadyMessageDissapear() {
 		for (;;) { // waiting for ready message to disappear
-			update();
+			bitmap = m.refresh(true);
 			if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 64) {
 				break;
 			}
@@ -93,16 +101,53 @@ public class Game {
 		return bitmap;
 	}
 	
-	public BitMap startGame() {
+	public BitMap start() {
 		this.waitForReadyMessageAppear();
+		gm = new GameMap(bitmap);
 		this.waitForReadyMessageDissapear();
 		return bitmap;
 	}
 
 	public BitMap update() {
 		bitmap = m.refresh(true);
-		t.throttle();
+		gm.update(bitmap);
+		try {
+			path = gm.calculatePath(target).iterator();
+			path.next();
+			this.moveTowards(path.next());
+			t.throttle();
+		} catch (NoSuchElementException e) {}
 		return bitmap;
+	}
+	
+	private Point previous;
+	public void moveTowards(Point p) {
+		Point m = gm.getMsPacman().iterator().next();
+		if(m.equals(previous)) {
+			p = path.next();
+		}
+		if (p.y < m.y){
+			this.keyPressed(KeyEvent.VK_UP);
+		} else if (p.x < m.x) {
+			this.keyPressed(KeyEvent.VK_LEFT);
+		} else if(p.x > m.x) {
+			this.keyPressed(KeyEvent.VK_RIGHT);
+		} else if (p.y > m.y) {
+			this.keyPressed(KeyEvent.VK_DOWN);
+		}
+		previous = m;
+	}
+	
+	public Iterator<Point> getPath() {
+		return path;
+	}
+	
+	public void setTarget(Point target) {
+		this.target = target;
+	}
+	
+	public GameMap getMap() {
+		return gm;
 	}
 
 	public void keyPressed(int code) {

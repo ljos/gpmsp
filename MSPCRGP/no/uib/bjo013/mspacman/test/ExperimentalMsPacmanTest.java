@@ -12,7 +12,7 @@ public class ExperimentalMsPacmanTest {
 	public static void main(String[] args) throws Exception {
 		CountDownLatch[] signal = { new CountDownLatch(1),
 				new CountDownLatch(1), new CountDownLatch(1) };
-		ExperimentalMsPacman c = new ExperimentalMsPacman(signal, new Object(), Thread.currentThread());
+		ExperimentalMsPacman c = new ExperimentalMsPacman(signal);
 		c.setSize(224, 288 + 22); // I think the + 22 is because of the top bar.
 
 		JFrame app = new JFrame("Ms. Pacman");
@@ -26,16 +26,14 @@ public class ExperimentalMsPacmanTest {
 
 		System.out.println("before await");
 		signal[0].await();
-		System.out.println("before await");
+		System.out.println("after await");
 		signal[1].await();
-		System.out.println("before await");
-
-		signal[2].await();
 
 		synchronized (c) {
 			c.stopMSP();
 		}
 		t.join();
-		System.out.println(t.isAlive()); // */
+		System.out.println(t.isAlive());
+		app.dispose();// */
 	}
 }
