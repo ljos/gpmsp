@@ -10,8 +10,16 @@ import no.uib.bjo013.mspacman.ExperimentalMsPacman;
 public class ExperimentalMsPacmanTest {
 
 	public static void main(String[] args) throws Exception {
-		CountDownLatch[] signal = { new CountDownLatch(1),
-				new CountDownLatch(1), new CountDownLatch(1) };
+		CountDownLatch[] signal = { 
+				new CountDownLatch(1),
+				new CountDownLatch(1),
+				new CountDownLatch(1),
+				new CountDownLatch(1),
+				new CountDownLatch(1),
+				new CountDownLatch(1),
+				new CountDownLatch(1),
+				new CountDownLatch(1),
+				new CountDownLatch(1) };
 		ExperimentalMsPacman c = new ExperimentalMsPacman(signal);
 		c.setSize(224, 288 + 22); // I think the + 22 is because of the top bar.
 
@@ -24,10 +32,9 @@ public class ExperimentalMsPacmanTest {
 		Thread t = new Thread(c);
 		t.start();
 
-		System.out.println("before await");
-		signal[0].await();
-		System.out.println("after await");
-		signal[1].await();
+		for(CountDownLatch s : signal) {
+			s.await();
+		}
 
 		synchronized (c) {
 			c.stopMSP();
