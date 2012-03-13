@@ -113,19 +113,16 @@ public class Game {
 		gm.update(bitmap);
 		try {
 			path = gm.calculatePath(target).iterator();
-			path.next();
+			path.next(); // NEED TWO TO MAKE SURE IT DOESNT DRIVE ITSELF 
+			path.next(); // STUCK.
 			this.moveTowards(path.next());
 			t.throttle();
 		} catch (NoSuchElementException e) {}
 		return bitmap;
 	}
 	
-	private Point previous;
 	public void moveTowards(Point p) {
 		Point m = gm.getMsPacman().iterator().next();
-		if(m.equals(previous)) {
-			p = path.next();
-		}
 		
 		//ORDER IS VERY IMPORTANT HERE
 		if (p.y < m.y){
@@ -137,7 +134,6 @@ public class Game {
 		} else if (p.y > m.y) {
 			this.keyPressed(KeyEvent.VK_DOWN);
 		}
-		previous = m;
 	}
 	
 	public Iterator<Point> getPath() {
