@@ -39,11 +39,11 @@ public class ExperimentalMsPacman extends GfxProducer implements MsPacman {
 			game.setTarget(nodes.next());
 			update(game.update());
 
-		}
-		if (this.isGameOver() && shouldContinue()) {
-			game.start();
-			signal[latch].countDown();
-			++latch;
+			if (this.isGameOver() && shouldContinue()) {
+				game.start();
+				signal[latch].countDown();
+				++latch;
+			}
 		}
 		for (CountDownLatch l : signal) {
 			l.countDown();
