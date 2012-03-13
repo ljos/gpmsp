@@ -130,10 +130,11 @@ public class GameMap {
 	}
 
 	private Point mspacman = new Point();
-
 	public LinkedHashSet<Point> getMsPacman() {
 		LinkedHashSet<Point> map = new LinkedHashSet<Point>();
-		if (containsMsPacman(mspacman.x + 1, mspacman.y)) {
+		if (containsMsPacman(mspacman.x, mspacman.y)) {
+			map.add(mspacman);
+		} else if (containsMsPacman(mspacman.x + 1, mspacman.y)) {
 			map.add(new Point(mspacman.x + 1, mspacman.y));
 		} else if (containsMsPacman(mspacman.x - 1, mspacman.y)) {
 			map.add(new Point(mspacman.x - 1, mspacman.y));
@@ -159,7 +160,9 @@ public class GameMap {
 	private Point blinky = new Point();
 	public LinkedHashSet<Point> getBlinky() {
 		LinkedHashSet<Point> map = new LinkedHashSet<Point>();
-		if (containsGhost(GameEntity.BLINKY.colour(), blinky.x+1, blinky.y)) {
+		if (containsGhost(GameEntity.BLINKY.colour(), blinky.x, blinky.y)) {
+			map.add(blinky);
+		} else if (containsGhost(GameEntity.BLINKY.colour(), blinky.x+1, blinky.y)) {
 			map.add(new Point(blinky.x+1, blinky.y));
 		} else if (containsGhost(GameEntity.BLINKY.colour(), blinky.x-1, blinky.y)) {
 			map.add(new Point(blinky.x-1, blinky.y));
@@ -184,7 +187,9 @@ public class GameMap {
 	private Point pinky = new Point();
 	public LinkedHashSet<Point> getPinky() {
 		LinkedHashSet<Point> map = new LinkedHashSet<Point>();
-		if (containsGhost(GameEntity.PINKY.colour(), pinky.x+1, pinky.y)) {
+		if (containsGhost(GameEntity.PINKY.colour(), pinky.x, pinky.y)) {
+			map.add(pinky);
+		} else if (containsGhost(GameEntity.PINKY.colour(), pinky.x+1, pinky.y)) {
 			map.add(new Point(pinky.x+1, pinky.y));
 		} else if (containsGhost(GameEntity.PINKY.colour(), pinky.x-1, pinky.y)) {
 			map.add(new Point(pinky.x-1, pinky.y));
@@ -206,7 +211,9 @@ public class GameMap {
 	private Point inky = new Point();
 	public LinkedHashSet<Point> getInky() {
 		LinkedHashSet<Point> map = new LinkedHashSet<Point>();
-		if (containsGhost(GameEntity.INKY.colour(), inky.x+1, inky.y)) {
+		if (containsGhost(GameEntity.INKY.colour(), inky.x, inky.y)) {
+			map.add(inky);
+		} else if (containsGhost(GameEntity.INKY.colour(), inky.x+1, inky.y)) {
 			map.add(new Point(inky.x+1, inky.y));
 		} else if (containsGhost(GameEntity.INKY.colour(), inky.x-1, inky.y)) {
 			map.add(new Point(inky.x-1, inky.y));
@@ -228,7 +235,9 @@ public class GameMap {
 	private Point sue = new Point();
 	public LinkedHashSet<Point> getSue() {
 		LinkedHashSet<Point> map = new LinkedHashSet<Point>();
-		if (containsGhost(GameEntity.SUE.colour(), sue.x+1, sue.y)) {
+		if (containsGhost(GameEntity.SUE.colour(), sue.x, sue.y)) {
+			map.add(sue);
+		} else if (containsGhost(GameEntity.SUE.colour(), sue.x+1, sue.y)) {
 			map.add(new Point(sue.x+1, sue.y));
 		} else if (containsGhost(GameEntity.SUE.colour(), sue.x-1, sue.y)) {
 			map.add(new Point(sue.x-1, sue.y));
@@ -294,7 +303,7 @@ public class GameMap {
 	}
 
 	public boolean containsMsPacman(int x, int y) {
-		return containsMsPacman1(x, y) || containsMsPacman1(x - 1, y);
+		return containsMsPacman1(x-1, y) || containsMsPacman1(x, y);
 	}
 
 	private boolean containsMsPacman1(int x, int y) {

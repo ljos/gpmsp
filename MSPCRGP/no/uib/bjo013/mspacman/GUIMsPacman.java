@@ -28,7 +28,7 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 	@Override
 	public void main(int w, int h) {
 		update(g.initialize());
-		update(g.startGame());
+		update(g.start());
 		
 		int latch = 0;
 		signal[latch].countDown();
@@ -46,7 +46,7 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 				lock.notify();
 			}
 			if (g.isGameOver() && shouldContinue()) {
-				update(g.startGame());
+				update(g.start());
 				signal[latch].countDown();
 				++latch;
 			}
