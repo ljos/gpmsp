@@ -5,14 +5,14 @@ import java.util.concurrent.CountDownLatch;
 
 import javax.swing.JFrame;
 
-import no.uib.bjo013.mspacman.ExperimentalMsPacman;
+import no.uib.bjo013.mspacman.GUIMsPacman;
 
 public class GUIMsPacmanTest {
 
 	public static void main(String[] args) throws Exception {
 		CountDownLatch[] signal = { new CountDownLatch(1),
 				new CountDownLatch(1), new CountDownLatch(1) };
-		ExperimentalMsPacman c = new ExperimentalMsPacman(signal, new Object(), Thread.currentThread());
+		GUIMsPacman c = new GUIMsPacman(signal, new Object(), Thread.currentThread());
 		c.setSize(224, 288 + 22); // I think the + 22 is because of the top bar.
 
 		JFrame app = new JFrame("Ms. Pacman");

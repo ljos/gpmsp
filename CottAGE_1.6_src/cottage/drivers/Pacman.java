@@ -227,11 +227,8 @@ public class Pacman extends MAMEDriver implements Driver, MAMEConstants {
 		input_port_2_r = in[2];
 		input_port_3_r = in[3];
 
-
-		if (name.equals("mspacman")) {
-			this.md = machine_driver_pacman();
-			GAME(1981, rom_mspacman(), 	ipt_mspacman(), v.pacman(), ROT90, "Bootleg", "Ms. Pac-Man" );
-		}
+		this.md = machine_driver_pacman();
+		GAME(1981, rom_mspacman(), 	ipt_mspacman(), v.pacman(), ROT90, "Bootleg", "Ms. Pac-Man" );
 
 		v.setRegions(REGION_PROMS, REGION_CPU1);
 
