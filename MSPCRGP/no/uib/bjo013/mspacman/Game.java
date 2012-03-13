@@ -126,6 +126,8 @@ public class Game {
 		if(m.equals(previous)) {
 			p = path.next();
 		}
+		
+		//ORDER IS VERY IMPORTANT HERE
 		if (p.y < m.y){
 			this.keyPressed(KeyEvent.VK_UP);
 		} else if (p.x < m.x) {
