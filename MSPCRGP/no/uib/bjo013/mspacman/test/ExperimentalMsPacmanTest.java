@@ -7,7 +7,7 @@ import javax.swing.JFrame;
 
 import no.uib.bjo013.mspacman.ExperimentalMsPacman;
 
-public class GUIMsPacmanTest {
+public class ExperimentalMsPacmanTest {
 
 	public static void main(String[] args) throws Exception {
 		CountDownLatch[] signal = { new CountDownLatch(1),
