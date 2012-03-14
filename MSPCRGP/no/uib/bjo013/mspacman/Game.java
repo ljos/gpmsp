@@ -123,16 +123,19 @@ public class Game {
 	
 	public void moveTowards(Point p) {
 		Point m = gm.getMsPacman().iterator().next();
-		
 		//ORDER IS VERY IMPORTANT HERE
-		if (p.y < m.y){
-			this.keyPressed(KeyEvent.VK_UP);
+		if (p.y < m.y && p.x <= m.x && p.x >= m.x-1){ //THE REASON FOR +-1 IS THAT
+			System.out.println("UP");                 // MSP SOME TIMES IS IN THE 
+			this.keyPressed(KeyEvent.VK_UP);          //WRONG POSITION +-1.
+		} else if (p.y > m.y && p.x <= m.x+1 && p.x >= m.x) { // IT IS THE FAULT OF THE EMULATOR.
+			System.out.println("DOWN");
+			this.keyPressed(KeyEvent.VK_DOWN);
 		} else if (p.x < m.x) {
+			System.out.println("LEFT");
 			this.keyPressed(KeyEvent.VK_LEFT);
 		} else if(p.x > m.x) {
+			System.out.println("RIGHT");
 			this.keyPressed(KeyEvent.VK_RIGHT);
-		} else if (p.y > m.y) {
-			this.keyPressed(KeyEvent.VK_DOWN);
 		}
 	}
 	
