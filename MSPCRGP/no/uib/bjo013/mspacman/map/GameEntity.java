@@ -1,7 +1,5 @@
 package no.uib.bjo013.mspacman.map;
 
-import java.awt.Point;
-
 public enum GameEntity {
 	MSPACMAN (16776960), 
 	BLINKY (16711680), 
