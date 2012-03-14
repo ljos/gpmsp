@@ -121,13 +121,17 @@ public class Game {
 		return bitmap;
 	}
 	
+	/* ORDER IS VERY IMPORTANT FOR THE IF ELSE TREE
+	 * 
+	 * THE REASON FOR THE +-1X IS THAT SOMETIMES MSP IS IN THE WRONG POSITION.
+	 * THIS IS THE FAULT OF THE EMULATOR OR SOMETHING. IT WORKS NOW ATLEAST.
+	 */
 	public void moveTowards(Point p) {
 		Point m = gm.getMsPacman().iterator().next();
-		//ORDER IS VERY IMPORTANT HERE
-		if (p.y < m.y && p.x <= m.x && p.x >= m.x-1){ //THE REASON FOR +-1 IS THAT
-			System.out.println("UP");                 // MSP SOME TIMES IS IN THE 
-			this.keyPressed(KeyEvent.VK_UP);          //WRONG POSITION +-1.
-		} else if (p.y > m.y && p.x <= m.x+1 && p.x >= m.x) { // IT IS THE FAULT OF THE EMULATOR.
+		if (p.y < m.y && p.x <= m.x && p.x >= m.x-1){ 
+			System.out.println("UP");                 
+			this.keyPressed(KeyEvent.VK_UP);          
+		} else if (p.y > m.y && p.x <= m.x+1 && p.x >= m.x) { 
 			System.out.println("DOWN");
 			this.keyPressed(KeyEvent.VK_DOWN);
 		} else if (p.x < m.x) {
