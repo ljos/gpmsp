@@ -239,7 +239,7 @@ public abstract class AStar<T>
 
 								if(p == null){
 										lastCost = Double.MAX_VALUE;
-										return null;
+										return new LinkedList<T>();
 								}
 
 								T last = p.getPoint();

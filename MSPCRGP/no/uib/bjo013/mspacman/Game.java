@@ -14,7 +14,6 @@ import cottage.CottageDriver;
 import cottage.machine.Pacman;
 
 public class Game {
-	/** reference to the driver **/
 	private Pacman m;
 	private Throttle t;
 	private BitMap bitmap;
@@ -42,7 +41,7 @@ public class Game {
 	}
 	
 	public BitMap initialize() {
-		for (int i = 3; i > 0;) { // finding if the game is at start screen.
+		for (int i = 3; i > 0;) { 
 			bitmap = m.refresh(true);
 			if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x43F8] == 0) {
 				--i;
@@ -73,7 +72,7 @@ public class Game {
 			}
 		};
 		Thread th = new Thread(sendKeys);
-		for (;;) { // waiting for ready message to appear
+		for (;;) { 
 			if (!th.isAlive()) {
 				th = new Thread(sendKeys);
 				th.start();
@@ -92,7 +91,7 @@ public class Game {
 	}
 	
 	public BitMap waitForReadyMessageDissapear() {
-		for (;;) { // waiting for ready message to disappear
+		for (;;) { 
 			bitmap = m.refresh(true);
 			if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 64) {
 				break;
@@ -108,13 +107,18 @@ public class Game {
 		return bitmap;
 	}
 
+	/*
+	 * MOVE TOWARDS IS DONE ON THE THIRD ELEMENT IN THE LIST. THE REASON FOR 
+	 * THIS IS THAT THE FIRST ELEMENT IS MSP AND THAT THE SECOND IS TOO CLOSE
+	 * AND MSP WILL THROW A FIT IF WE GO FOR SECOND.
+	 */
 	public BitMap update() {
 		bitmap = m.refresh(true);
 		gm.update(bitmap);
 		try {
 			path = gm.calculatePath(target).iterator();
-			path.next(); // NEED TWO TO MAKE SURE IT DOESNT DRIVE ITSELF 
-			path.next(); // STUCK.
+			path.next(); 
+			path.next(); 
 			this.moveTowards(path.next());
 			t.throttle();
 		} catch (NoSuchElementException e) {}
@@ -127,18 +131,14 @@ public class Game {
 	 * THIS IS THE FAULT OF THE EMULATOR OR SOMETHING. IT WORKS NOW ATLEAST.
 	 */
 	public void moveTowards(Point p) {
-		Point m = gm.getMsPacman().iterator().next();
+		Point m = gm.getMsPacman();
 		if (p.y < m.y && p.x <= m.x && p.x >= m.x-1){ 
-			System.out.println("UP");                 
 			this.keyPressed(KeyEvent.VK_UP);          
 		} else if (p.y > m.y && p.x <= m.x+1 && p.x >= m.x) { 
-			System.out.println("DOWN");
 			this.keyPressed(KeyEvent.VK_DOWN);
 		} else if (p.x < m.x) {
-			System.out.println("LEFT");
 			this.keyPressed(KeyEvent.VK_LEFT);
 		} else if(p.x > m.x) {
-			System.out.println("RIGHT");
 			this.keyPressed(KeyEvent.VK_RIGHT);
 		}
 	}
