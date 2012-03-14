@@ -21,7 +21,7 @@ public class ExperimentalMsPacmanTest {
 				new CountDownLatch(1),
 				new CountDownLatch(1) };
 		ExperimentalMsPacman c = new ExperimentalMsPacman(signal);
-		c.setSize(224, 288 + 22); // I think the + 22 is because of the top bar.
+		c.setSize(224, 288 + 22); // I think the +22 is because of the top bar.
 
 		JFrame app = new JFrame("Ms. Pacman");
 		app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

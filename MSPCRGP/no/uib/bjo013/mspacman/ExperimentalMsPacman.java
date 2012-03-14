@@ -15,7 +15,7 @@ public class ExperimentalMsPacman extends GfxProducer implements MsPacman {
 	/** booleans **/
 	boolean stop = false;
 
-	private Game game = new Game(true);
+	private Game game = new Game(false);
 
 	private final CountDownLatch[] signal;
 
@@ -33,6 +33,7 @@ public class ExperimentalMsPacman extends GfxProducer implements MsPacman {
 
 		while (shouldContinue()) { // running game
 			Iterator<Point> nodes = game.getMap().getSuperPills().iterator();
+
 			if (!nodes.hasNext()) {
 				nodes = game.getMap().getPills().iterator();
 			}

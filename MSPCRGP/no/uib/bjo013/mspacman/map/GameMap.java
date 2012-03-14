@@ -13,6 +13,9 @@ public class GameMap {
 	private LinkedHashSet<Point> MAP = new LinkedHashSet<Point>();
 	private LinkedHashSet<Point> pills = new LinkedHashSet<Point>();
 	private LinkedHashSet<Point> superPills = new LinkedHashSet<Point>();
+	private Point mspacman = new Point();
+	private Point[] ghosts = new Point[4];
+	private List<Point> blues = new ArrayList<Point>();
 
 	private PathFinder pf;
 
@@ -75,19 +78,49 @@ public class GameMap {
 
 	public void update(BitMap bitmap) {
 		this.bitmap = bitmap;
-		try {
-			Point p = this.getMsPacman().iterator().next();
-		pills.remove(p);
-		pills.remove(new Point(p.x + 1, p.y));
-		pills.remove(new Point(p.x - 1, p.y));
-		pills.remove(new Point(p.x, p.y + 1));
-		pills.remove(new Point(p.x, p.y - 1));
-		superPills.remove(p);
-		superPills.remove(new Point(p.x + 1, p.y));
-		superPills.remove(new Point(p.x - 1, p.y));
-		superPills.remove(new Point(p.x, p.y + 1));
-		superPills.remove(new Point(p.x, p.y - 1));
-		} catch (NoSuchElementException e) {}
+		ghosts= new Point[4];
+		blues = new ArrayList<Point>();
+		
+		for (Point p : MAP) {
+			if (this.containsMsPacman(p.x, p.y)) {
+				pills.remove(p);
+				superPills.remove(p);
+				mspacman = p;
+			} else if(!this.containsPill(p.x, p.y)){
+				GameEntity[] ghs = new GameEntity[] { GameEntity.BLINKY,
+						GameEntity.PINKY, GameEntity.INKY, GameEntity.SUE };
+				for (GameEntity ghost : ghs) {
+					if (this.containsGhost(ghost.colour(), p.x, p.y)) {
+						switch (ghost) {
+						case BLINKY:
+							ghosts[0] = p;
+							break;
+						case PINKY:
+							ghosts[1] = p;
+							break;
+						case INKY:
+							ghosts[2] = p;
+							break;
+						case SUE:
+							ghosts[3] = p;
+							break;
+						}
+					}
+				}
+				if (this.containsBlueGhost(p.x, p.y)) {
+					boolean add = true;
+					for(Point b : blues) {
+						if(p.x+1 == b.x || p.x-1 == b.x) {
+							add = false;
+							break;
+						}
+					}
+					if(add) {
+						blues.add(p);
+					}
+				}
+			}
+		}
 	}
 
 	public LinkedHashSet<Point> getMap() {
@@ -102,193 +135,71 @@ public class GameMap {
 		return superPills;
 	}
 
-	public LinkedHashSet<Point> getGhosts() {
-		LinkedHashSet<Point> map = new LinkedHashSet<Point>();
-		map.addAll(this.getBlinky());
-		map.addAll(this.getPinky());
-		map.addAll(this.getInky());
-		map.addAll(this.getSue());
-		return map;
+	public Point[] getGhosts() {
+		return ghosts;
+	}
+	
+	public List<Point> getBlueGhosts() {
+		return blues;
+	}
+	
+	public Point getMsPacman() {
+		return mspacman;
 	}
 
-	public LinkedHashSet<Point> getBlueGhosts() {
-		LinkedHashSet<Point> map = new LinkedHashSet<Point>();
-		boolean blue = false;
-		for (Point p : MAP) {
-			if (!blue 
-					&& this.getBlinky().isEmpty() 
-					&& this.getPinky().isEmpty()
-					&& this.getInky().isEmpty() 
-					&& this.getSue().isEmpty()) {
-				break;
-			} else if (containsBlueGhost(p.x, p.y)) {
-				map.add(p);
-				blue = true;
-			}
-		}
-		return map;
+	public Point getBlinky() {
+		return ghosts[0];
 	}
 
-	private Point mspacman = new Point();
-	public LinkedHashSet<Point> getMsPacman() {
-		LinkedHashSet<Point> map = new LinkedHashSet<Point>();
-		if (containsMsPacman(mspacman.x, mspacman.y)) {
-			map.add(mspacman);
-		} else if (containsMsPacman(mspacman.x + 1, mspacman.y)) {
-			map.add(new Point(mspacman.x + 1, mspacman.y));
-		} else if (containsMsPacman(mspacman.x - 1, mspacman.y)) {
-			map.add(new Point(mspacman.x - 1, mspacman.y));
-		} else if (containsMsPacman(mspacman.x, mspacman.y + 1)) {
-			map.add(new Point(mspacman.x, mspacman.y + 1));
-		} else if (containsMsPacman(mspacman.x, mspacman.y - 1)) {
-			map.add(new Point(mspacman.x, mspacman.y - 1));
-		} else {
-			for (Point p : MAP) {
-				if (containsMsPacman(p.x, p.y)) {
-					map.add(p);
-					mspacman = p;
-					return map;
-				}
-			}
-		}
-		if(map.isEmpty()) {
-			map.add(mspacman);
-		}
-		return map;
+	public Point getPinky() {
+		return ghosts[1];
 	}
 
-	private Point blinky = new Point();
-	public LinkedHashSet<Point> getBlinky() {
-		LinkedHashSet<Point> map = new LinkedHashSet<Point>();
-		if (containsGhost(GameEntity.BLINKY.colour(), blinky.x, blinky.y)) {
-			map.add(blinky);
-		} else if (containsGhost(GameEntity.BLINKY.colour(), blinky.x+1, blinky.y)) {
-			map.add(new Point(blinky.x+1, blinky.y));
-		} else if (containsGhost(GameEntity.BLINKY.colour(), blinky.x-1, blinky.y)) {
-			map.add(new Point(blinky.x-1, blinky.y));
-		} else if (containsGhost(GameEntity.BLINKY.colour(), blinky.x, blinky.y+1)) {
-			map.add(new Point(blinky.x, blinky.y+1));
-		} else if (containsGhost(GameEntity.BLINKY.colour(), blinky.x, blinky.y-1)) {
-			map.add(new Point(blinky.x, blinky.y-1));
-		} else {
-			for (Point p : MAP) {
-				if (containsGhost(GameEntity.BLINKY.colour(), p.x, p.y)) {
-					map.add(p);
-					return map;
-				}
-			}
-		}
-		if(map.isEmpty()) {
-			map.add(blinky);
-		}
-		return map;
+	public Point getInky() {
+		return ghosts[2];
 	}
 
-	private Point pinky = new Point();
-	public LinkedHashSet<Point> getPinky() {
-		LinkedHashSet<Point> map = new LinkedHashSet<Point>();
-		if (containsGhost(GameEntity.PINKY.colour(), pinky.x, pinky.y)) {
-			map.add(pinky);
-		} else if (containsGhost(GameEntity.PINKY.colour(), pinky.x+1, pinky.y)) {
-			map.add(new Point(pinky.x+1, pinky.y));
-		} else if (containsGhost(GameEntity.PINKY.colour(), pinky.x-1, pinky.y)) {
-			map.add(new Point(pinky.x-1, pinky.y));
-		} else if (containsGhost(GameEntity.PINKY.colour(), pinky.x, pinky.y+1)) {
-			map.add(new Point(pinky.x, pinky.y+1));
-		} else if (containsGhost(GameEntity.PINKY.colour(), pinky.x, pinky.y-1)) {
-			map.add(new Point(pinky.x, pinky.y-1));
-		} else {
-			for (Point p : MAP) {
-				if (containsGhost(GameEntity.PINKY.colour(), p.x, p.y)) {
-					map.add(p);
-					return map;
-				}
-			}
-		}
-		return map;
-	}
-
-	private Point inky = new Point();
-	public LinkedHashSet<Point> getInky() {
-		LinkedHashSet<Point> map = new LinkedHashSet<Point>();
-		if (containsGhost(GameEntity.INKY.colour(), inky.x, inky.y)) {
-			map.add(inky);
-		} else if (containsGhost(GameEntity.INKY.colour(), inky.x+1, inky.y)) {
-			map.add(new Point(inky.x+1, inky.y));
-		} else if (containsGhost(GameEntity.INKY.colour(), inky.x-1, inky.y)) {
-			map.add(new Point(inky.x-1, inky.y));
-		} else if (containsGhost(GameEntity.INKY.colour(), inky.x, inky.y+1)) {
-			map.add(new Point(inky.x, inky.y+1));
-		} else if (containsGhost(GameEntity.INKY.colour(), inky.x, inky.y-1)) {
-			map.add(new Point(inky.x, inky.y-1));
-		} else {
-			for (Point p : MAP) {
-				if (containsGhost(GameEntity.INKY.colour(), p.x, p.y)) {
-					map.add(p);
-					return map;
-				}
-			}
-		}
-		return map;
-	}
-
-	private Point sue = new Point();
-	public LinkedHashSet<Point> getSue() {
-		LinkedHashSet<Point> map = new LinkedHashSet<Point>();
-		if (containsGhost(GameEntity.SUE.colour(), sue.x, sue.y)) {
-			map.add(sue);
-		} else if (containsGhost(GameEntity.SUE.colour(), sue.x+1, sue.y)) {
-			map.add(new Point(sue.x+1, sue.y));
-		} else if (containsGhost(GameEntity.SUE.colour(), sue.x-1, sue.y)) {
-			map.add(new Point(sue.x-1, sue.y));
-		} else if (containsGhost(GameEntity.SUE.colour(), sue.x, sue.y+1)) {
-			map.add(new Point(sue.x, sue.y+1));
-		} else if (containsGhost(GameEntity.SUE.colour(), sue.x, sue.y-1)) {
-			map.add(new Point(sue.x, sue.y-1));
-		} else {
-			for (Point p : MAP) {
-				if (containsGhost(GameEntity.SUE.colour(), p.x, p.y)) {
-					map.add(p);
-					return map;
-				}
-			}
-		}
-		return map;
+	public Point getSue() {
+		return ghosts[3];
 	}
 
 	public List<Point> calculatePath(Point to) {
 		PathFinder.setTarget(to);
-		List<Point> ret = null;
+		List<Point> ret = new ArrayList<Point>();
 		try {
-			ret = pf.compute(getMsPacman().iterator().next());
+			ret = pf.compute(getMsPacman());
 		} catch (NoSuchElementException e) {}
-		return ret == null ? new ArrayList<Point>() : ret;
+		return ret;
 	}
 	public boolean containsBlueGhost(int x, int y) {
-		return containsBlueGhost1(x, y)
-				|| containsBlueGhost1(x + 1, y);
+		return (containsBlueGhost1(x, y) || containsBlueGhost1(x+1, y));
 	}
+	/*
+	 * 2171358 BLUE 16758935 EYE
+	 * 16711680 WHITE 16711680 EYE
+	 */
 	private boolean containsBlueGhost1(int x, int y) {
-		return ((bitmap.getPixel(x + 5, y + 6) == 16758935
-				&& bitmap.getPixel(x + 6, y + 7) == 16758935
-				&& bitmap.getPixel(x + 9, y + 6) == 16758935
-				&& bitmap.getPixel(x + 10, y + 7) == 16758935
-				&& bitmap.getPixel(x + 6, y + 6) == 16758935
-				&& bitmap.getPixel(x + 10, y + 6) == 16758935
-				&& bitmap.getPixel(x + 4, y + 5) == 2171358
-				&& bitmap.getPixel(x + 7, y + 8) == 2171358
-				&& bitmap.getPixel(x + 8, y + 5) == 2171358 
-				&& bitmap.getPixel(x + 11, y + 8) == 2171358) 
-				|| (bitmap.getPixel(x + 5, y + 6) == 16711680
-				&& bitmap.getPixel(x + 6, y + 7) == 16711680
-				&& bitmap.getPixel(x + 9, y + 6) == 16711680
-				&& bitmap.getPixel(x + 10, y + 7) == 16711680
-				&& bitmap.getPixel(x + 6, y + 6) == 16711680
-				&& bitmap.getPixel(x + 10, y + 6) == 16711680
-				&& bitmap.getPixel(x + 4, y + 5) == 14606046
-				&& bitmap.getPixel(x + 7, y + 8) == 14606046
-				&& bitmap.getPixel(x + 8, y + 5) == 14606046 
-				&& bitmap.getPixel(x + 11, y + 8) == 14606046));
+		return (bitmap.getPixel(x + 5, y + 6) == 16758935
+			 && bitmap.getPixel(x + 6, y + 7) == 16758935
+			 && bitmap.getPixel(x + 9, y + 6) == 16758935
+			 && bitmap.getPixel(x + 10, y + 7) == 16758935
+			 && bitmap.getPixel(x + 6, y + 6) == 16758935
+		     && bitmap.getPixel(x + 10, y + 6) == 16758935
+			 && bitmap.getPixel(x + 4, y + 5) == 2171358
+			 && bitmap.getPixel(x + 7, y + 8) == 2171358
+			 && bitmap.getPixel(x + 8, y + 5) == 2171358 
+			 && bitmap.getPixel(x + 11, y + 8) == 2171358) 
+		  || 
+		       (bitmap.getPixel(x + 5, y + 6) == 16711680
+			 && bitmap.getPixel(x + 6, y + 7) == 16711680
+			 && bitmap.getPixel(x + 9, y + 6) == 16711680
+			 && bitmap.getPixel(x + 10, y + 7) == 16711680
+			 && bitmap.getPixel(x + 6, y + 6) == 16711680
+			 && bitmap.getPixel(x + 10, y + 6) == 16711680
+			 && bitmap.getPixel(x + 4, y + 5) == 14606046
+			 && bitmap.getPixel(x + 7, y + 8) == 14606046
+			 && bitmap.getPixel(x + 8, y + 5) == 14606046 
+			 && bitmap.getPixel(x + 11, y + 8) == 14606046);
 	}
 
 	public boolean containsGhost(int ghost, int x, int y) {
@@ -303,7 +214,7 @@ public class GameMap {
 	}
 
 	public boolean containsMsPacman(int x, int y) {
-		return containsMsPacman1(x-1, y) || containsMsPacman1(x, y);
+		return containsMsPacman1(x, y) || containsMsPacman1(x-1, y);
 	}
 
 	private boolean containsMsPacman1(int x, int y) {
