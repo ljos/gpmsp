@@ -1,230 +1,138 @@
-(ns mspacman.individual
-  (use [clojure.inspector :include (atom?)]))
+(ns mspacman.individual)
 
-(import '(no.uib.bjo013.mspacman MsPacman NUIMsPacman GUIMsPacman ExperimentalMsPacman))
+(import '(no.uib.bjo013.mspacman Game GfxMsPacman))
 (import javax.swing.JFrame)
-(import java.awt.BorderLayout)
-(import java.awt.event.KeyEvent)
-(import '(java.util.concurrent CountDownLatch TimeUnit Semaphore))
-
+(import '(java.awt BorderLayout Point))
 
 (def ^:dynamic msp nil)
+(def ^:dynamic targets nil)
 
-(def ENTITY-LIST '(mspacman
-                   blinky
-                   pinky
-                   inky
-                   sue))
+(def ENTITY-LIST nil)
+(def FUNCTION-LIST nil)
+(def ITEM-LIST nil)
+(def BOOL-LIST nil)
+(def ATOM-LIST nil)
 
-(def ITEM-LIST (concat
-                '(pills)
-                ENTITY-LIST))
+(def mspacman 'mspacman)
+(def blinky 'blinky)
+(def pinky 'pinky)
+(def inky 'inky)
+(def sue 'sue)
+(def pill 'pill)
+(def superpill 'superpill)
+(def blue 'blue)
 
-(def ATOM-LIST (concat
-                '(move-left
-                  move-right
-                  move-up
-                  move-down
-                  int)
-                ITEM-LIST))
+(def entity-list [mspacman
+                  blinky
+                  pinky
+                  inky
+                  sue
+                  pill
+                  superpill
+                  blue])
 
-(def BOOL-LIST '((msp-check-area-below entity)
-                 (msp-check-area-above entity)
-                 (msp-check-area-leftof entity)
-                 (msp-check-area-rightof entity)
-                 (msp> expr expr)
-                 (msp< expr expr)
-                 (or expr expr)
-                 (and expr expr)
-                 (= expr expr)
-                 (msp-closer? entity item)))
+(def blues (map #(symbol (str "b" %)) (range 0 4)))
+(def pills (map #(symbol (str "p" %)) (range 0 220)))
+(def superpills (map #(symbol (str "s" %)) (range 0 4)))
 
-(def FUNCTION-LIST (concat
-                    '((msp-relative-distance entity item)
-                      (if bool expr expr?)
-                      (msp- expr expr)
-                      (msp+ expr expr))
-                    BOOL-LIST))
+(defn get-point [^clojure.lang.Symbol entity]
+  {:pre [(symbol? entity)]
+   :post [(= Point (type %))]}
+  (let [m (.getMap msp)]
+    (case entity
+     mspacman (.getMsPacman m)
+     blinky (.getBlinky m)
+     pinky (.getPinky m)
+     inky (.getInky m)
+     sue (.getSue m)
+     pill (.getClosestPill m)
+     superpill (.getClosestSuperPill m)
+     blue (.getClosestBlue m))))
 
-(def mspacman (atom {:name 'mspacman :colour 16776960}))
-(def blinky (atom {:name 'blinky :colour 16711680}))
-(def pinky (atom {:name 'pinky :colour 16759006}))
-(def inky  (atom {:name 'inky :colour 65502}))
-(def sue (atom {:name 'sue :colour 16758855}))
-(def pills (atom {:name 'pills :colour 14606046}))
-(def walkway (atom {:name 'walkway :colour 0}))
+(defn set-target [^Point point]
+  {:pre [(= Point (type point))]}
+  (.setTarget msp point))
 
-(def move-left 'move-left)
-(def move-right 'move-right)
-(def move-up 'move-up)
-(def move-down 'move-down)
+(defn remove-point [^Point point]
+  {:pre [(= Point (type point))]}
+  (.removePoint point))
 
-(defn msp> [& keys]
-  (let [l (remove #(not (instance? Number %))
-                  keys)]
-    (if (empty? l)
-      true
-      (apply > l))))
+(defn translate-point [^Point point ^Number x ^Number y]
+  {:pre [(= Point (type point))
+         (number? x)
+         (number? y)]
+   :post [(= Point (type %))]}
+  (Point. (+ x (.x point)) (+ y (.x point))))
 
-(defn msp< [& keys]
-  (let [l (remove #(not (instance? Number %))
-                  keys)]
-    (if (empty? l)
-      true
-      (apply > l))))
-
-(defn msp+ [& keys]
-  (let [l (remove #(not (instance? Number %))
-                  keys)]
-    (if (empty? l)
-      0
-      (apply + l))))
-
-(defn msp- [& keys]
-  (let [l (remove #(not (instance? Number %))
-                  keys)]
-    (if (empty? l)
-      0
-      (apply - l))))
-
-(defn msp-sleep []
-  (Thread/sleep 10))
-
-(defn msp-move-left []
-  (-> msp (.keyPressed KeyEvent/VK_LEFT)))
-
-(defn msp-move-right []
-  (-> msp (.keyPressed KeyEvent/VK_RIGHT)))
-
-(defn msp-move-up []
-  (-> msp (.keyPressed KeyEvent/VK_UP)))
-
-(defn msp-move-down []
-  (-> msp (.keyPressed KeyEvent/VK_DOWN)))
-
-(defn msp-check-area-leftof [entity]
-  (when (and (= (type entity) clojure.lang.Atom)
-             (some #(= (:name @entity) %) ENTITY-LIST))
-    (let [xy (-> msp (.getEntity (:colour @entity)))]
-      (-> msp (.checkForEntity (:colour @entity) 0 (first xy) (second xy))))))
-
-(defn msp-check-area-above [entity]
-  (when (and (= (type entity) clojure.lang.Atom)
-             (some #(= (:name @entity) %) ENTITY-LIST))
-    (let [xy (-> msp (.getEntity (:colour @entity)))]
-      (-> msp (.checkForEntity (:colour @entity) 1 (first xy) (second xy))))))
-
-(defn msp-check-area-rightof [entity]
-  (when (and (= (type entity) clojure.lang.Atom)
-             (some #(= (:name @entity) %) ENTITY-LIST))
-    (let [xy (-> msp (.getEntity (:colour @entity)))]
-      (-> msp (.checkForEntity (:colour @entity) 2 (first xy) (second xy))))))
-
-(defn msp-check-area-below [entity]
-  (when (and (= (type entity) clojure.lang.Atom)
-             (some #(= (:name @entity) %) ENTITY-LIST))
-    (let [xy (-> msp (.getEntity (:colour @entity)))]
-      (-> msp (.checkForEntity (:colour @entity) 3 (first xy) (second xy))))))
-
-(defn msp-relative-distance [entity item]
-  (when (and (= (type entity) clojure.lang.Atom)
-             (= (type item) clojure.lang.Atom)
-             (some #(= % (:name @entity)) ENTITY-LIST)
-             (some #(= % (:name @item)) ITEM-LIST))
-    (let [k (keyword (:name @item))]
-      (k (swap! entity
-                assoc
-                k
-                (-> msp
-                    (.relativeDistance (:colour @entity)
-                                       (:colour @item))))))))
-
-(defn msp-closer? [entity item]
-  (when (and (= (type entity) clojure.lang.Atom)
-             (= (type item) clojure.lang.Atom)
-             (some #(= % (:name @entity)) ENTITY-LIST)
-             (some #(= % (:name @item)) ITEM-LIST))
-    (let [k (keyword (:name @item))
-          prev-d (k @entity)
-          new-d (msp-relative-distance entity item)]
-      (or (nil? prev-d)
-          (< prev-d new-d)))))
-
-(defn move-in-direction [direction]
-  (case direction
-    move-left (msp-move-left)
-    move-right (msp-move-right)
-    move-up (msp-move-up)
-    move-down (msp-move-down)
-    ())
-  direction)
+(defn rotate
+  "rotate list from n to m 1 time"
+  [^Number n ^Number m l]
+  {:pre [(seq? l)
+         (number? n)
+         (number? m)]
+   :post (seq? %)}
+  (concat (take n l)
+          (let [o (drop n (take m l))]
+            (concat (rest o) (list (first o))))
+          (drop m l)))
 
 (defn fitness [tries code]
-  (let [signal (into-array
-                (repeatedly (inc tries)
-                            #(new CountDownLatch 1)))
-        lock (new Object)]
-    (binding [msp (new NUIMsPacman signal lock (Thread/currentThread))]
-      (let [thread (new Thread msp)]
-        (.start thread)
-        (loop [score 0
-               times 0]
-          (if (or (<= tries times)
-                  (and (<= 3 times)
-                       (= (/ score times) 120)))
-            (do (locking msp
-                  (.stopMSP msp))
-                (.join thread)                
-                (int (/ score times)))
-            (do (.await (nth signal times))
-                (recur (+ score
-                          (do (while (and (not (.isGameOver msp)) (.shouldContinue msp))
-                                    (while (not= (.toString (.getState thread)) "WAITING"))
-                                    (locking lock
-                                      (move-in-direction (eval `~code))
-                                      (.notify lock)
-                                      (.wait lock))) 
-                                  (.getScore msp)))
-                       (inc times)))))))))
+  (binding [msp (Game.)]
+    (loop [score 0
+           times 0]
+      (if (or (<= tries times)
+              (and (<= 3 times)
+                   (= (/ score times) 120)))
+        (int (/ score times))
+        (do (.start msp)
+            (recur (+ score
+                      (do (while (not (.isGameOver msp))
+                            (eval`~code)
+                            (.update msp))
+                          (.getScore msp)))
+                   (inc times)))))))
 
 (defn fitness-graphic [tries code]
-  (let [signal (into-array
-                (repeatedly (inc tries)
-                            #(new CountDownLatch 1)))
-        lock (new Object)]
-    (binding [msp (doto (new ExperimentalMsPacman signal lock (Thread/currentThread))
-                    (.setSize 224 (+ 288 22)))]
-      (let [frame (doto (new JFrame)
-                    (.setDefaultCloseOperation
-                     javax.swing.JFrame/EXIT_ON_CLOSE)
-                    (.setSize 224 (+ 288 22))
-                    (.setLocation 100 0)
-                    (-> .getContentPane
-                        (.add msp java.awt.BorderLayout/CENTER))
-                    (.setVisible Boolean/TRUE))x
-            thread (new Thread msp)]
-        (do (.start thread)
-            (loop [score 0
-                   times 0]
-              (if (or (<= tries times)
-                      (and (<= 3 times)
-                           (= (/ score times) 120)))
-                (do (locking msp
-                      (.stopMSP msp))
-                    (.join thread)
-                    (.dispose frame)
-                    (int (/ score tries)))
-                (do (.await (nth signal times))
-                    (recur (+ score
-                              (do (while (and (not (.isGameOver msp)) (.shouldContinue msp))
-                                    (while (not= (.toString (.getState thread)) "WAITING"))
-                                    (locking lock
-                                      (let [start (. System (nanoTime))]
-                                       (move-in-direction (eval `~code))
-                                       (if (< 250 (/ (double (- (. System (nanoTime)) start))
-                                                     1000000.0))
-                                         (.stopMSP msp)))
-                                      (.notify lock)
-                                      (.wait lock))) 
-                                  (.getScore msp)))
-                        (inc times))))))))))
+  (binding [msp (Game.)]
+    (let [gfx (doto (GfxMsPacman. (.initialize msp))
+                (.setSize 224 (+ 288 22)))
+          frame (doto (JFrame.)
+                  (.setDefaultCloseOperation
+                   javax.swing.JFrame/EXIT_ON_CLOSE)
+                  (.setSize 224 (+ 288 22))
+                  (.setLocation 100 0)
+                  (-> .getContentPane
+                      (.add gfx java.awt.BorderLayout/CENTER))
+                  (.setVisible Boolean/TRUE))
+          thread (Thread. gfx)]
+      (.start thread)
+      (loop [score 0
+             times 0]
+        (if (or (<= tries times)
+                (and (<= 3 times)
+                     (= (/ score times) 120)))
+          (do (.dispose frame)
+              (.stop gfx)
+              (locking gfx
+                (.notify gfx))
+              (.join thread)
+              (int (/ score tries)))
+          (do (.setBitmap gfx (.start msp))
+              (recur (+ score
+                        (do (while (and (not (.isGameOver msp)))
+                              (eval `~code)
+                              (.setBitmap gfx (.update msp))
+                              (locking gfx
+                                (.notify gfx)))
+                            (.getScore msp)))
+                     (inc times))))))))
+
+(defn- distance [^Point p]
+  (.size (.calculatePath (.getMap msp) p 200)))
+
+(defn most-valuable [l]
+  (let [memd (memoize distance)]
+    (reduce  (fn [^Point a ^Point b]
+               (if (< (memd a) (memd b))
+                a b))
+            l)))

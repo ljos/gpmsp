@@ -3,8 +3,11 @@ package no.uib.bjo013.mspacman;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import jef.machine.Machine;
 import jef.util.Throttle;
@@ -19,10 +22,19 @@ public class Game {
 	private BitMap bitmap;
 	
 	private GameMap gm;
-	private Iterator<Point> path;
+	private List<Point> path;
 	private Point target;
+	private Set<Point> closed = new HashSet<Point>();
 
+	public Game() {
+		init(false);
+	}
+	
 	public Game(boolean throttle) {
+		init(throttle);
+	}
+	
+	private void init(boolean throttle) {
 		CottageDriver d = new CottageDriver();
 		
 		String driver = "mspacman";
@@ -114,14 +126,20 @@ public class Game {
 	 */
 	public BitMap update() {
 		bitmap = m.refresh(true);
+		if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 82) {
+			gm = new GameMap(bitmap);
+			this.waitForReadyMessageDissapear();
+		}
 		gm.update(bitmap);
 		try {
-			path = gm.calculatePath(target).iterator();
-			path.next(); 
-			path.next(); 
-			this.moveTowards(path.next());
+			path = gm.calculatePath(target, closed);
+			Iterator<Point> ph = path.iterator();
+			ph.next(); 
+			ph.next();
+			this.moveTowards(ph.next());
 			t.throttle();
 		} catch (NoSuchElementException e) {}
+		closed.clear();
 		return bitmap;
 	}
 	
@@ -129,26 +147,37 @@ public class Game {
 	 * 
 	 * THE REASON FOR THE +-1X IS THAT SOMETIMES MSP IS IN THE WRONG POSITION.
 	 * THIS IS THE FAULT OF THE EMULATOR OR SOMETHING. IT WORKS NOW ATLEAST.
+	 * 
+	 * THE -1 RETURN MAKES SURE IT CONTINUES IN THE CORRECT DIRECTION WHEN IT 
+	 * TRIES TO MOVE THROUGH PORTAL.
 	 */
 	public void moveTowards(Point p) {
 		Point m = gm.getMsPacman();
-		if (p.y < m.y && p.x <= m.x && p.x >= m.x-1){ 
+		int mx = (m.x > 220 && p.x < 10) ? -1 : m.x; 
+		int my = m.y;
+		int px = (p.x > 220 && m.x < 10) ? -1 : p.x ;
+		int py = p.y;
+		if (py < my && px <= mx && px >= mx-1){ 
 			this.keyPressed(KeyEvent.VK_UP);          
-		} else if (p.y > m.y && p.x <= m.x+1 && p.x >= m.x) { 
+		} else if (py > my && px <= mx+1 && px >= mx) { 
 			this.keyPressed(KeyEvent.VK_DOWN);
-		} else if (p.x < m.x) {
+		} else if (px < mx) {
 			this.keyPressed(KeyEvent.VK_LEFT);
-		} else if(p.x > m.x) {
+		} else if(px > mx) {
 			this.keyPressed(KeyEvent.VK_RIGHT);
 		}
 	}
 	
-	public Iterator<Point> getPath() {
+	public List<Point> getPath() {
 		return path;
 	}
 	
 	public void setTarget(Point target) {
 		this.target = target;
+	}
+	
+	public void removePoint(Point p) {
+		closed.add(p);
 	}
 	
 	public GameMap getMap() {

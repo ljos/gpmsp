@@ -372,7 +372,7 @@ public class Pacman extends MAMEDriver implements Driver, MAMEConstants {
 			32*8, 33*8, 34*8, 35*8, 36*8, 37*8, 38*8, 39*8 };
 
 		return new GfxLayout(
-			16,16,	/* 16*8 sprites */
+			16,16,	/* 16*16 sprites */
 			64,	/* 256 sprites */
 			2,	/* 4 bits per pixel */
 			pOffs,
