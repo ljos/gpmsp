@@ -2,22 +2,22 @@ package no.uib.bjo013.mspacman.map;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Set;
 
 import jef.video.BitMap;
 
 public class GameMap {
 	private BitMap bitmap;
-	private LinkedHashSet<Point> MAP = new LinkedHashSet<Point>();
-	private LinkedHashSet<Point> pills = new LinkedHashSet<Point>();
-	private LinkedHashSet<Point> superPills = new LinkedHashSet<Point>();
+	private List<Point> MAP = new ArrayList<Point>();
+	private List<Point> pills = new ArrayList<Point>();
+	private List<Point> superPills = new ArrayList<Point>();
 	private Point mspacman = new Point();
 	private Point[] ghosts = new Point[4];
 	private List<Point> blues = new ArrayList<Point>();
 
-	private PathFinder pf;
+	private AStar astar;
 
 	public GameMap(BitMap bitmap) {
 		this.bitmap = bitmap;
@@ -73,65 +73,84 @@ public class GameMap {
 		for (int x = 204; x < 224; x++) {
 			MAP.add(new Point(x, 84));
 		}
-		pf = new PathFinder(MAP);
+		astar = new AStar(new HashSet<Point>(MAP));
 	}
 
 	public void update(BitMap bitmap) {
 		this.bitmap = bitmap;
-		ghosts= new Point[4];
-		blues = new ArrayList<Point>();
+		ghosts = new Point[4];
+		blues.clear();
 		
 		for (Point p : MAP) {
-			if (this.containsMsPacman(p.x, p.y)) {
+			if (!this.isBlack(p.x, p.y)) {
+				if(this.containsPill(p.x, p.y) && !pills.contains(p)) {
+					pills.add(p);
+				} else if (this.containsSuperPill(p.x, p.y) && !superPills.contains(p)) {
+					superPills.add(p);
+				} else if (this.containsMsPacman(p.x, p.y)) {
+					mspacman = p;
+					pills.remove(p);
+					superPills.remove(p);
+				} else {
+					GameEntity[] ghs = new GameEntity[] { GameEntity.BLINKY,
+							GameEntity.PINKY, GameEntity.INKY, GameEntity.SUE };
+					for (GameEntity ghost : ghs) {
+						if (this.containsGhost(ghost.colour(), p.x, p.y)) {
+							switch (ghost) {
+							case BLINKY:
+								ghosts[0] = p;
+								break;
+							case PINKY:
+								ghosts[1] = p;
+								break;
+							case INKY:
+								ghosts[2] = p;
+								break;
+							case SUE:
+								ghosts[3] = p;
+								break;
+							}
+						}
+					}
+					if (this.containsBlueGhost(p.x, p.y)) {
+						boolean add = true;
+						for (Point b : blues) {
+							if (p.x + 1 == b.x || p.x - 1 == b.x) {
+								add = false;
+								break;
+							}
+						}
+						if (add) {
+							blues.add(p);
+						}
+					}
+				}
+			} else {
 				pills.remove(p);
-				superPills.remove(p);
-				mspacman = p;
-			} else if(!this.containsPill(p.x, p.y)){
-				GameEntity[] ghs = new GameEntity[] { GameEntity.BLINKY,
-						GameEntity.PINKY, GameEntity.INKY, GameEntity.SUE };
-				for (GameEntity ghost : ghs) {
-					if (this.containsGhost(ghost.colour(), p.x, p.y)) {
-						switch (ghost) {
-						case BLINKY:
-							ghosts[0] = p;
-							break;
-						case PINKY:
-							ghosts[1] = p;
-							break;
-						case INKY:
-							ghosts[2] = p;
-							break;
-						case SUE:
-							ghosts[3] = p;
-							break;
-						}
-					}
-				}
-				if (this.containsBlueGhost(p.x, p.y)) {
-					boolean add = true;
-					for(Point b : blues) {
-						if(p.x+1 == b.x || p.x-1 == b.x) {
-							add = false;
-							break;
-						}
-					}
-					if(add) {
-						blues.add(p);
-					}
-				}
 			}
 		}
 	}
 
-	public LinkedHashSet<Point> getMap() {
+	private boolean isBlack(int x, int y) {
+		return bitmap.getPixel(x + 6, y + 6) == 0
+				&& bitmap.getPixel(x + 9, y + 6) == 0
+				&& bitmap.getPixel(x + 6, y + 9) == 0
+				&& bitmap.getPixel(x + 9, y + 9) == 0
+				&& bitmap.getPixel(x + 7, y + 7) == 0
+				&& bitmap.getPixel(x + 7, y + 8) == 0
+				&& bitmap.getPixel(x + 8, y + 7) == 0
+				&& bitmap.getPixel(x + 8, y + 8) == 0;
+	}
+
+	public List<Point> getMap() {
 		return MAP;
 	}
 
-	public LinkedHashSet<Point> getPills() {
+	public List<Point> getPills() {
 		return pills;
 	}
 
-	public LinkedHashSet<Point> getSuperPills() {
+	public List<Point> getSuperPills() {
 		return superPills;
 	}
 
@@ -163,14 +182,10 @@ public class GameMap {
 		return ghosts[3];
 	}
 
-	public List<Point> calculatePath(Point to) {
-		PathFinder.setTarget(to);
-		List<Point> ret = new ArrayList<Point>();
-		try {
-			ret = pf.compute(getMsPacman());
-		} catch (NoSuchElementException e) {}
-		return ret;
+	public List<Point> calculatePath(Point to, Set<Point> closed) {
+		return astar.computePath(getMsPacman(), to, closed);
 	}
+	
 	public boolean containsBlueGhost(int x, int y) {
 		return (containsBlueGhost1(x, y) || containsBlueGhost1(x+1, y));
 	}
