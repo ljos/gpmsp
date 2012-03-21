@@ -109,9 +109,9 @@
                   (string/lower-case (.getHostName (InetAddress/getLocalHost)))
                   n)
           (str generation))
-    (println (map #(:fitness %) generation)
+    (println (map :fitness generation)
              "average:"
-             (int (/ (reduce + (map #(:fitness %) generation))
+             (int (/ (reduce + (map :fitness generation))
                      (count generation))))
     (newline)
     generation))

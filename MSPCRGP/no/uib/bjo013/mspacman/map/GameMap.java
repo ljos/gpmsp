@@ -2,17 +2,26 @@ package no.uib.bjo013.mspacman.map;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import jef.video.BitMap;
 
 public class GameMap {
 	private BitMap bitmap;
-	private List<Point> MAP = new ArrayList<Point>();
-	private List<Point> pills = new ArrayList<Point>();
-	private List<Point> superPills = new ArrayList<Point>();
+	private Map<Point, Double> MAP = new LinkedHashMap<Point, Double>();
+	
+	private Map<Integer, Point> pills = new LinkedHashMap<Integer, Point>();
+	private Map<Point, Integer> revpills = new HashMap<Point,Integer>();
+	
+	private Map<Integer, Point> superPills = new LinkedHashMap<Integer,Point>();
+	private Map<Point, Integer> revsuperPills = new HashMap<Point, Integer>();
+	
 	private Point mspacman = new Point();
 	private Point[] ghosts = new Point[4];
 	private List<Point> blues = new ArrayList<Point>();
@@ -37,7 +46,9 @@ public class GameMap {
 				bitmap.setPixel(x, y, 0);
 			}
 		}
-
+		
+		Integer pilln = 0;
+		Integer superpilln = 0;
 		for (int y = 24; y < 270; ++y) {
 			for (int x = 0; x < 208; ++x) {
 				boolean print = true;
@@ -57,40 +68,51 @@ public class GameMap {
 				}
 				if (print) {
 					Point p = new Point(x, y);
-					MAP.add(p);
+					MAP.put(p, new Double(1));
 					if (containsPill(x, y)) {
-						pills.add(p);
+						pills.put(pilln, p);
+						revpills.put(p, pilln);
+						pilln++;
 					}
 					if (containsSuperPill(x, y)) {
-						superPills.add(p);
+						superPills.put(superpilln,p);
+						revsuperPills.put(p, superpilln);
+						superpilln++;
 					}
 				}
 			}
 		}
 		for (int x = 204; x < 224; x++) {
-			MAP.add(new Point(x, 156));
+			MAP.put(new Point(x, 84), new Double(1));
 		}
 		for (int x = 204; x < 224; x++) {
-			MAP.add(new Point(x, 84));
+			MAP.put(new Point(x, 156), new Double(1));
 		}
-		astar = new AStar(new HashSet<Point>(MAP));
+		astar = new AStar(MAP);
 	}
 
 	public void update(BitMap bitmap) {
 		this.bitmap = bitmap;
 		ghosts = new Point[4];
 		blues.clear();
-		
-		for (Point p : MAP) {
+		for (Point p : MAP.keySet()) {
+			if(p == null) {
+				continue;
+			}
 			if (!this.isBlack(p.x, p.y)) {
-				if(this.containsPill(p.x, p.y) && !pills.contains(p)) {
-					pills.add(p);
-				} else if (this.containsSuperPill(p.x, p.y) && !superPills.contains(p)) {
-					superPills.add(p);
+				if(this.containsPill(p.x, p.y) && !pills.containsKey(p)) {
+					pills.put(revpills.get(p), p);
 				} else if (this.containsMsPacman(p.x, p.y)) {
 					mspacman = p;
-					pills.remove(p);
-					superPills.remove(p);
+					pills.remove(revpills.get(p));
+					if(!superPills.isEmpty()) {
+						for(Point s : superPills.values()) {
+							if(mspacman.distance(s) < 6) {
+								superPills.remove(revsuperPills.get(s));
+								break;
+							}
+						}
+					}
 				} else {
 					GameEntity[] ghs = new GameEntity[] { GameEntity.BLINKY,
 							GameEntity.PINKY, GameEntity.INKY, GameEntity.SUE };
@@ -126,36 +148,25 @@ public class GameMap {
 					}
 				}
 			} else {
-				pills.remove(p);
+				pills.remove(revpills.get(p));
 			}
 		}
 	}
 
-	private boolean isBlack(int x, int y) {
-		return bitmap.getPixel(x + 6, y + 6) == 0
-				&& bitmap.getPixel(x + 9, y + 6) == 0
-				&& bitmap.getPixel(x + 6, y + 9) == 0
-				&& bitmap.getPixel(x + 9, y + 9) == 0
-				&& bitmap.getPixel(x + 7, y + 7) == 0
-				&& bitmap.getPixel(x + 7, y + 8) == 0
-				&& bitmap.getPixel(x + 8, y + 7) == 0
-				&& bitmap.getPixel(x + 8, y + 8) == 0;
-	}
-
-	public List<Point> getMap() {
-		return MAP;
-	}
-
-	public List<Point> getPills() {
+	public Map<Integer,Point> getPills() {
 		return pills;
 	}
 
-	public List<Point> getSuperPills() {
+	public Map<Integer,Point> getSuperPills() {
 		return superPills;
 	}
 
-	public Point[] getGhosts() {
-		return ghosts;
+	public List<Point> getGhosts() {
+		List<Point> gs = new ArrayList<Point>();
+		for(Point p : ghosts) {
+			gs.add(p);
+		}
+		return gs;
 	}
 	
 	public List<Point> getBlueGhosts() {
@@ -182,8 +193,45 @@ public class GameMap {
 		return ghosts[3];
 	}
 
-	public List<Point> calculatePath(Point to, Set<Point> closed) {
-		return astar.computePath(getMsPacman(), to, closed);
+	public List<Point> calculatePath(Point to) {
+		return astar.computePath(getMsPacman(), to);
+	}
+	
+	public void resetSearch() {
+		astar.resetSearch();
+	}
+	
+	public boolean validPoint(Point p) {
+		return this.MAP.containsKey(p);
+	}
+	
+	public Point adjustScores(Map<Point, Double> ps) {
+		Map<Point, Double> adjustments = new HashMap<Point, Double>(MAP);
+		adjustments.putAll(ps);
+		astar.adjustScores(adjustments);
+		Set<Point> adj = new LinkedHashSet<Point>(pills.values());
+		adj.addAll(superPills.values());
+		adj.addAll(blues);
+		Iterator<Point> iter = adj.iterator();
+		Point smallest = iter.next();
+		while(iter.hasNext()) {
+			Point n = iter.next();
+			if(adjustments.get(smallest) > adjustments.get(n)) {
+				smallest = n;
+			}
+		}
+		return smallest;
+	}
+	
+	private boolean isBlack(int x, int y) {
+		return bitmap.getPixel(x + 6, y + 6) == 0
+				&& bitmap.getPixel(x + 9, y + 6) == 0
+				&& bitmap.getPixel(x + 6, y + 9) == 0
+				&& bitmap.getPixel(x + 9, y + 9) == 0
+				&& bitmap.getPixel(x + 7, y + 7) == 0
+				&& bitmap.getPixel(x + 7, y + 8) == 0
+				&& bitmap.getPixel(x + 8, y + 7) == 0
+				&& bitmap.getPixel(x + 8, y + 8) == 0;
 	}
 	
 	public boolean containsBlueGhost(int x, int y) {
