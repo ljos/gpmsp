@@ -2,6 +2,7 @@ package no.uib.bjo013.mspacman.test;
 
 import java.awt.BorderLayout;
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -35,22 +36,19 @@ public class GfxMsPacmanTest {
 					c.notify();
 				}
 				try {
-					Point target = g.getMap().getPills().get(0);
-					g.setTarget(target);
+					for(Point p : g.getMap().getGhosts()) {
+						if (p != null) {
+							g.adjustCircle(p, 20, Double.MAX_VALUE);	
+						}
+					}
 				} catch (Exception e) {
 				}
+				
 				bm = g.update();
-				List<Point> path = g.getPath();
-				for (Point p : path) {
-					bm.setPixelFast(p.x, p.y, 65280);
+				for(Point q : g.getPath()) {
+					bm.setPixel(q.x, q.y, 65280);
 				}
 				c.setBitmap(bm);
-				synchronized (c) {
-					c.notify();
-				}
-				synchronized (c) {
-					c.notify();
-				}
 			}
 		}
 		c.stop();

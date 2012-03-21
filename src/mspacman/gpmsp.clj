@@ -77,7 +77,7 @@
   (take SIZE-OF-POPULATION (repeatedly #(create-random-individual))))
 
 (defn fitness-proportionate-selection [population]
-  (let [F (reduce + (map #(:fitness %1) population))
+  (let [F (reduce + (map :fitness population))
         r (rand)]
     (loop [pop population
            slice (/ (:fitness (first population)) F)]
@@ -169,7 +169,7 @@
   (let [elitism (* SIZE-OF-POPULATION ELITISM-RATE)]
     (sort-by :fitness >
              (pmap #(struct individual % (ind/fitness FITNESS-RUNS %))
-                   (concat (map #(:program %)
+                   (concat (map :program
                                 (take elitism generation))
                            (recombination elitism generation))))))
 
@@ -185,9 +185,9 @@
                            (string/lower-case (.getHostName (InetAddress/getLocalHost)))
                            n)
                    (str generation))
-             (println (map #(:fitness %) generation)
+             (println (map :fitness generation)
                       "average:"
-                      (int (/ (reduce + (map #(:fitness %) generation)) (count generation))))
+                      (int (/ (reduce + (map :fitness generation)) (count generation))))
              (recur (run-generation generation)
                     (inc n))))))
 

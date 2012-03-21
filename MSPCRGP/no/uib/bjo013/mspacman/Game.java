@@ -3,11 +3,10 @@ package no.uib.bjo013.mspacman;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.net.URL;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.Map;
 
 import jef.machine.Machine;
 import jef.util.Throttle;
@@ -24,7 +23,7 @@ public class Game {
 	private GameMap gm;
 	private List<Point> path;
 	private Point target;
-	private Set<Point> closed = new HashSet<Point>();
+	private Map<Point,Double> adjustments = new HashMap<Point, Double>();
 
 	public Game() {
 		init(false);
@@ -132,14 +131,16 @@ public class Game {
 		}
 		gm.update(bitmap);
 		try {
-			path = gm.calculatePath(target, closed);
+			gm.resetSearch();
+			target = gm.adjustScores(adjustments);
+			path = gm.calculatePath(target);
 			Iterator<Point> ph = path.iterator();
-			ph.next(); 
+			ph.next();
 			ph.next();
 			this.moveTowards(ph.next());
 			t.throttle();
-		} catch (NoSuchElementException e) {}
-		closed.clear();
+		} catch (Exception e) {}
+		adjustments.clear();
 		return bitmap;
 	}
 	
@@ -153,13 +154,13 @@ public class Game {
 	 */
 	public void moveTowards(Point p) {
 		Point m = gm.getMsPacman();
-		int mx = (m.x > 220 && p.x < 10) ? -1 : m.x; 
+		int mx = (m.x > 220 && p.x < 15) ? -1 : m.x; 
 		int my = m.y;
-		int px = (p.x > 220 && m.x < 10) ? -1 : p.x ;
+		int px = (p.x > 220 && m.x < 15) ? -1 : p.x ;
 		int py = p.y;
 		if (py < my && px <= mx && px >= mx-1){ 
 			this.keyPressed(KeyEvent.VK_UP);          
-		} else if (py > my && px <= mx+1 && px >= mx) { 
+		} else if (py > my && px <= mx+1 && px >= mx-1) { 
 			this.keyPressed(KeyEvent.VK_DOWN);
 		} else if (px < mx) {
 			this.keyPressed(KeyEvent.VK_LEFT);
@@ -176,8 +177,26 @@ public class Game {
 		this.target = target;
 	}
 	
-	public void removePoint(Point p) {
-		closed.add(p);
+	public void adjustScores(Map<Point, Double> ps) {
+		adjustments.putAll(ps);
+	}
+	
+	public void adjustScore(Point p, Double score) {
+		if(adjustments.containsKey(p)) {
+			score += adjustments.get(p);
+		}
+		adjustments.put(p, score);
+	}
+	
+	public void adjustCircle(Point origin, int radius, double value) {	
+		for(int i = -radius; i < radius; ++i) {
+			for(int j = -radius; j < radius; ++j) {
+				Point p = new Point(origin.x+i, origin.y+j);
+				if(gm.validPoint(p)) {
+					adjustments.put(p, value);
+				}
+			}
+		}
 	}
 	
 	public GameMap getMap() {
