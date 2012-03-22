@@ -19,23 +19,23 @@ public class Game {
 	private Pacman m;
 	private Throttle t;
 	private BitMap bitmap;
-	
+
 	private GameMap gm;
 	private List<Point> path;
 	private Point target;
-	private Map<Point,Double> adjustments = new HashMap<Point, Double>();
+	private Map<Point, Double> adjustments = new HashMap<Point, Double>();
 
 	public Game() {
 		init(false);
 	}
-	
+
 	public Game(boolean throttle) {
 		init(throttle);
 	}
-	
+
 	private void init(boolean throttle) {
 		CottageDriver d = new CottageDriver();
-		
+
 		String driver = "mspacman";
 
 		URL base_URL = null;
@@ -44,15 +44,15 @@ public class Game {
 					System.getProperty("user.home")));
 		} catch (Exception e) {
 		}
-		
+
 		m = (Pacman) d.getMachine(base_URL, driver);
 		bitmap = m.refresh(true);
 		t = new Throttle(m.getProperty(Machine.FPS));
 		t.enable(throttle);
 	}
-	
+
 	public BitMap initialize() {
-		for (int i = 3; i > 0;) { 
+		for (int i = 3; i > 0;) {
 			bitmap = m.refresh(true);
 			if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x43F8] == 0) {
 				--i;
@@ -62,7 +62,7 @@ public class Game {
 		}
 		return bitmap;
 	}
-	
+
 	public BitMap waitForReadyMessageAppear() {
 		Runnable sendKeys = new Runnable() {
 			@Override
@@ -83,7 +83,7 @@ public class Game {
 			}
 		};
 		Thread th = new Thread(sendKeys);
-		for (;;) { 
+		for (;;) {
 			if (!th.isAlive()) {
 				th = new Thread(sendKeys);
 				th.start();
@@ -100,9 +100,9 @@ public class Game {
 		}
 		return bitmap;
 	}
-	
+
 	public BitMap waitForReadyMessageDissapear() {
-		for (;;) { 
+		for (;;) {
 			bitmap = m.refresh(true);
 			if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 64) {
 				break;
@@ -110,7 +110,7 @@ public class Game {
 		}
 		return bitmap;
 	}
-	
+
 	public BitMap start() {
 		this.waitForReadyMessageAppear();
 		gm = new GameMap(bitmap);
@@ -119,7 +119,7 @@ public class Game {
 	}
 
 	/*
-	 * MOVE TOWARDS IS DONE ON THE THIRD ELEMENT IN THE LIST. THE REASON FOR 
+	 * MOVE TOWARDS IS DONE ON THE THIRD ELEMENT IN THE LIST. THE REASON FOR
 	 * THIS IS THAT THE FIRST ELEMENT IS MSP AND THAT THE SECOND IS TOO CLOSE
 	 * AND MSP WILL THROW A FIT IF WE GO FOR SECOND.
 	 */
@@ -139,66 +139,71 @@ public class Game {
 			ph.next();
 			this.moveTowards(ph.next());
 			t.throttle();
-		} catch (Exception e) {}
+		} catch (Exception e) {
+		}
 		adjustments.clear();
 		return bitmap;
 	}
-	
-	/* ORDER IS VERY IMPORTANT FOR THE IF ELSE TREE
+
+	/*
+	 * ORDER IS VERY IMPORTANT FOR THE IF ELSE TREE
 	 * 
 	 * THE REASON FOR THE +-1X IS THAT SOMETIMES MSP IS IN THE WRONG POSITION.
 	 * THIS IS THE FAULT OF THE EMULATOR OR SOMETHING. IT WORKS NOW ATLEAST.
 	 * 
-	 * THE -1 RETURN MAKES SURE IT CONTINUES IN THE CORRECT DIRECTION WHEN IT 
+	 * THE -1 RETURN MAKES SURE IT CONTINUES IN THE CORRECT DIRECTION WHEN IT
 	 * TRIES TO MOVE THROUGH PORTAL.
 	 */
 	public void moveTowards(Point p) {
 		Point m = gm.getMsPacman();
-		int mx = (m.x > 220 && p.x < 15) ? -1 : m.x; 
+		int mx = (m.x > 220 && p.x < 15) ? -1 : m.x;
 		int my = m.y;
-		int px = (p.x > 220 && m.x < 15) ? -1 : p.x ;
+		int px = (p.x > 220 && m.x < 15) ? -1 : p.x;
 		int py = p.y;
-		if (py < my && px <= mx && px >= mx-1){ 
-			this.keyPressed(KeyEvent.VK_UP);          
-		} else if (py > my && px <= mx+1 && px >= mx-1) { 
+		if (py < my && px <= mx && px >= mx - 1) {
+			this.keyPressed(KeyEvent.VK_UP);
+		} else if (py > my && px <= mx + 1 && px >= mx - 1) {
 			this.keyPressed(KeyEvent.VK_DOWN);
 		} else if (px < mx) {
 			this.keyPressed(KeyEvent.VK_LEFT);
-		} else if(px > mx) {
+		} else if (px > mx) {
 			this.keyPressed(KeyEvent.VK_RIGHT);
 		}
 	}
-	
+
 	public List<Point> getPath() {
 		return path;
 	}
-	
+
 	public void setTarget(Point target) {
 		this.target = target;
 	}
-	
+
 	public void adjustScores(Map<Point, Double> ps) {
 		adjustments.putAll(ps);
 	}
-	
+
 	public void adjustScore(Point p, Double score) {
-		if(adjustments.containsKey(p)) {
+		if (adjustments.containsKey(p)) {
 			score += adjustments.get(p);
 		}
 		adjustments.put(p, score);
 	}
-	
-	public void adjustCircle(Point origin, int radius, double value) {	
-		for(int i = -radius; i < radius; ++i) {
-			for(int j = -radius; j < radius; ++j) {
-				Point p = new Point(origin.x+i, origin.y+j);
-				if(gm.validPoint(p)) {
-					adjustments.put(p, value);
+
+	public void adjustCircle(Point origin, int radius, double value) {
+		try {
+			for (int i = -radius; i < radius; ++i) {
+				for (int j = -radius; j < radius; ++j) {
+					Point p = new Point(origin.x + i, origin.y + j);
+					if (gm.validPoint(p)) {
+						adjustments.put(p, value);
+					}
 				}
 			}
+		} catch (Exception e) {
 		}
 	}
-	
+
 	public GameMap getMap() {
 		return gm;
 	}
@@ -273,7 +278,7 @@ public class Game {
 	public int getPixel(int x, int y) {
 		return bitmap.getPixel(x, y);
 	}
-	
+
 	public void setThrottle(boolean enable) {
 		t.enable(enable);
 	}

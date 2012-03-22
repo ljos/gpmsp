@@ -12,8 +12,8 @@
 (def SIZE-OF-POPULATION 700)
 (def ELITISM-RATE 0.05)
 (def NUMBER-OF-GENERATIONS 1000)
-(def MAX-STARTING-DEPTH 3)
-(def MAX-STARTING-WIDTH-OF-EXPR 5)
+(def MAX-STARTING-DEPTH 10)
+(def MAX-STARTING-WIDTH-OF-EXPR 10)
 (def MUTATION-RATE 0.25)
 (def REPRODUCTION-RATE 0.70)
 (def MUTATION-DEPTH 3)
@@ -24,25 +24,35 @@
 (def SELECTION 'fitness-proportionate)
 (def TOURNAMENT-SIZE 10)
 
+(declare expand)
 (defn atomize [term]
-  (cond (= term 'int)
-        (rand-int 288)
-        (= term 'entity)
-        ,(rand-nth ind/ENTITY-LIST)
-        (= term 'item)
-        ,(rand-nth ind/ITEM-LIST)
+  (cond (= term 'value)
+        (rand-nth ind/VALUE-LIST)
+        (= term 'radius)
+        ,(rand-nth ind/RADIUS-LIST)
+        (= term 'pill)
+        ,(rand-nth ind/PILL-LIST)
+        (= term 'superpill)
+        ,(rand-nth ind/SUPERPILL-LIST)
+        (= term 'blue)
+        ,(rand-nth ind/BLUE-LIST)
+        (= term 'x)
+        ,(rand-nth ind/X-LIST)
+        (= term 'y)
+        ,(rand-nth ind/Y-LIST)  
         (symbol? term)
         ,`~term
+        (number? term)
+        ,term
         :else
-        ,term))
+        ,(expand term 1)))
 
 (defn expand [exprs depth]
   (if (or (symbol? exprs)
+          (number? exprs)
           (empty? exprs)
           (< depth 1))
-    (if (symbol? exprs)
-      (atomize exprs)
-      (atomize (rand-nth ind/ATOM-LIST)))
+    (atomize exprs)
     (cons (first exprs) 
           (loop [terms (rest exprs)
                  acc ()
@@ -59,8 +69,8 @@
                              (expand (rand-nth ind/FUNCTION-LIST)
                                      (dec depth))
                              ())
-                          bool
-                          ,(expand (rand-nth ind/BOOL-LIST)
+                          point
+                          ,(expand (rand-nth ind/POINT-LIST)
                                    (dec depth))
                           ,(atomize term))]
                 (recur (if (and (= term 'expr+)
@@ -71,7 +81,7 @@
                        (dec expr-width))))))))
 
 (defn create-random-individual []
-  (expand (rand-nth ind/FUNCTION-LIST) (rand-int MAX-STARTING-DEPTH)))
+  (expand '(do expr+) (inc (rand-int MAX-STARTING-DEPTH))))
 
 (defn create-random-population []
   (take SIZE-OF-POPULATION (repeatedly #(create-random-individual))))
@@ -97,7 +107,7 @@
 (defn select-random-node [tree]
   (if-not (seq? tree)
     (zip/seq-zip tree)
-    (loop [loc (zip/seq-zip tree)
+    (loop [loc (zip/down (zip/seq-zip tree))
           val loc
           n 2] ;start at two as first one is set as val
      (cond (zip/end? loc)
@@ -125,22 +135,25 @@
         n (count (zip/lefts loc))
         expr (first (filter #(and (not (symbol? %))
                                   (= (first %) l))
-                            ind/FUNCTION-LIST))
+                            ind/EXPR-LIST))
         c (if (= (second expr) 'expr+)
             'expr+
             (nth expr n))]
     (case c 
       (expr expr? expr+) (rand-nth ind/FUNCTION-LIST)
-      bool (rand-nth ind/BOOL-LIST)
-      entity (rand-nth ind/ENTITY-LIST)
-      item (rand-nth ind/ITEM-LIST))))
+      pill (rand-nth ind/PILL-LIST)
+      superpill (rand-nth ind/SUPERPILL-LIST)
+      point (rand-nth ind/POINT-LIST)
+      blue (rand-nth ind/BLUE-LIST)
+      value (rand-nth ind/VALUE-LIST)
+      radius (rand-nth ind/RADIUS-LIST)
+      x (rand-nth ind/X-LIST)
+      y (rand-nth ind/Y-LIST))))
 
 (defn mutation [tree]
   (let [original (select-random-node tree)
-        replacement (if (and (seq? tree)
-                             (not (zip/branch? original)))
-                      (expand (find-relevant-expr original) (rand-int MUTATION-DEPTH))
-                      (expand (rand-nth ind/FUNCTION-LIST) (rand-int MUTATION-DEPTH)))]
+        replacement (expand (find-relevant-expr original)
+                            (rand-int MUTATION-DEPTH))]
     (zip/root
      (zip/replace original replacement))))
 
