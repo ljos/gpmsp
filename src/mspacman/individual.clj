@@ -7,18 +7,17 @@
 
 (def ^:dynamic msp nil)
 
-(def ENTITY-LIST nil)
-(def VALUE-LIST (for [x (range 0 11)]
-                  (Math/pow 10 x)))
+(def VALUE-LIST (concat (for [x (range 0 11)]
+                          (Math/pow 10 x))
+                        (list Double/MAX_VALUE)))
 (def RADIUS-LIST (range 0 288))
+(def X-LIST (range -224 224))
+(def Y-LIST (range -288 288))
 (def FUNCTION-LIST '((adjust-point point value)
                      (adjust-circle point radius value)))
-(def ITEM-LIST nil)
-(def BOOL-LIST nil)
-(def ATOM-LIST nil)
 (def PILL-LIST (range 0 220))
 (def SUPERPILL-LIST (range 0 4))
-(def BLUE-LIST)
+(def BLUE-LIST (range 0 4))
 (def POINT-LIST '((get-mspacman)
                   (get-blinky)
                   (get-pinky)
@@ -27,7 +26,10 @@
                   (get-pill pill)
                   (get-superpill superpill)
                   (get-blue blue)
-                  (translate-point point)))
+                  (translate-point point x y)))
+(def EXPR-LIST (concat '((do expr+))
+                       FUNCTION-LIST
+                       POINT-LIST))
 
 (defmacro get-map [f]
   `(~f (.getMap msp)))
@@ -63,18 +65,16 @@
   (.setTarget msp point))
 
 (defn adjust-point [point n]
-  {:pre [(= Point (type point))]}
-  (.adjustScore msp point n))
+  (when (= Point (type point))
+    (.adjustScore msp point (double n))))
 
 (defn adjust-circle [origin radius value]
-  (.adjustScore msp orogin radius value))
+  (when (= Point (type origin))
+    (.adjustCircle msp origin radius (double value))))
 
 (defn translate-point [^Point point ^Number x ^Number y]
-  {:pre [(= Point (type point))
-         (number? x)
-         (number? y)]
-   :post [(= Point (type %))]}
-  (Point. (+ x (.x point)) (+ y (.x point))))
+  (when (= Point (type point))
+    (Point. (+ x (.x point)) (+ y (.x point)))))
 
 (defn- path-distance [^Point p]
   (.size (.calculatePath (.getMap msp) p)))
@@ -92,6 +92,7 @@
                    (= (/ score times) 120)))
         (int (/ score times))
         (do (.start msp)
+            (.update msp)
             (recur (+ score
                       (do (while (not (.isGameOver msp))
                             (eval`~code)
