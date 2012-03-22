@@ -219,5 +219,5 @@
 (defn run-fitness-on [individuals]
   (use 'mspacman.individual)
   (sort-by :fitness >
-           (map #(assoc % :fitness (ind/fitness FITNESS-RUNS (:program %)))
-                individuals)))
+           (pmap #(assoc % :fitness (ind/fitness FITNESS-RUNS (:program %)))
+                 individuals)))
