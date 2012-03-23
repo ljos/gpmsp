@@ -151,14 +151,14 @@
       y (rand-nth ind/Y-LIST))))
 
 (defn mutation [tree]
-  (case (rand-nth ['replace 'insert 'remove])
+  (case (rand-nth ['replace 'remove 'insert])
     replace (let [original (select-random-node tree)
                   replacement (expand (find-relevant-expr original)
                                       (inc (rand-int MUTATION-DEPTH)))]
               (zip/root
                (zip/replace original replacement)))
     remove (zip/root (zip/remove (select-random-node tree)))
-    insert (zip/root (zip/insert-right (zip/down tree)
+    insert (zip/root (zip/insert-right (zip/down (zip/seq-zip tree))
                                        (expand (rand-nth ind/FUNCTION-LIST)
                                                (inc (rand-int MUTATION-DEPTH)))))))
 
