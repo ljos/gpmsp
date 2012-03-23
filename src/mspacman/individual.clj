@@ -34,7 +34,7 @@
 
 (defmacro msp-defn [name args & body]
   `(defn ~name ~args
-     (try (try ~body (catch NullPointerException f#))
+     (try (try ~@body (catch NullPointerException f#))
        (catch Exception e#
          (println (format "%s threw exception: " ~name))
          (throw e#)))))
