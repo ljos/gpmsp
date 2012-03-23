@@ -9,7 +9,7 @@
 
 (defstruct individual :program :fitness)
 
-(def SIZE-OF-POPULATION 700)
+(def SIZE-OF-POPULATION 10)
 (def ELITISM-RATE 0.05)
 (def NUMBER-OF-GENERATIONS 1000)
 (def MAX-STARTING-DEPTH 10)
@@ -19,7 +19,7 @@
 (def MUTATION-DEPTH 3)
 (def RAND-INT-RATE 0.25)
 (def EXPR?-RATE 0.50)
-(def FITNESS-RUNS 10)
+(def FITNESS-RUNS 1)
 
 (def SELECTION 'fitness-proportionate)
 (def TOURNAMENT-SIZE 10)
@@ -218,6 +218,7 @@
 
 (defn run-fitness-on [individuals]
   (use 'mspacman.individual)
+  (println "Individuals in:" individuals)
   (sort-by :fitness >
            (doall
             (pmap #(assoc % :fitness (ind/fitness FITNESS-RUNS (:program %)))
