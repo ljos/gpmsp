@@ -226,7 +226,6 @@
 
 (defn run-fitness-on [individuals]
   (use 'mspacman.individual)
-  (println "Individuals in:" individuals)
   (sort-by :fitness >
            (doall
             (pmap #(assoc % :fitness (ind/fitness FITNESS-RUNS (:program %)))
