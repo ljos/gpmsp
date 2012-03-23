@@ -34,7 +34,7 @@
 
 (defmacro msp-defn [name args & body]
   `(defn ~name ~args
-     (try ~body
+     (try (try ~body (catch NullPointerException f#))
        (catch Exception e#
          (println (format "%s threw exception: " ~name))
          (throw e#)))))
@@ -46,7 +46,7 @@
   (get-map .getMsPacman))
 
 (msp-defn get-blinky []
-  (get-map .getBlinky))
+  ((get-map .getBlinky)))
 
 (msp-defn get-pinky []
   (get-map .getPinky))
