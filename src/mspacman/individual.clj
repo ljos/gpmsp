@@ -46,7 +46,7 @@
   (get-map .getMsPacman))
 
 (msp-defn get-blinky []
-  ((get-map .getBlinky)))
+  (get-map .getBlinky))
 
 (msp-defn get-pinky []
   (get-map .getPinky))
