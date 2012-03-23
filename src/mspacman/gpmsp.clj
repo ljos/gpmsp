@@ -107,7 +107,7 @@
 (defn select-random-node [tree]
   (if-not (seq? tree)
     (zip/seq-zip tree)
-    (loop [loc (zip/down (zip/seq-zip tree))
+    (loop [loc (zip/next (zip/next (zip/seq-zip tree)))
           val loc
           n 2] ;start at two as first one is set as val
      (cond (zip/end? loc)
