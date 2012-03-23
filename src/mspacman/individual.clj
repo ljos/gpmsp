@@ -37,7 +37,6 @@
      (try ~body
        (catch Exception e#
          (println (format "%s threw exception: " ~name))
-         (.printStackTrace e# *out*)
          (throw e#)))))
 
 (defmacro get-map [f]
