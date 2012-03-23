@@ -151,11 +151,16 @@
       y (rand-nth ind/Y-LIST))))
 
 (defn mutation [tree]
-  (let [original (select-random-node tree)
-        replacement (expand (find-relevant-expr original)
-                            (rand-int MUTATION-DEPTH))]
-    (zip/root
-     (zip/replace original replacement))))
+  (case (rand-nth [replace insert remove])
+    replace (let [original (select-random-node tree)
+                  replacement (expand (find-relevant-expr original)
+                                      (inc (rand-int MUTATION-DEPTH)))]
+              (zip/root
+               (zip/replace original replacement)))
+    remove (zip/root (zip/remove (select-random-mode tree)))
+    insert (zip/root (zip/insert-right (zip/down tree)
+                                       (expand (rand-nth ind/FUNCTION-LIST)
+                                               (inc (rand-int MUTATION-DEPTH)))))))
 
 (defn recombination [elitism population]
   (loop [indivs (- SIZE-OF-POPULATION elitism)
