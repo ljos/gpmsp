@@ -157,7 +157,10 @@
                                       (inc (rand-int MUTATION-DEPTH)))]
               (zip/root
                (zip/replace original replacement)))
-    remove (zip/root (zip/remove (select-random-node tree)))
+    remove (conj (let [r (rest tree)
+                       l (split-at (rand-int (count r)) r)]
+                   (concat (first l) (rest (second l))))
+                 (first tree))
     insert (zip/root (zip/insert-right (zip/down (zip/seq-zip tree))
                                        (expand (rand-nth ind/FUNCTION-LIST)
                                                (inc (rand-int MUTATION-DEPTH)))))))
