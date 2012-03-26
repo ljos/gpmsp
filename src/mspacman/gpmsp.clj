@@ -122,13 +122,12 @@
                    (inc n))))))
 
 (defn reproduction [parents]
-  (let [parent-node-1 (select-random-node (first parents))
-        parent-node-2 (select-random-node (second parents))
-        reproduce #(zip/root
-                    (zip/replace %1
-                                 (zip/node %2)))]
-    (vector (reproduce parent-node-1 parent-node-2)
-            (reproduce parent-node-2 parent-node-1))))
+  (letfn [(reproduce [parent-1 parent-2]
+            (concat ['do]
+                    (take (/ (count (rest parent-1)) 2) (rest parent-1))
+                    (drop (/ (count (rest parent-2)) 2) (rest parent-2))))]
+    (vector (reproduce (first parents) (second parents))
+            (reproduce (second parents) (first parents)))))
 
 (defn find-relevant-expr [loc]
   (let [l (zip/node (zip/leftmost loc))
