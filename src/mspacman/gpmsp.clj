@@ -9,7 +9,7 @@
 
 (defstruct individual :program :fitness)
 
-(def SIZE-OF-POPULATION 700)
+(def SIZE-OF-POPULATION 500)
 (def ELITISM-RATE 0.05)
 (def NUMBER-OF-GENERATIONS 1000)
 (def MAX-STARTING-DEPTH 10)
@@ -19,7 +19,7 @@
 (def MUTATION-DEPTH 3)
 (def RAND-INT-RATE 0.25)
 (def EXPR?-RATE 0.50)
-(def FITNESS-RUNS 7)
+(def FITNESS-RUNS 5)
 
 (def SELECTION 'fitness-proportionate)
 (def TOURNAMENT-SIZE 10)
@@ -104,26 +104,9 @@
     fitness-proportionate (fitness-proportionate-selection population)
     tournament-selection (tournament-selection TOURNAMENT-SIZE population)))
 
-(defn select-random-node [tree]
-  (if-not (seq? tree)
-    (zip/seq-zip tree)
-    (loop [loc (zip/next (zip/next (zip/seq-zip tree)))
-          val loc
-          n 2] ;start at two as first one is set as val
-     (cond (zip/end? loc)
-           ,val
-           (or (dzip/leftmost? loc) (nil? (zip/node loc)))
-           ,(recur (zip/next loc) val n)
-           :else
-           ,(recur (zip/next loc)
-                   (if (zero? (mod (rand-int n) n))
-                     loc
-                     val)
-                   (inc n))))))
-
 (defn reproduction [parents]
   (letfn [(reproduce [parent-1 parent-2]
-            (concat ['do]
+            (concat '(do)
                     (take (/ (count (rest parent-1)) 2) (rest parent-1))
                     (drop (/ (count (rest parent-2)) 2) (rest parent-2))))]
     (vector (reproduce (first parents) (second parents))
@@ -138,16 +121,37 @@
         c (if (= (second expr) 'expr+)
             'expr+
             (nth expr n))]
-    (case c 
-      (expr expr? expr+) (rand-nth ind/FUNCTION-LIST)
-      pill (rand-nth ind/PILL-LIST)
-      superpill (rand-nth ind/SUPERPILL-LIST)
-      point (rand-nth ind/POINT-LIST)
-      blue (rand-nth ind/BLUE-LIST)
-      value (rand-nth ind/VALUE-LIST)
-      radius (rand-nth ind/RADIUS-LIST)
-      x (rand-nth ind/X-LIST)
-      y (rand-nth ind/Y-LIST))))
+    (try
+      (case c 
+        (expr expr? expr+) (rand-nth ind/FUNCTION-LIST)
+        pill (rand-nth ind/PILL-LIST)
+        superpill (rand-nth ind/SUPERPILL-LIST)
+        point (rand-nth ind/POINT-LIST)
+        blue (rand-nth ind/BLUE-LIST)
+        value (rand-nth ind/VALUE-LIST)
+        radius (rand-nth ind/RADIUS-LIST)
+        x (rand-nth ind/X-LIST)
+        y (rand-nth ind/Y-LIST))
+      (catch java.lang.IllegalArgumentException e
+        (throw (java.lang.IllegalArgumentException.
+                (format "\n###\nL: %s\nN: %s\nE: %s\nC: %s\n###" l n expr c) e))))))
+
+(defn select-random-node [tree]
+  (if-not (seq? tree)
+    (zip/seq-zip tree)
+    (loop [loc (zip/next (zip/next (zip/seq-zip tree)))
+           val loc
+           n 2] ;start at two as first one is set as val
+      (cond (zip/end? loc)
+            ,val
+            (or (dzip/leftmost? loc) (nil? (zip/node loc)))
+            ,(recur (zip/next loc) val n)
+            :else
+            ,(recur (zip/next loc)
+                    (if (zero? (mod (rand-int n) n))
+                      loc
+                      val)
+                    (inc n))))))
 
 (defn mutation [tree]
   (case (rand-nth ['replace 'remove 'insert])
@@ -198,18 +202,18 @@
   (loop [generation gen 
          n gen-nb]
     (if (>= n NUMBER-OF-GENERATIONS)
-         (println 'finished)
-         (do (println 'generation n)
-             (spit (format "%s/generations/%s_generation_%tL.txt"
-                           (System/getProperty "user.home")
-                           (string/lower-case (.getHostName (InetAddress/getLocalHost)))
-                           n)
-                   (str generation))
-             (println (map :fitness generation)
-                      "average:"
-                      (int (/ (reduce + (map :fitness generation)) (count generation))))
-             (recur (run-generation generation)
-                    (inc n))))))
+      (println 'finished)
+      (do (println 'generation n)
+          (spit (format "%s/generations/%s_generation_%tL.txt"
+                        (System/getProperty "user.home")
+                        (string/lower-case (.getHostName (InetAddress/getLocalHost)))
+                        n)
+                (str generation))
+          (println (map :fitness generation)
+                   "average:"
+                   (int (/ (reduce + (map :fitness generation)) (count generation))))
+          (recur (run-generation generation)
+                 (inc n))))))
 
 (defn gp-run
   ([]
