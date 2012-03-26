@@ -9,6 +9,7 @@
 
 (def VALUE-LIST (concat (for [x (range 0 11)]
                           (Math/pow 10 x))
+                        (range 10)
                         (list Double/MAX_VALUE)))
 (def RADIUS-LIST (range 0 288))
 (def X-LIST (range -224 224))
