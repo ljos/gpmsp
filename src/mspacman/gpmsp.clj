@@ -229,6 +229,7 @@
 
 (defn run-fitness-on [individuals]
   (use 'mspacman.individual)
+  (println (format "Running %s individuals." (count individuals)))
   (sort-by :fitness >
            (doall
             (pmap #(assoc % :fitness (ind/fitness FITNESS-RUNS (:program %)))
