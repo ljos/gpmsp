@@ -9,7 +9,7 @@
 
 (defstruct individual :program :fitness)
 
-(def SIZE-OF-POPULATION 100)
+(def SIZE-OF-POPULATION 400)
 (def ELITISM-RATE 0.05)
 (def NUMBER-OF-GENERATIONS 1000)
 (def MAX-STARTING-DEPTH 10)
