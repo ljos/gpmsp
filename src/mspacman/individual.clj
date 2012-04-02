@@ -37,7 +37,7 @@
   `(defn ~name ~args
      (try (try ~@body (catch NullPointerException f#))
        (catch Exception e#
-         (println (format "%s threw exception: " ~name))
+         (println (format "%s threw exception: " ~&form))
          (throw e#)))))
 
 (defmacro get-map [f]
