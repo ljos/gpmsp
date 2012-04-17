@@ -96,8 +96,19 @@
         (recur (rest pop)
                (+ slice (/ (:fitness (second pop)) F)))))))
 
+(defn compare-fitness [indiv-1 indiv-2]
+  (cond (> (:fitness indiv-1) (:fitness indiv-2))
+        ,-1
+        (< (:fitness indiv-1) (:fitness indiv-2))
+        ,1
+        (> (count (flatten (:program indiv-1)))
+           (count (flatten (:program indiv-2))))
+        ,1
+        :else
+        ,-1))
+
 (defn tournament-selection [tournament-size population]
-  (first (sort :fitness > (repeatedly tournament-size #(rand-nth population)))))
+  (first (sort compare-fitness (repeatedly tournament-size #(rand-nth population)))))
 
 (defn selection [population]
   (case SELECTION
@@ -191,11 +202,11 @@
 (defn run-generation [generation]
   (use 'mspacman.individual)
   (let [elitism (* SIZE-OF-POPULATION ELITISM-RATE)]
-    (sort-by :fitness >
-             (pmap #(struct individual % (ind/fitness FITNESS-RUNS %))
-                   (concat (map :program
-                                (take elitism generation))
-                           (recombination elitism generation))))))
+    (sort compare-fitness
+          (pmap #(struct individual % (ind/fitness FITNESS-RUNS %))
+                (concat (map :program
+                             (take elitism generation))
+                        (recombination elitism generation))))))
 
 (defn- gp-go [gen gen-nb]
   (use 'mspacman.individual)
@@ -219,9 +230,9 @@
   ([]
      (println "Started")
      (use 'mspacman.individual)
-     (gp-go (sort-by :fitness >
-                     (pmap #(struct individual %1 (ind/fitness FITNESS-RUNS %1))
-                           (create-random-population)))
+     (gp-go (sort compare-fitness
+                  (pmap #(struct individual %1 (ind/fitness FITNESS-RUNS %1))
+                        (create-random-population)))
             0))
   ([gen-file nb-gen]
      (println (format "Started at generation %s." nb-gen))
@@ -230,7 +241,7 @@
 (defn run-fitness-on [individuals]
   (use 'mspacman.individual)
   (println (format "Running %s individuals." (count individuals)))
-  (sort-by :fitness >
-           (doall
-            (pmap #(assoc % :fitness (ind/fitness FITNESS-RUNS (:program %)))
-                  individuals))))
+  (sort compare-fitness
+        (doall
+         (pmap #(assoc % :fitness (ind/fitness FITNESS-RUNS (:program %)))
+               individuals))))
