@@ -93,15 +93,13 @@
     (.distance p m)))
 
 (defn fitness [tries code]
-  (println (format "Started running %s" (str code)))
   (binding [msp (Game.)]
     (loop [score 0
            times 0]
       (if (or (<= tries times)
               (and (<= 3 times)
                    (= (/ score times) 120)))
-        (do (println (format "Finished running %s" (str code)))
-            (int (/ score times)))
+        (int (/ score times))
         (do (.start msp)
             (.update msp)
             (recur (+ score
