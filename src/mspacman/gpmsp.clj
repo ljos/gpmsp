@@ -27,7 +27,7 @@
 (declare expand)
 (defn atomize [term]
   (cond (= term 'value)
-        (rand-nth ind/VALUE-LIST)
+        ,(rand-nth ind/VALUE-LIST)
         (= term 'radius)
         ,(rand-nth ind/RADIUS-LIST)
         (= term 'pill)
