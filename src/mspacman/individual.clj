@@ -93,18 +93,18 @@
     (.distance p m)))
 
 (defn fitness [tries code]
-  (info "Running" (str code) "," tries " times.")
+  (log/info "Running" (str code) "," tries " times.")
   (binding [msp (Game.)]
     (loop [score 0
            times 0]
       (if (or (<= tries times)
               (and (<= 3 times)
                    (= (/ score times) 120)))
-        (do (info (str code) "fininshed with score" (/ score times))
+        (do (log/info (str code) "fininshed with score" (/ score times))
             (int (/ score times)))
         (do (.start msp)
             (.update msp)
-            (info "Code:" code "Try:" times)
+            (log/info "Code:" code "Try:" times)
             (recur (+ score
                       (do (while (not (.isGameOver msp))
                             (eval`~code)
