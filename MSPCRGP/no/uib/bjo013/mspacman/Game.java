@@ -132,7 +132,6 @@ public class Game {
 			gm = new GameMap(bitmap);
 			this.waitForReadyMessageDissapear();
 		}
-		System.out.println("SCORE " + lastscore + " " + (System.currentTimeMillis() - nochange));
 		if ((System.currentTimeMillis() - nochange) > 10000) {
 			gm.update(bitmap);
 			return bitmap;
