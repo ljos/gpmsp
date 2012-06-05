@@ -123,26 +123,40 @@ public class Game {
 	 * THIS IS THAT THE FIRST ELEMENT IS MSP AND THAT THE SECOND IS TOO CLOSE
 	 * AND MSP WILL THROW A FIT IF WE GO FOR SECOND.
 	 */
+	private long nochange = System.currentTimeMillis();
+	private long lastscore = 0;
 	public BitMap update() {
 		bitmap = m.refresh(true);
 		if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 82) {
+			nochange = System.currentTimeMillis();
 			gm = new GameMap(bitmap);
 			this.waitForReadyMessageDissapear();
 		}
-		gm.update(bitmap);
-		try {
-			gm.resetSearch();
-			target = gm.adjustScores(adjustments);
-			path = gm.calculatePath(target);
-			Iterator<Point> ph = path.iterator();
-			ph.next();
-			ph.next();
-			this.moveTowards(ph.next());
-			t.throttle();
-		} catch (Exception e) {
+		System.out.println("SCORE " + lastscore + " " + (System.currentTimeMillis() - nochange));
+		if ((System.currentTimeMillis() - nochange) > 10000) {
+			gm.update(bitmap);
+			return bitmap;
+		} else {
+			if (lastscore != getScore()) {
+				lastscore = getScore();
+				nochange = System.currentTimeMillis();
+			}
+			
+			gm.update(bitmap);
+			try {
+				gm.resetSearch();
+				target = gm.adjustScores(adjustments);
+				path = gm.calculatePath(target);
+				Iterator<Point> ph = path.iterator();
+				ph.next();
+				ph.next();
+				this.moveTowards(ph.next());
+				t.throttle();
+			} catch (Exception e) {
+			}
+			adjustments.clear();
+			return bitmap;
 		}
-		adjustments.clear();
-		return bitmap;
 	}
 
 	/*
@@ -268,19 +282,10 @@ public class Game {
 		return (score > 9999999) ? 0 : score;
 	}
 
-	private long nochange = System.currentTimeMillis();
-	private long lastscore = 0;
 	public boolean isGameOver() {
 		if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x403B] == 67) {
 			nochange=0;
 			return true;
-		} else if (lastscore == getScore()) {
-			if(System.currentTimeMillis() - nochange == 30 * 1000) {
-				return true;
-			}
-		} else {
-			nochange = System.currentTimeMillis();
-			lastscore = getScore();
 		}
 		return false;
 	}
