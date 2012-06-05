@@ -135,7 +135,7 @@
               (locking gfx
                 (.notify gfx))
               (.join thread)
-              (int (/ score tries)))
+              (int (/ score times)))
           (do (.setBitmap gfx (.start msp))
               (recur (+ score
                         (do (while (and (not (.isGameOver msp)))
