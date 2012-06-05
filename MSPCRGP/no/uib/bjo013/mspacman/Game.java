@@ -245,6 +245,7 @@ public class Game {
 	}
 
 	public long getScore() {
+		// SCORE = 0x43f7, HIGH SCORE = 0x43ed
 		return getScore(0x43f7, ((cottage.machine.Pacman) m).md.getREGION_CPU());
 	}
 
@@ -267,8 +268,22 @@ public class Game {
 		return (score > 9999999) ? 0 : score;
 	}
 
+	private long nochange = System.currentTimeMillis();
+	private long lastscore = 0;
 	public boolean isGameOver() {
-		return ((cottage.machine.Pacman) m).md.getREGION_CPU()[0x403B] == 67;
+		if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x403B] == 67) {
+			nochange=0;
+			return true;
+		} else if (lastscore == getScore()) {
+			System.out.println("SCORE " + lastscore + " " + (System.currentTimeMillis() - nochange));
+			if(System.currentTimeMillis() - nochange == 30 * 1000) {
+				return true;
+			}
+		} else {
+			nochange = System.currentTimeMillis();
+			lastscore = getScore();
+		}
+		return false;
 	}
 
 	public int[] getPixels() {
