@@ -275,7 +275,6 @@ public class Game {
 			nochange=0;
 			return true;
 		} else if (lastscore == getScore()) {
-			System.out.println("SCORE " + lastscore + " " + (System.currentTimeMillis() - nochange));
 			if(System.currentTimeMillis() - nochange == 30 * 1000) {
 				return true;
 			}
