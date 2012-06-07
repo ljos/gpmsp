@@ -2,8 +2,6 @@ package no.uib.bjo013.mspacman.test;
 
 import java.awt.BorderLayout;
 import java.awt.Point;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JFrame;
 
@@ -15,7 +13,7 @@ public class GfxMsPacmanTest {
 
 	public static void main(String[] args) throws Exception {
 		BitMap bm;
-		Game g = new Game(true);
+		Game g = new Game(false);
 		bm = g.initialize();
 		GfxMsPacman c = new GfxMsPacman(bm);
 		c.setSize(224, 288 + 22); // I think the + 22 is because of the top bar.
@@ -38,7 +36,7 @@ public class GfxMsPacmanTest {
 				try {
 					for(Point p : g.getMap().getGhosts()) {
 						if (p != null) {
-							g.adjustCircle(p, 20, Double.MAX_VALUE);	
+							g.adjustNeighbors(p, 30, Double.MAX_VALUE);	
 						}
 					}
 				} catch (Exception e) {

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,7 +15,7 @@ import jef.video.BitMap;
 
 public class GameMap {
 	private BitMap bitmap;
-	private Map<Point, Double> MAP = new LinkedHashMap<Point, Double>();
+	private Map<Point, List<Point>> MAP = new LinkedHashMap<Point, List<Point>>();
 	
 	private Map<Integer, Point> pills = new LinkedHashMap<Integer, Point>();
 	private Map<Point, Integer> revpills = new HashMap<Point,Integer>();
@@ -25,8 +26,6 @@ public class GameMap {
 	private Point mspacman = new Point();
 	private Point[] ghosts = new Point[4];
 	private List<Point> blues = new ArrayList<Point>();
-
-	private AStar astar;
 
 	public GameMap(BitMap bitmap) {
 		this.bitmap = bitmap;
@@ -68,7 +67,7 @@ public class GameMap {
 				}
 				if (print) {
 					Point p = new Point(x, y);
-					MAP.put(p, new Double(1));
+					MAP.put(p, new LinkedList<Point>());
 					if (containsPill(x, y)) {
 						pills.put(pilln, p);
 						revpills.put(p, pilln);
@@ -83,12 +82,24 @@ public class GameMap {
 			}
 		}
 		for (int x = 204; x < 224; x++) {
-			MAP.put(new Point(x, 84), new Double(1));
+			MAP.put(new Point(x, 84), new LinkedList<Point>());
 		}
 		for (int x = 204; x < 224; x++) {
-			MAP.put(new Point(x, 156), new Double(1));
+			MAP.put(new Point(x, 156), new LinkedList<Point>());
 		}
-		astar = new AStar(MAP);
+		for(Point p : MAP.keySet()) {
+			for(Point q : MAP.keySet()) {
+				if (p.distance(q) == 1) {
+					MAP.get(p).add(q);
+				}
+			}
+			if(p.x == 0) {
+				MAP.get(p).add(new Point(223, p.y));
+			} else if (p.x == 223) {
+				MAP.get(p).add(new Point(0, p.y));
+			}
+		}
+		
 	}
 
 	public void update(BitMap bitmap) {
@@ -192,31 +203,26 @@ public class GameMap {
 	public Point getSue() {
 		return ghosts[3];
 	}
+	
+	public Map<Point, List<Point>> getMap() {
+		return MAP;
+	}
 
-	public List<Point> calculatePath(Point to) {
-		return astar.computePath(getMsPacman(), to);
+	public List<Point> calculatePath(Point to, Map<Point, Double> weights) {
+		return AStar.computePath(MAP, getMsPacman(), to, weights);
 	}
 	
-	public void resetSearch() {
-		astar.resetSearch();
-	}
-	
-	public boolean validPoint(Point p) {
-		return this.MAP.containsKey(p);
-	}
-	
-	public Point adjustScores(Map<Point, Double> ps) {
-		Map<Point, Double> adjustments = new HashMap<Point, Double>(MAP);
-		adjustments.putAll(ps);
-		astar.adjustScores(adjustments);
+	public Point findTarget(Map<Point, Double> weights) {
 		Set<Point> adj = new LinkedHashSet<Point>(pills.values());
 		adj.addAll(superPills.values());
 		adj.addAll(blues);
 		Iterator<Point> iter = adj.iterator();
 		Point smallest = iter.next();
+		Double sscore = weights.containsKey(smallest) ? weights.get(smallest) : 0;
 		while(iter.hasNext()) {
 			Point n = iter.next();
-			if(adjustments.get(smallest) > adjustments.get(n)) {
+			Double nscore = weights.containsKey(n) ? weights.get(n) : 0;
+			if(sscore > nscore){
 				smallest = n;
 			}
 		}

@@ -5,10 +5,10 @@ public enum GameEntity {
 	BLINKY (16711680), 
 	PINKY (16759006), 
 	INKY (65502), 
-	SUE (16758855), 
-	PILL (14606046), 
-	SUPER_PILL (14606046),
+	SUE (16758855),
 	BLUE (2171358), 
+	SUPER_PILL (14606046),
+	PILL (14606046), 
 	NONE (0);
 	
 	private int colour;
