@@ -4,9 +4,12 @@ import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import jef.machine.Machine;
 import jef.util.Throttle;
@@ -143,16 +146,14 @@ public class Game {
 			
 			gm.update(bitmap);
 			try {
-				gm.resetSearch();
-				target = gm.adjustScores(adjustments);
-				path = gm.calculatePath(target);
+				target = gm.findTarget(adjustments);
+				path = gm.calculatePath(target, adjustments);
 				Iterator<Point> ph = path.iterator();
 				ph.next();
 				ph.next();
 				this.moveTowards(ph.next());
 				t.throttle();
-			} catch (Exception e) {
-			}
+			} catch (Exception e) {}
 			adjustments.clear();
 			return bitmap;
 		}
@@ -203,17 +204,16 @@ public class Game {
 		adjustments.put(p, score);
 	}
 
-	public void adjustCircle(Point origin, int radius, double value) {
-		try {
-			for (int i = -radius; i < radius; ++i) {
-				for (int j = -radius; j < radius; ++j) {
-					Point p = new Point(origin.x + i, origin.y + j);
-					if (gm.validPoint(p)) {
-						adjustments.put(p, value);
-					}
-				}
-			}
-		} catch (Exception e) {
+	public void adjustNeighbors(Point origin, int radius, double value) {
+		Set<Point> ps = new HashSet<Point>(gm.getMap().get(origin));
+		for(int i = 0; i < radius; i++) {
+		List<Point> all = new LinkedList<Point>(ps);
+		for(Point p : all) {
+			ps.addAll(gm.getMap().get(p));
+		}
+		}
+		for(Point p : ps) {
+			adjustments.put(p, value);
 		}
 	}
 
