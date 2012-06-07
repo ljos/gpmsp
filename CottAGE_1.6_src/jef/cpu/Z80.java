@@ -366,7 +366,7 @@ public final void exec(int cycles) {
 
   cycle = checkInterrupt(cycle);
 
-  if (DEBUG) startSlice = true;
+ // if (DEBUG) startSlice = true;
 
   while (cycle > 0) {
 
@@ -634,7 +634,7 @@ public final void exec(int cycles) {
 		   case 0xff: 	rst(0x38); break;	// RST $38		ok
 	   }
 
-	   if (DEBUG) debug(instruction, PPC, A, F, B, C, D, E, H, L, SP, IX, IY, I, cycle);
+	  // if (DEBUG) debug(instruction, PPC, A, F, B, C, D, E, H, L, SP, IX, IY, I, cycle);
 
 	  }	// end if (cycle ==0)
 

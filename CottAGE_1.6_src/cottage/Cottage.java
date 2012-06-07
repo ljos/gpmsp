@@ -180,6 +180,7 @@ public class Cottage extends GfxProducer {
 		System.out.println("Running...");
 
 		t = new Throttle(m.getProperty(Machine.FPS));
+		t.enable(false);
 				
 		BitMap bm = m.refresh(true);
 		while (!stop) {
@@ -192,8 +193,7 @@ public class Cottage extends GfxProducer {
 	}
 	
 	public int getPixel(int x, int y) {
-		return (x >= 0 && x < 224 && y >= 0 && y < 288) ? pixel[x + y * 224]
-				: -1;
+		return (x >= 0 && x < 224 && y >= 0 && y < 288) ? pixel[x + y * 224] : -1;
 	}
 	
 	@Override
