@@ -141,10 +141,11 @@ public abstract class GfxProducer extends javax.swing.JApplet implements
 	public void update() {
 		if (_graphics != null) {
 			_graphics.setColor(Color.black);
-			if (zoomed)
+			if (zoomed) {
 				_graphics.fillRect(0, 0, _width * 2, _height * 2);
-			else
+			} else {
 				_graphics.fillRect(0, 0, _width, _height);
+			}
 			postPaint(_graphics);
 		}
 	}

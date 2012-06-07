@@ -168,18 +168,20 @@ public class Throttle {
 	 */
 	public void throttle() {
 		// Try slow down to the machine's original speed
-		if(throttle && ((frameNumber % throttleStep) == 0)) {
-			try {
-				Thread.sleep( sleep );
-			} catch(Exception e) {
+		if (throttle) {
+			if ((frameNumber % throttleStep) == 0) {
+				try {
+					Thread.sleep(sleep);
+				} catch (Exception e) {
+				}
 			}
-        }
 
-        if (frameNumber < FRAMES_UNTIL_THROTTLE_RECALC) {
-        	frameNumber++;
-		} else {
-			frameNumber = 0;
-			recalcTiming();
+			if (frameNumber < FRAMES_UNTIL_THROTTLE_RECALC) {
+				frameNumber++;
+			} else {
+				frameNumber = 0;
+				recalcTiming();
+			}
 		}
 	}
 
