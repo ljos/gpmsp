@@ -231,7 +231,7 @@
      (println "Started")
      (use 'mspacman.individual)
      (gp-go (sort compare-fitness
-                  (pmap #(struct individual %1 (ind/fitness FITNESS-RUNS %1))
+                  (pmap #(struct individual %1 (ind/fitness FITNESS-RUNS %1 (* 5 60 1000)))
                         (create-random-population)))
             0))
   ([gen-file nb-gen]
