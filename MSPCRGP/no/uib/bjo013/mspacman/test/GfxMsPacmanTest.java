@@ -13,7 +13,7 @@ public class GfxMsPacmanTest {
 
 	public static void main(String[] args) throws Exception {
 		BitMap bm;
-		Game g = new Game(false);
+		Game g = new Game(false, 30000);
 		bm = g.initialize();
 		GfxMsPacman c = new GfxMsPacman(bm);
 		c.setSize(224, 288 + 22); // I think the + 22 is because of the top bar.

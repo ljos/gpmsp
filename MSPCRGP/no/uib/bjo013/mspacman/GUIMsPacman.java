@@ -17,7 +17,7 @@ public class GUIMsPacman extends GfxProducer implements MsPacman {
 	
 	private boolean stop = false;
 	
-	private Game g = new Game(false);
+	private Game g = new Game(false, 60000);
 
 	public GUIMsPacman(CountDownLatch[] signal, Object lock, Thread parent) {
 		this.signal = signal;
