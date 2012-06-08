@@ -203,7 +203,7 @@
   (use 'mspacman.individual)
   (let [elitism (* SIZE-OF-POPULATION ELITISM-RATE)]
     (sort compare-fitness
-          (pmap #(struct individual % (ind/fitness FITNESS-RUNS %))
+          (pmap #(struct individual % (ind/fitness FITNESS-RUNS % (* 5 60 1000)))
                 (concat (map :program
                              (take elitism generation))
                         (recombination elitism generation))))))
@@ -243,5 +243,5 @@
   (println (format "Running %s individuals." (count individuals)))
   (sort compare-fitness
         (doall
-         (pmap #(assoc % :fitness (ind/fitness FITNESS-RUNS (:program %)))
+         (pmap #(assoc % :fitness (ind/fitness FITNESS-RUNS (:program %) (* 5 60 1000)))
                individuals))))
