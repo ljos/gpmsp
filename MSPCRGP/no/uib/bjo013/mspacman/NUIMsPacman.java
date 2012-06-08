@@ -3,7 +3,7 @@ package no.uib.bjo013.mspacman;
 import java.util.concurrent.CountDownLatch;
 
 public class NUIMsPacman implements MsPacman {
-	private Game g = new Game(false);
+	private Game g = new Game(false, 60000);
 	
 	private boolean stop = false;
 

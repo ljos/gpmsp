@@ -6,10 +6,10 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import jef.machine.Machine;
 import jef.util.Throttle;
@@ -27,12 +27,15 @@ public class Game {
 	private List<Point> path;
 	private Point target;
 	private Map<Point, Double> adjustments = new HashMap<Point, Double>();
+	private long time;
 
-	public Game() {
+	public Game(long time) {
+		this.time = time;
 		init(false);
 	}
 
-	public Game(boolean throttle) {
+	public Game(boolean throttle, long time) {
+		this.time = time;
 		init(throttle);
 	}
 
@@ -114,10 +117,13 @@ public class Game {
 		return bitmap;
 	}
 
+	private long start;
 	public BitMap start() {
+		this.ranOutOfTime=false;
 		this.waitForReadyMessageAppear();
 		gm = new GameMap(bitmap);
 		this.waitForReadyMessageDissapear();
+		start = System.currentTimeMillis();
 		return bitmap;
 	}
 
@@ -126,37 +132,29 @@ public class Game {
 	 * THIS IS THAT THE FIRST ELEMENT IS MSP AND THAT THE SECOND IS TOO CLOSE
 	 * AND MSP WILL THROW A FIT IF WE GO FOR SECOND.
 	 */
-	private long nochange = System.currentTimeMillis();
-	private long lastscore = 0;
 	public BitMap update() {
+		if(System.currentTimeMillis()-time >= start) {
+			this.ranOutOfTime = true;
+		}
 		bitmap = m.refresh(true);
 		if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x4252] == 82) {
-			nochange = System.currentTimeMillis();
 			gm = new GameMap(bitmap);
 			this.waitForReadyMessageDissapear();
 		}
-		if ((System.currentTimeMillis() - nochange) > 10000) {
-			gm.update(bitmap);
-			return bitmap;
-		} else {
-			if (lastscore != getScore()) {
-				lastscore = getScore();
-				nochange = System.currentTimeMillis();
-			}
-			
-			gm.update(bitmap);
-			try {
-				target = gm.findTarget(adjustments);
-				path = gm.calculatePath(target, adjustments);
-				Iterator<Point> ph = path.iterator();
-				ph.next();
-				ph.next();
-				this.moveTowards(ph.next());
-				t.throttle();
-			} catch (Exception e) {}
-			adjustments.clear();
-			return bitmap;
+
+		gm.update(bitmap);
+
+		target = gm.findTarget(adjustments);
+		path = gm.calculatePath(target, adjustments);
+		if(path.size() > 2) {
+			Iterator<Point> ph = path.iterator();
+			ph.next();
+			ph.next();
+			this.moveTowards(ph.next());
 		}
+		t.throttle();
+		adjustments.clear();
+		return bitmap;
 	}
 
 	/*
@@ -205,15 +203,17 @@ public class Game {
 	}
 
 	public void adjustNeighbors(Point origin, int radius, double value) {
-		Set<Point> ps = new HashSet<Point>(gm.getMap().get(origin));
-		for(int i = 0; i < radius; i++) {
-		List<Point> all = new LinkedList<Point>(ps);
-		for(Point p : all) {
-			ps.addAll(gm.getMap().get(p));
-		}
-		}
-		for(Point p : ps) {
-			adjustments.put(p, value);
+		Set<Point> ps = new HashSet<Point>();
+		ps.add(origin);
+		Set<Point> closed = new HashSet<Point>();
+		for (int i = 0; i < radius; ++i) {
+			Set<Point> ns = new HashSet<Point>(ps);
+			ns.removeAll(closed);
+			for(Point p : ns){
+				ps.addAll(gm.getMap().get(p));
+				closed.add(p);
+				adjustments.put(p, value);
+			}
 		}
 	}
 
@@ -281,12 +281,10 @@ public class Game {
 		return (score > 9999999) ? 0 : score;
 	}
 
+	private boolean ranOutOfTime = false;
 	public boolean isGameOver() {
-		if (((cottage.machine.Pacman) m).md.getREGION_CPU()[0x403B] == 67) {
-			nochange=0;
-			return true;
-		}
-		return false;
+		return ((cottage.machine.Pacman) m).md.getREGION_CPU()[0x403B] == 67 ||
+				ranOutOfTime;
 	}
 
 	public int[] getPixels() {
