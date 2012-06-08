@@ -48,6 +48,9 @@ public class AStar {
 	}
 	
 	public static List<Point> computePath(Map<Point, List<Point>> map, Point from, Point goal, Map<Point, Double> weights) {
+		if (goal == null) {
+			return new LinkedList<Point>();
+		}
 		Map<Point, Point> path = new HashMap<Point, Point>();
 		Set<Point> closedSet = new HashSet<Point>();
 		PriorityQueue<Node> openSet = new PriorityQueue<Node>();
