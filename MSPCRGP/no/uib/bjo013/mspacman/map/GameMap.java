@@ -216,17 +216,21 @@ public class GameMap {
 		Set<Point> adj = new LinkedHashSet<Point>(pills.values());
 		adj.addAll(superPills.values());
 		adj.addAll(blues);
-		Iterator<Point> iter = adj.iterator();
-		Point smallest = iter.next();
-		Double sscore = weights.containsKey(smallest) ? weights.get(smallest) : 0;
-		while(iter.hasNext()) {
-			Point n = iter.next();
-			Double nscore = weights.containsKey(n) ? weights.get(n) : 0;
-			if(sscore > nscore){
-				smallest = n;
+		if (!adj.isEmpty()) {
+			Iterator<Point> iter = adj.iterator();
+			Point smallest = iter.next();
+			Double sscore = weights.containsKey(smallest) ? weights
+					.get(smallest) : 0;
+			while (iter.hasNext()) {
+				Point n = iter.next();
+				Double nscore = weights.containsKey(n) ? weights.get(n) : 0;
+				if (sscore > nscore) {
+					smallest = n;
+				}
 			}
+			return smallest;
 		}
-		return smallest;
+		return null;
 	}
 	
 	private boolean isBlack(int x, int y) {
