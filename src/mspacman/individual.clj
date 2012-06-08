@@ -85,16 +85,9 @@
   (when (= Point (type point))
     (Point. (+ x (.x point)) (+ y (.x point)))))
 
-(msp-defn path-distance [^Point p]
-           (.size (.calculatePath (.getMap msp) p)))
-
-(msp-defn distance [^Point p]
-  (let [m (.getMsPacman (.getMap msp))]
-    (.distance p m)))
-
-(defn fitness [tries code]
+(defn fitness [tries code time]
   (log/info "Running" (str code) "," tries " times.")
-  (binding [msp (Game.)]
+  (binding [msp (Game. time)]
     (loop [score 0
            times 0]
       (if (or (<= tries times)
@@ -112,8 +105,8 @@
                           (.getScore msp)))
                    (inc times)))))))
 
-(defn fitness-graphic [tries code]
-  (binding [msp (Game.)]
+(defn fitness-graphic [tries code time]
+  (binding [msp (Game. time)]
     (let [gfx (doto (GfxMsPacman. (.initialize msp))
                 (.setSize 224 (+ 288 22)))
           frame (doto (JFrame.)
