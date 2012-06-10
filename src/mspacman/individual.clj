@@ -15,7 +15,7 @@
 (def X-LIST (range -224 224))
 (def Y-LIST (range -288 288))
 (def FUNCTION-LIST '((adjust-point point value)
-                     (adjust-circle point radius value)))
+                     (adjust-neighbor point radius value)))
 (def PILL-LIST (range 0 220))
 (def SUPERPILL-LIST (range 0 4))
 (def BLUE-LIST (range 0 4))
@@ -77,9 +77,9 @@
   (when (= Point (type point))
     (.adjustScore msp point (double n))))
 
-(msp-defn adjust-circle [origin radius value]
+(msp-defn adjust-neighbor [origin radius value]
   (when (= Point (type origin))
-    (.adjustCircle msp origin radius (double value))))
+    (.adjustNeighbors msp origin radius (double value))))
 
 (msp-defn translate-point [^Point point ^Number x ^Number y]
   (when (= Point (type point))
