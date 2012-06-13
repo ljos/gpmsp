@@ -199,7 +199,7 @@
                  (concat acc indiv)
                  (conj acc indiv)))))))
 
-(defn- calc-time [times]
+(defn calc-time [times]
   (let [mean (/ (reduce + times) SIZE-OF-POPULATION)
         std (/ (reduce + (map #(Math/pow % 2)
                               (map #(- % mean) times)))
