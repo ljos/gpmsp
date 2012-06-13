@@ -211,7 +211,7 @@
   (let [new-time (calc-time (map :time generation))
         elitism (* SIZE-OF-POPULATION ELITISM-RATE)]
     (sort compare-fitness
-          (pmap #(let [[time fitness] (ind/fitness FITNESS-RUNS % new-time)]
+          (pmap #(let [[fitness time] (ind/fitness FITNESS-RUNS % new-time)]
                    (struct individual % fitness time))
                 (concat (map :program
                              (take elitism generation))
@@ -240,7 +240,7 @@
      (println "Started")
      (use 'mspacman.individual)
      (gp-go (sort compare-fitness
-                  (pmap #(let [[time fitness] (ind/fitness FITNESS-RUNS %1 (* 5 60 1000))]
+                  (pmap #(let [[fitness time] (ind/fitness FITNESS-RUNS %1 (* 5 60 1000))]
                            (struct individual %1 fitness time))
                         (create-random-population)))
             0))
@@ -254,7 +254,7 @@
   (let [run-time (:time (first individuals))]
     (sort compare-fitness
           (doall
-           (pmap #(let [[time fitness]
+           (pmap #(let [[fitness time]
                         (ind/fitness FITNESS-RUNS (:program %) run-time)]
                     (assoc (assoc % :fitness fitness)
                       :time time))
