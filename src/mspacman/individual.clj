@@ -88,8 +88,8 @@
 (defn fitness [tries code time]
   (log/info "Running" (str code) "," tries " times.")
   (binding [msp (Game. time)]
-    (loop [score 0
-           times 0]
+    (loop [[score time] [0 0]
+           times 0] 
       (if (or (<= tries times)
               (and (<= 3 times)
                    (= (/ score times) 120)))
@@ -99,13 +99,13 @@
         (do (.start msp)
             (.update msp)
             (log/info "Code:" code "Try:" times)
-            (recur (+ score
-                      (do (while (not (.isGameOver msp))
-                            (eval`~code)
-                            (.update msp))
-                          [(.getScore msp)
-                           (.getTime msp)]))
-                   (inc times)))))))
+            (recur
+             (do (while (not (.isGameOver msp))
+                   (eval`~code)
+                   (.update msp))
+                 [(+ (.getScore msp) score)
+                  (+ (.getTime msp) time)])
+             (inc times)))))))
 
 (defn fitness-graphic [tries code time]
   (binding [msp (Game. time)]
@@ -133,12 +133,12 @@
               [(int (/ score times))
                (long (/ time times))])
           (do (.setBitmap gfx (.start msp))
-              (recur (+ score
-                        (do (while (and (not (.isGameOver msp)))
-                              (eval `~code)
-                              (.setBitmap gfx (.update msp))
-                              (locking gfx
-                                (.notify gfx)))
-                            [(.getScore msp)
-                             (.getTime msp)]))
+              (recur 
+               (do (while (and (not (.isGameOver msp)))
+                     (eval `~code)
+                     (.setBitmap gfx (.update msp))
+                     (locking gfx
+                       (.notify gfx)))
+                   [(+ (.getScore msp) score)
+                    (+ (.getTime msp) time)])
                      (inc times))))))))
