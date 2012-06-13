@@ -102,7 +102,7 @@
   (let [machines  (find-usable-machines ALL-MACHINES)
         from-machines (do (println machines)
                           (send-population machines population))
-        generation (sort-by :fitness > from-machines)]
+        generation (sort gp/compare-fitness from-machines)]
     (newline)
     (println 'generation n)
     (spit (format "%s/generations/%s_generation_%tL.txt"
@@ -124,7 +124,9 @@
            n (inc startn)]
       (if (< n gp/NUMBER-OF-GENERATIONS)
         (recur (gp-over-cluster (concat (take elitism population)
-                                        (map #(struct gp/individual %  0)
+                                        (map #(struct gp/individual %
+                                                      0
+                                                      (gp/calc-time (map :time population)))
                                              (gp/recombination elitism population)))
                                 n)
                (inc n))
@@ -132,7 +134,7 @@
 
 (defn start-gp-cluster
   ([]
-     (run-cluster (map #(struct gp/individual % 0)
+     (run-cluster (map #(struct gp/individual % 0 (* 5 60 1000))
                        (gp/create-random-population))
                   0))
   ([start-pop start-gen]

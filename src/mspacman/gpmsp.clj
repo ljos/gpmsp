@@ -7,7 +7,7 @@
   (:use [mspacman.individual :as ind])
   (import java.net.InetAddress))
 
-(defstruct individual :program :fitness)
+(defstruct individual :program :fitness :time)
 
 (def SIZE-OF-POPULATION 70)
 (def ELITISM-RATE 0.05)
@@ -199,11 +199,20 @@
                  (concat acc indiv)
                  (conj acc indiv)))))))
 
+(defn- calc-time [times]
+  (let [mean (/ (reduce + times) SIZE-OF-POPULATION)
+        std (/ (reduce + (map #(Math/pow % 2)
+                              (map #(- % mean) times)))
+               SIZE-OF-POPULATION)]
+    (long (+ mean (* std 2)))))
+
 (defn run-generation [generation]
   (use 'mspacman.individual)
-  (let [elitism (* SIZE-OF-POPULATION ELITISM-RATE)]
+  (let [new-time (calc-time (map :time generation))
+        elitism (* SIZE-OF-POPULATION ELITISM-RATE)]
     (sort compare-fitness
-          (pmap #(struct individual % (ind/fitness FITNESS-RUNS % (* 5 60 1000)))
+          (pmap #(let [[time fitness] (ind/fitness FITNESS-RUNS % new-time)]
+                   (struct individual % fitness time))
                 (concat (map :program
                              (take elitism generation))
                         (recombination elitism generation))))))
@@ -231,7 +240,8 @@
      (println "Started")
      (use 'mspacman.individual)
      (gp-go (sort compare-fitness
-                  (pmap #(struct individual %1 (ind/fitness FITNESS-RUNS %1 (* 5 60 1000)))
+                  (pmap #(let [[time fitness] (ind/fitness FITNESS-RUNS %1 (* 5 60 1000))]
+                           (struct individual %1 fitness time))
                         (create-random-population)))
             0))
   ([gen-file nb-gen]
@@ -241,7 +251,11 @@
 (defn run-fitness-on [individuals]
   (use 'mspacman.individual)
   (println (format "Running %s individuals." (count individuals)))
-  (sort compare-fitness
-        (doall
-         (pmap #(assoc % :fitness (ind/fitness FITNESS-RUNS (:program %) (* 5 60 1000)))
-               individuals))))
+  (let [run-time (:time (first individuals))]
+    (sort compare-fitness
+          (doall
+           (pmap #(let [[time fitness]
+                        (ind/fitness FITNESS-RUNS (:program %) run-time)]
+                    (assoc (assoc % :fitness fitness)
+                      :time time))
+                 individuals)))))
