@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import jef.machine.Machine;
 import jef.util.Throttle;
@@ -285,6 +284,11 @@ public class Game {
 	public boolean isGameOver() {
 		return ((cottage.machine.Pacman) m).md.getREGION_CPU()[0x403B] == 67 ||
 				ranOutOfTime;
+	}
+	
+	public long getTime() {
+		return System.currentTimeMillis() - time;
+		
 	}
 
 	public int[] getPixels() {
