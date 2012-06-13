@@ -94,7 +94,8 @@
               (and (<= 3 times)
                    (= (/ score times) 120)))
         (do (log/info (str code) "fininshed with score" (/ score times))
-            (int (/ score times)))
+            [(int (/ score times))
+             (long (/ time times))])
         (do (.start msp)
             (.update msp)
             (log/info "Code:" code "Try:" times)
@@ -102,7 +103,8 @@
                       (do (while (not (.isGameOver msp))
                             (eval`~code)
                             (.update msp))
-                          (.getScore msp)))
+                          [(.getScore msp)
+                           (.getTime msp)]))
                    (inc times)))))))
 
 (defn fitness-graphic [tries code time]
@@ -118,7 +120,7 @@
                   (.setVisible Boolean/TRUE))
           thread (Thread. gfx)]
       (.start thread)
-      (loop [score 0
+      (loop [[score time] [0 0]
              times 0]
         (if (or (<= tries times)
                 (and (<= 3 times)
@@ -128,7 +130,8 @@
               (locking gfx
                 (.notify gfx))
               (.join thread)
-              (int (/ score times)))
+              [(int (/ score times))
+               (long (/ time times))])
           (do (.setBitmap gfx (.start msp))
               (recur (+ score
                         (do (while (and (not (.isGameOver msp)))
@@ -136,5 +139,6 @@
                               (.setBitmap gfx (.update msp))
                               (locking gfx
                                 (.notify gfx)))
-                            (.getScore msp)))
+                            [(.getScore msp)
+                             (.getTime msp)]))
                      (inc times))))))))
