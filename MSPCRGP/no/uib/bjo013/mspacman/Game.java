@@ -287,7 +287,7 @@ public class Game {
 	}
 	
 	public long getTime() {
-		return start - System.currentTimeMillis();
+		return System.currentTimeMillis() - start;
 		
 	}
 
