@@ -5,10 +5,10 @@
   (:require [mspacman.gpmsp :as gp]
             [clojure.string :as string]))
 
-(def ALL-MACHINES [;"mn121033"
+(def ALL-MACHINES ["mn121033"
                    "mn121034"	
                    ;"mn121035"
-                   "mn121036"
+                   ;"mn121036"
                    "mn121037"
                    "mn121038"
                    "mn121039" "mn121040"	
@@ -62,10 +62,13 @@
   (letfn [(has-user? [machine]
             (try
               (let [socket (doto (Socket.)
-                             (.connect (InetSocketAddress. (format "%s.klientdrift.uib.no" machine)
-                                                           50001)
-                                       2000))
-                    rdr (LineNumberingPushbackReader. (InputStreamReader. (.getInputStream socket)))]
+                             (.connect
+                              (InetSocketAddress.
+                               (format "%s.klientdrift.uib.no" machine)
+                               50001) 2000))
+                    rdr (LineNumberingPushbackReader.
+                         (InputStreamReader.
+                          (.getInputStream socket)))]
                 (try
                   (when (zero? (read-string (.readLine rdr)))
                     machine)
@@ -109,7 +112,19 @@
                   (System/getProperty "user.home")
                   (string/lower-case (.getHostName (InetAddress/getLocalHost)))
                   n)
-          (str generation))
+          (str {:population generation
+                :population-size gp/SIZE-OF-POPULATION
+                :elitism gp/ELITISM-RATE
+                :max-start-depth gp/MAX-STARTING-DEPTH
+                :max-starting-width gpMAX-STARTING-WIDTH-OF-EXPR
+                :mutation gp/MUTATION-RATE
+                :reproduction gp/REPRODUCTION-RATE
+                :mutation-depth gp/MUTATION-DEPTH
+                :rand-int gp/RAND-INT-RATE
+                :expr? gp/EXPR?-RATE
+                :fitness-runs gp/FITNESS-RUNS
+                :selection gp/SELECTION
+                :date gp/STARTED}))
     (println (map :fitness generation)
              "average:"
              (int (/ (reduce + (map :fitness generation))
