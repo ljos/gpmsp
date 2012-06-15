@@ -5,7 +5,9 @@
             [clojure.java.shell :as shell]
             [mspacman.control :as con])
   (:use [mspacman.individual :as ind])
-  (import java.net.InetAddress))
+  (import java.net.InetAddress)
+  (import java.util.Calendar)
+  (import java.text.SimpleDateFormat))
 
 (defstruct individual :program :fitness :time)
 
@@ -23,6 +25,9 @@
 
 (def SELECTION 'fitness-proportionate)
 (def TOURNAMENT-SIZE 10)
+
+(def STARTED (.format (SimpleDateFormat. "yyyy-MM-dd'T'HH:mm:ssZ")
+                      (.getTime (Calendar/getInstance))))
 
 (declare expand)
 (defn atomize [term]
@@ -228,7 +233,19 @@
                         (System/getProperty "user.home")
                         (string/lower-case (.getHostName (InetAddress/getLocalHost)))
                         n)
-                (str generation))
+                (str {:population generation
+                      :population-size SIZE-OF-POPULATION
+                      :elitism ELITISM-RATE
+                      :max-start-depth MAX-STARTING-DEPTH
+                      :max-starting-width gpMAX-STARTING-WIDTH-OF-EXPR
+                      :mutation MUTATION-RATE
+                      :reproduction REPRODUCTION-RATE
+                      :mutation-depth MUTATION-DEPTH
+                      :rand-int RAND-INT-RATE
+                      :expr? EXPR?-RATE
+                      :fitness-runs FITNESS-RUNS
+                      :selection SELECTION
+                      :date STARTED}))
           (println (map :fitness generation)
                    "average:"
                    (int (/ (reduce + (map :fitness generation)) (count generation))))
