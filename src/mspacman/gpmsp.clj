@@ -209,7 +209,7 @@
         std (/ (reduce + (map #(Math/pow % 2)
                               (map #(- % mean) times)))
                SIZE-OF-POPULATION)]
-    (long (+ mean (* std 2)))))
+    (long (+ mean std))))
 
 (defn run-generation [generation]
   (use 'mspacman.individual)
