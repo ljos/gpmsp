@@ -237,7 +237,7 @@
                       :population-size SIZE-OF-POPULATION
                       :elitism ELITISM-RATE
                       :max-start-depth MAX-STARTING-DEPTH
-                      :max-starting-width gpMAX-STARTING-WIDTH-OF-EXPR
+                      :max-starting-width MAX-STARTING-WIDTH-OF-EXPR
                       :mutation MUTATION-RATE
                       :reproduction REPRODUCTION-RATE
                       :mutation-depth MUTATION-DEPTH
