@@ -76,7 +76,7 @@
                   (finally
                    (shutdown-socket socket))))
               (catch Exception e nil)))]
-    (doall (filter has-user? machines))))
+    (doall (filter #(do (println %) (has-user? %)) machines))))
 
 (defn- send-inds-to-mahine [individuals machine]
   (try
