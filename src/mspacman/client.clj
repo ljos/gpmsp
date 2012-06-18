@@ -62,6 +62,7 @@
   (letfn [(has-user? [machine]
             (try
               (let [socket (doto (Socket.)
+                             (.setSoTimeout 5000)
                              (.connect
                               (InetSocketAddress.
                                (format "%s.klientdrift.uib.no" machine)
