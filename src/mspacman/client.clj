@@ -153,7 +153,7 @@
                        (gp/create-random-population))
                   0))
   ([start-pop start-gen]
-     (run-cluster (loop [popu (read-string (slurp start-pop))]
+     (run-cluster (loop [popu (:population (read-string (slurp start-pop)))]
                     (if (= (count popu) gp/SIZE-OF-POPULATION)
                       popu
                       (recur (conj popu (first popu)))))
