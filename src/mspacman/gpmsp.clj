@@ -263,7 +263,8 @@
             0))
   ([gen-file nb-gen]
      (println (format "Started at generation %s." nb-gen))
-     (gp-go (run-generation (read-string (slurp gen-file))) (read-string nb-gen))))
+     (gp-go (run-generation (:population (read-string (slurp gen-file))))
+            (read-string nb-gen))))
 
 (defn run-fitness-on [individuals]
   (use 'mspacman.individual)
