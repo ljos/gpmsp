@@ -31,7 +31,7 @@
   (letfn [(has-user? [machine]
             (try
               (let [socket (doto (Socket.)
-                             (.setSoTimeout 5000)
+                             (.setSoTimeout 30000)
                              (.connect
                               (InetSocketAddress.
                                (format "%s.klientdrift.uib.no" machine)
@@ -46,7 +46,7 @@
                   (finally
                    (shutdown-socket socket))))
               (catch Exception e nil)))]
-    (doall (filter #(do (println %) (has-user? %)) machines))))
+    (doall (filter #(has-user? %) machines))))
 
 (defn- send-inds-to-mahine [individuals machine]
   (try
