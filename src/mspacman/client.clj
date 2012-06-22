@@ -49,6 +49,9 @@
                    (shutdown-socket socket))))
               (catch java.net.ConnectException e
                 (println (.getMessage e)
+                         machine))
+              (catch java.net.SocketTimeoutException e
+                (println (.getMessage e)
                          machine))))]
     (doall (filter #(has-user? %) machines))))
 
