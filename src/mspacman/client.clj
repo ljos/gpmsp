@@ -42,10 +42,14 @@
                 (try
                   (when (zero? (read-string (.readLine rdr)))
                     machine)
-                  (catch Exception e (do (println (.getMessage e)) nil))
+                  (catch Exception e
+                    (println (.getMessage e)
+                             machine))
                   (finally
                    (shutdown-socket socket))))
-              (catch Exception e nil)))]
+              (catch java.net.ConnectException e
+                (println (.getMessage e)
+                         machine))))]
     (doall (filter #(has-user? %) machines))))
 
 (defn- send-inds-to-mahine [individuals machine]
