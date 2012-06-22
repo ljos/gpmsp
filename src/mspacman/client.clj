@@ -29,39 +29,36 @@
 (defn- find-usable-machines [machines]
   {:post [(seq %)]}
   (letfn [(has-user? [machine]
-            (try
-              (let [socket (doto (Socket.)
-                             (.setSoTimeout 30000)
-                             (.connect
-                              (InetSocketAddress.
-                               (format "%s.klientdrift.uib.no" machine)
-                               50001) 2000))
-                    rdr (LineNumberingPushbackReader.
-                         (InputStreamReader.
-                          (.getInputStream socket)))]
-                (try
-                  (when (zero? (read-string (.readLine rdr)))
-                    machine)
-                  (catch Exception e (do (println (.getMessage e)) nil))
-                  (finally
-                   (shutdown-socket socket))))
-              (catch Exception e nil)))]
+            (let [socket (doto (Socket.)
+                           (.setSoTimeout 30000)
+                           (.connect
+                            (InetSocketAddress.
+                             (format "%s.klientdrift.uib.no" machine)
+                             50001) 2000))
+                  rdr (LineNumberingPushbackReader.
+                       (InputStreamReader.
+                        (.getInputStream socket)))]
+              (try
+                (when (zero? (read-string (.readLine rdr)))
+                  machine)
+                (catch Exception e (do (println (.getMessage e)) nil))
+                (finally
+                  (shutdown-socket socket)))))]
     (doall (filter #(has-user? %) machines))))
 
 (defn- send-inds-to-mahine [individuals machine]
-  (try
-    (let [socket (Socket. (format "%s.klientdrift.uib.no" machine) 50000)
-          rdr (LineNumberingPushbackReader.
-               (InputStreamReader.
-                (.getInputStream socket)))]
-      (try
-        (binding [*out* (OutputStreamWriter.
-                         (.getOutputStream socket))]
-          (prn individuals))
-        (read-string (.readLine rdr))
-        (finally
-         (shutdown-socket socket))))
-    (catch Exception e nil)))
+  (let [socket (Socket. (format "%s.klientdrift.uib.no" machine) 50000)
+        rdr (LineNumberingPushbackReader.
+             (InputStreamReader.
+              (.getInputStream socket)))]
+    (try
+      (binding [*out* (OutputStreamWriter.
+                       (.getOutputStream socket))]
+        (prn individuals))
+      (read-string (.readLine rdr))
+      (catch Exception e (do (println (.getMessage e)) nil))
+      (finally
+        (shutdown-socket socket)))))
 
 (defn- send-population [machines population]
   (mapcat deref
