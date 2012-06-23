@@ -208,9 +208,12 @@ public class Game {
 		for (int i = 0; i < radius; ++i) {
 			Set<Point> ns = new HashSet<Point>(ps);
 			ns.removeAll(closed);
+			closed.addAll(ns);
 			for(Point p : ns){
 				ps.addAll(gm.getMap().get(p));
-				closed.add(p);
+				if (adjustments.containsKey(p)) {
+					value += adjustments.get(p);
+				}
 				adjustments.put(p, value);
 			}
 		}
