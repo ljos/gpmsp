@@ -28,7 +28,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-*/
+ */
 
 package jef.cpuboard;
 
@@ -42,34 +42,33 @@ import jef.map.WriteMap;
 /**
  * @author Erik Duijs
  * 
- * Tweaked implementation of CpuBoard.
- * The 'writefast', 'readarg' and 'readfast' implementations bypass the memory map.
- * This will only make a difference when a Cpu calls these methods in
- * certain circumstances. For example 'readarg' reads an argument of an opcode and one
- * can assume that this will always be read from memory, making the memory map not
- * necessary.
+ *         Tweaked implementation of CpuBoard. The 'writefast', 'readarg' and
+ *         'readfast' implementations bypass the memory map. This will only make
+ *         a difference when a Cpu calls these methods in certain circumstances.
+ *         For example 'readarg' reads an argument of an opcode and one can
+ *         assume that this will always be read from memory, making the memory
+ *         map not necessary.
  * 
- * FastCpuBoard.java
+ *         FastCpuBoard.java
  */
 public class FastCpuBoard implements CpuBoard {
 
-	public Cpu		cpu;
-	public int		frq;
-    //public ReadHandler    readMap[];
-    //public WriteHandler   writeMap[];
-    //public ReadHandler    portInMap[];
-    //public WriteHandler   portOutMap[];
-    public InterruptHandler irqHandler;
-    private ReadMap mra;
-    private WriteMap mwa;
-    private ReadHandler ior;
-    private WriteHandler iow;
-	public int		ipf;
+	public Cpu cpu;
+	public int frq;
+	// public ReadHandler readMap[];
+	// public WriteHandler writeMap[];
+	// public ReadHandler portInMap[];
+	// public WriteHandler portOutMap[];
+	public InterruptHandler irqHandler;
+	private ReadMap mra;
+	private WriteMap mwa;
+	private ReadHandler ior;
+	private WriteHandler iow;
+	public int ipf;
 
-	public int		mem[];
+	public int mem[];
 
-
-/** Initialize the CpuBoard */
+	/** Initialize the CpuBoard */
 	@Override
 	public boolean init(CpuDriver cpuDriver) {
 
@@ -88,19 +87,19 @@ public class FastCpuBoard implements CpuBoard {
 		return true;
 	}
 
-/** Get the memory */
+	/** Get the memory */
 	@Override
 	public int[] getMem() {
 		return mem;
 	}
 
-/** Get the CPU */
+	/** Get the CPU */
 	@Override
 	public Cpu getCpu() {
 		return cpu;
 	}
 
-/** Reset the CPU */
+	/** Reset the CPU */
 	@Override
 	public void reset(boolean hard) {
 		cpu.reset();
@@ -111,89 +110,88 @@ public class FastCpuBoard implements CpuBoard {
 		}
 	}
 
-/** Execute the CPU for a given number of cycles */
+	/** Execute the CPU for a given number of cycles */
 	@Override
 	public void exec(int cycles) {
 		cpu.exec(cycles);
 	}
 
-/** Cause an interrupt on the CPU */
+	/** Cause an interrupt on the CPU */
 	@Override
 	public void interrupt(int type, boolean irq) {
 		cpu.interrupt(type, irq);
 	}
 
-/** Write a byte */
+	/** Write a byte */
 	@Override
 	public void write8(int address, int data) {
-		//writeMap[address].write(address, data);
-        mwa.write(address, data);
+		// writeMap[address].write(address, data);
+		mwa.write(address, data);
 	}
 
-/** Write a byte */
+	/** Write a byte */
 	@Override
 	public void write8fast(int address, int data) {
 		mem[address] = data;
 	}
 
-/** Read a byte */
+	/** Read a byte */
 	@Override
 	public int read8(int address) {
-		//return readMap[address].read(address);
-        return mra.read(address);
+		// return readMap[address].read(address);
+		return mra.read(address);
 	}
 
-/** Read an opcode byte */
+	/** Read an opcode byte */
 	@Override
 	public int read8opc(int address) {
 		return mem[address];
 	}
 
-/** Read a byte directly */
+	/** Read a byte directly */
 	@Override
 	public int read8arg(int address) {
 		return mem[address];
 	}
 
-/** Write a word */
+	/** Write a word */
 	@Override
 	public void write16(int address, int data) {
 		write8(address + 1, data >> 8);
 		write8(address, data & 0xff);
 	}
 
-/** Write a word */
+	/** Write a word */
 	@Override
 	public void write16fast(int address, int data) {
 		mem[address + 1] = data >> 8;
 		mem[address] = data & 0xff;
 	}
 
-/** Read a word */
+	/** Read a word */
 	@Override
 	public int read16(int address) {
 		return read8(address) | (read8(address + 1) << 8);
 	}
 
-/** Read a word */
+	/** Read a word */
 	@Override
 	public int read16arg(int address) {
 		return mem[address] | (mem[address + 1] << 8);
 	}
 
-
-/** Write to port */
+	/** Write to port */
 	@Override
 	public void out(int port, int value) {
-		//portOutMap[port].write(port, value);
-        iow.write(port, value);
+		// portOutMap[port].write(port, value);
+		iow.write(port, value);
 	}
 
-/** Read from port */
+	/** Read from port */
 	@Override
 	public int in(int port) {
-		//return portInMap[port].read(port);
-        return ior.read(port);
+		// return portInMap[port].read(port);
+		return ior.read(port);
 	}
 
 }

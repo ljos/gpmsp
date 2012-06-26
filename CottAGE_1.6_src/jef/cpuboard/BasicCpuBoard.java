@@ -28,7 +28,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-*/
+ */
 
 package jef.cpuboard;
 
@@ -44,27 +44,27 @@ import jef.map.WriteMap;
  * 
  * @author Erik Duijs
  * 
- * BasicCpuBoard.java */
+ *         BasicCpuBoard.java
+ */
 public class BasicCpuBoard implements CpuBoard {
 
-	public Cpu		cpu;
-	public int		frq;
-	//public ReadHandler	readMap[];
-	//public WriteHandler	writeMap[];
-	//public ReadHandler	portInMap[];
-	//public WriteHandler	portOutMap[];
-    private ReadMap mra;
-    private WriteMap mwa;
-    private ReadHandler ior;
-    private WriteHandler iow;
-    
-	public InterruptHandler	irqHandler;
-	public int		ipf;
+	public Cpu cpu;
+	public int frq;
+	// public ReadHandler readMap[];
+	// public WriteHandler writeMap[];
+	// public ReadHandler portInMap[];
+	// public WriteHandler portOutMap[];
+	private ReadMap mra;
+	private WriteMap mwa;
+	private ReadHandler ior;
+	private WriteHandler iow;
 
-	public int		mem[];
+	public InterruptHandler irqHandler;
+	public int ipf;
 
+	public int mem[];
 
-/** Initialize the CpuBoard */
+	/** Initialize the CpuBoard */
 	@Override
 	public boolean init(CpuDriver cpuDriver) {
 
@@ -83,19 +83,19 @@ public class BasicCpuBoard implements CpuBoard {
 		return true;
 	}
 
-/** Get the memory */
+	/** Get the memory */
 	@Override
 	public int[] getMem() {
 		return mem;
 	}
 
-/** Get the CPU */
+	/** Get the CPU */
 	@Override
 	public Cpu getCpu() {
 		return cpu;
 	}
 
-/** Reset the CPU */
+	/** Reset the CPU */
 	@Override
 	public void reset(boolean hard) {
 		cpu.reset();
@@ -106,99 +106,101 @@ public class BasicCpuBoard implements CpuBoard {
 		}
 	}
 
-/** Execute the CPU for a given number of cycles */
+	/** Execute the CPU for a given number of cycles */
 	@Override
 	public void exec(int cycles) {
 		cpu.exec(cycles);
 	}
 
-/** Cause an interrupt on the CPU */
+	/** Cause an interrupt on the CPU */
 	@Override
 	public void interrupt(int type, boolean irq) {
 		cpu.interrupt(type, irq);
 	}
 
-/** Write a byte */
+	/** Write a byte */
 	@Override
 	public void write8(int address, int data) {
-        mwa.write(address, data);
-		//writeMap[address].write(address, data);
+		mwa.write(address, data);
+		// writeMap[address].write(address, data);
 	}
 
-/** Write a byte */
+	/** Write a byte */
 	@Override
 	public void write8fast(int address, int data) {
-        mwa.write(address, data);
-		//writeMap[address].write(address, data);
+		mwa.write(address, data);
+		// writeMap[address].write(address, data);
 	}
 
-/** Read a byte */
+	/** Read a byte */
 	@Override
 	public int read8(int address) {
-        return mra.read(address);
-		//return readMap[address].read(address);
+		return mra.read(address);
+		// return readMap[address].read(address);
 	}
 
-/** Read an opcode byte */
+	/** Read an opcode byte */
 	@Override
 	public int read8opc(int address) {
-        return mra.read(address);
-        //return readMap[address].read(address);
+		return mra.read(address);
+		// return readMap[address].read(address);
 	}
 
-/** Read a byte */
+	/** Read a byte */
 	@Override
 	public int read8arg(int address) {
-        return mra.read(address);
-        //return readMap[address].read(address);
+		return mra.read(address);
+		// return readMap[address].read(address);
 	}
 
-/** Write a word */
+	/** Write a word */
 	@Override
 	public void write16(int address, int data) {
 		mwa.write(address++, data & 0xff);
-		mwa.write(address, data>>8);
-        //writeMap[address].write(address++, data & 0xff);
-        //writeMap[address].write(address, data>>8);
+		mwa.write(address, data >> 8);
+		// writeMap[address].write(address++, data & 0xff);
+		// writeMap[address].write(address, data>>8);
 	}
 
-/** Write a word */
+	/** Write a word */
 	@Override
 	public void write16fast(int address, int data) {
-        mwa.write(address++, data & 0xff);
-        mwa.write(address, data>>8);
-        //writeMap[address].write(address++, data & 0xff);
-        //writeMap[address].write(address, data>>8);
+		mwa.write(address++, data & 0xff);
+		mwa.write(address, data >> 8);
+		// writeMap[address].write(address++, data & 0xff);
+		// writeMap[address].write(address, data>>8);
 	}
 
-/** Read a word */
+	/** Read a word */
 	@Override
 	public int read16(int address) {
 		return mra.read(address++) | (mra.read(address) << 8);
-        //return readMap[address].read(address++) | (readMap[address].read(address) << 8);
+		// return readMap[address].read(address++) |
+		// (readMap[address].read(address) << 8);
 	}
 
-/** Read a word */
+	/** Read a word */
 	@Override
 	public int read16arg(int address) {
-        return mra.read(address++) | (mra.read(address) << 8);
-        //return readMap[address].read(address++) | (readMap[address].read(address) << 8);
+		return mra.read(address++) | (mra.read(address) << 8);
+		// return readMap[address].read(address++) |
+		// (readMap[address].read(address) << 8);
 	}
 
-
-/** Write to port */
+	/** Write to port */
 	@Override
 	public void out(int port, int value) {
-		//System.out.println(Integer.toHexString(port) + " - " + portOutMap[port].toString());
-		//portOutMap[port].write(port, value);
-        iow.write(port, value);
+		// System.out.println(Integer.toHexString(port) + " - " +
+		// portOutMap[port].toString());
+		// portOutMap[port].write(port, value);
+		iow.write(port, value);
 	}
 
-/** Read from port */
+	/** Read from port */
 	@Override
 	public int in(int port) {
-		//return portInMap[port].read(port);
-        return ior.read(port);
+		// return portInMap[port].read(port);
+		return ior.read(port);
 	}
 
 }

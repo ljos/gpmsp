@@ -75,7 +75,8 @@ public final class Z80 implements Cpu, Z80debug {
 	// lookup table for setting a bit of an 8-bit value using OR
 	private static final int[] bitSet = { 1, 2, 4, 8, 16, 32, 64, 128 };
 	// lookup table for resetting a bit of an 8-bit value using AND
-	private static final int[] bitRes = { 254, 253, 251, 247, 239, 223, 191, 127 }; 
+	private static final int[] bitRes = { 254, 253, 251, 247, 239, 223, 191,
+			127 };
 	// Debug info
 	int debugLevel = 0;
 	static int debugBreakPoint = 0;

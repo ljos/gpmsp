@@ -28,38 +28,39 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-*/
+ */
 
 package jef.map;
 
 /**
  * @author Erik Duijs
  * 
- * MemoryWriteAddress.java */
+ *         MemoryWriteAddress.java
+ */
 public class MemoryWriteAddress implements WriteMap {
 
-//	private int			size;
-	public WriteHandler 	writeMap[];
-	private UndefinedWrite  defwrite  = new UndefinedWrite();
-	private WriteHandler	RAM;
-	private WriteHandler	ROM;
-	public int[]		mem;
+	// private int size;
+	public WriteHandler writeMap[];
+	private UndefinedWrite defwrite = new UndefinedWrite();
+	private WriteHandler RAM;
+	private WriteHandler ROM;
+	public int[] mem;
 	static final boolean debug = false;
 
-	public MEMWriteBanked 	BANKS[] = new MEMWriteBanked[8];
-	
+	public MEMWriteBanked BANKS[] = new MEMWriteBanked[8];
+
 	public MemoryWriteAddress(int[] mem) {
 		this.mem = mem;
-		this.RAM	  = new RAMwrite();
-		this.ROM	  = new ROMwrite();
+		this.RAM = new RAMwrite();
+		this.ROM = new ROMwrite();
 		this.writeMap = new WriteHandler[mem.length];
-		set(0, mem.length-1, defwrite);
+		set(0, mem.length - 1, defwrite);
 	}
 
 	public MemoryWriteAddress(int size) {
-	//	this.size = size;
+		// this.size = size;
 		this.writeMap = new WriteHandler[size];
-		set(0, size-1, defwrite);
+		set(0, size - 1, defwrite);
 	}
 
 	@Override
@@ -71,7 +72,7 @@ public class MemoryWriteAddress implements WriteMap {
 
 	@Override
 	public void setMW(int from, int until, int type) {
-		WriteHandler wh = null; //(type == 0) ? RAM : ROM;
+		WriteHandler wh = null; // (type == 0) ? RAM : ROM;
 
 		switch (type) {
 		case MWA_RAM:
@@ -102,19 +103,22 @@ public class MemoryWriteAddress implements WriteMap {
 		return mem.length;
 	}
 
-	/*public WriteHandler[] get() {
-		return writeMap;
-	}*/
-    
-    @Override
+	/*
+	 * public WriteHandler[] get() { return writeMap; }
+	 */
+
+	@Override
 	public void write(int address, int data) {
-        writeMap[address].write(address, data);
-    }
+		writeMap[address].write(address, data);
+	}
 
 	public class UndefinedWrite implements WriteHandler {
 		@Override
 		public void write(int address, int value) {
-			if (debug) System.out.println("Undefined Write at " + Integer.toHexString(address) + ", value : " + Integer.toHexString(value));
+			if (debug)
+				System.out.println("Undefined Write at "
+						+ Integer.toHexString(address) + ", value : "
+						+ Integer.toHexString(value));
 		}
 	}
 
@@ -127,9 +131,10 @@ public class MemoryWriteAddress implements WriteMap {
 
 	public class ROMwrite implements WriteHandler {
 		@Override
-		public void write(int address, int value) {}
+		public void write(int address, int value) {
+		}
 	}
-	
+
 	public class MEMWriteBanked implements WriteHandler {
 		int startArea;
 		int bank_address;
@@ -141,10 +146,11 @@ public class MemoryWriteAddress implements WriteMap {
 		public void setBankAdr(int adr) {
 			this.bank_address = adr - this.startArea;
 		}
+
 		@Override
 		public void write(int address, int value) {
 			mem[address + this.bank_address] = value;
 		}
 	}
-	
+
 }

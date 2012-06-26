@@ -88,8 +88,8 @@ public class Cottage extends GfxProducer {
 				showFPS = !showFPS;
 				break;
 
-			default: //255=nothing, 254=up, 253=left, 251=right, 247=down
-				switch (code) { 
+			default: // 255=nothing, 254=up, 253=left, 251=right, 247=down
+				switch (code) {
 				case KeyEvent.VK_UP:
 					m.writeInput(254);
 					break;
@@ -101,11 +101,11 @@ public class Cottage extends GfxProducer {
 					break;
 				case KeyEvent.VK_DOWN:
 					m.writeInput(247);
-					break; 
-				default: 
+					break;
+				default:
 					m.keyPress(code);
 					break;
-				} 
+				}
 				break;
 			}
 			break;
@@ -116,11 +116,11 @@ public class Cottage extends GfxProducer {
 			case KeyEvent.VK_LEFT:
 			case KeyEvent.VK_RIGHT:
 			case KeyEvent.VK_DOWN:
-				//m.writeInput(255);
+				// m.writeInput(255);
 				break;
 			default:
 				m.keyRelease(code);
-				break; 
+				break;
 			}
 			break;
 		}
@@ -181,7 +181,7 @@ public class Cottage extends GfxProducer {
 
 		t = new Throttle(m.getProperty(Machine.FPS));
 		t.enable(false);
-				
+
 		BitMap bm = m.refresh(true);
 		while (!stop) {
 			if (!paused) {
@@ -191,18 +191,19 @@ public class Cottage extends GfxProducer {
 			t.throttle();
 		}
 	}
-	
+
 	public int getPixel(int x, int y) {
-		return (x >= 0 && x < 224 && y >= 0 && y < 288) ? pixel[x + y * 224] : -1;
+		return (x >= 0 && x < 224 && y >= 0 && y < 288) ? pixel[x + y * 224]
+				: -1;
 	}
-	
+
 	@Override
 	public void postPaint(Graphics g) {
 		if (paused) {
-	//		String text = "GAME PAUSED";
-	//		jef.video.Console.drawTextLine(g,
-	//				getWidth() / 2 - 6 * text.length() / 2,
-	//				getHeight() / 2 + 6, text);
+			// String text = "GAME PAUSED";
+			// jef.video.Console.drawTextLine(g,
+			// getWidth() / 2 - 6 * text.length() / 2,
+			// getHeight() / 2 + 6, text);
 		} else if (showFPS) {
 			StringBuffer buf = new StringBuffer();
 			String fs = Integer.toString(t.getFrameSkip());

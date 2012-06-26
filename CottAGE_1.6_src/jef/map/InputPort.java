@@ -30,13 +30,12 @@ package jef.map;
 
 import java.awt.event.KeyEvent;
 
-
 /**
  * @author Erik Duijs
  * 
- * This class implements a ReadHandler for handling input events. TO DO: Make
- * inputs configurable instead of hardcoded MAME input map which has to be done
- * in a cottage.mame class.
+ *         This class implements a ReadHandler for handling input events. TO DO:
+ *         Make inputs configurable instead of hardcoded MAME input map which
+ *         has to be done in a cottage.mame class.
  */
 public class InputPort implements ReadHandler {
 
@@ -58,8 +57,8 @@ public class InputPort implements ReadHandler {
 	public static final int IPT_BUTTON2 = 10;
 	public static final int IPT_BUTTON3 = 11;
 	public static final int IPT_BUTTON4 = 12;
-    public static final int IPT_BUTTON5 = 13;
-    public static final int IPT_BUTTON6 = 14;
+	public static final int IPT_BUTTON5 = 13;
+	public static final int IPT_BUTTON6 = 14;
 	public static final int IPT_TILT = 15;
 	public static final int IPF_2WAY = 0; // not implemented
 	public static final int IPF_4WAY = 0; // not implemented
@@ -72,12 +71,12 @@ public class InputPort implements ReadHandler {
 	public static final int IPF_PLAYER4 = 384; // not implemented
 
 	// analog
-	public static final int IPT_PADDLE			= 1;
-	public static final int IPT_DIAL			= 2;
-	public static final int IPF_REVERSE		= 256;
-	public static final int IPT_AD_STICK_X 	= 3;
-	public static final int IPT_AD_STICK_Y 	= 4;
-	
+	public static final int IPT_PADDLE = 1;
+	public static final int IPT_DIAL = 2;
+	public static final int IPF_REVERSE = 256;
+	public static final int IPT_AD_STICK_X = 3;
+	public static final int IPT_AD_STICK_Y = 4;
+
 	private int value = 0;
 
 	private boolean analog = false;
@@ -89,7 +88,8 @@ public class InputPort implements ReadHandler {
 	private int[] bitMask = new int[512];
 	private int[] activityType = new int[512];
 
-	private boolean[] impulse = { false, false, false, false, false, false, false, false };
+	private boolean[] impulse = { false, false, false, false, false, false,
+			false, false };
 	private int[] impulseActivityType = { 0, 0, 0, 0, 0, 0, 0, 0 };
 	private int[] impulseInputType = { 0, 0, 0, 0, 0, 0, 0, 0 };
 	private int[] impulseCounter = { -1, -1, -1, -1, -1, -1, -1, -1 };
@@ -104,211 +104,187 @@ public class InputPort implements ReadHandler {
 
 		switch (keyCode) {
 
-			case KeyEvent.VK_5 :
-				value =
-					(activityType[IPT_COIN1] == IP_ACTIVE_HIGH)
-						? value | (0xff & bitMask[IPT_COIN1])
-						: value & ~bitMask[IPT_COIN1];
-				break;
+		case KeyEvent.VK_5:
+			value = (activityType[IPT_COIN1] == IP_ACTIVE_HIGH) ? value
+					| (0xff & bitMask[IPT_COIN1]) : value & ~bitMask[IPT_COIN1];
+			break;
 
-			case KeyEvent.VK_6 :
-				value =
-					(activityType[IPT_COIN2] == IP_ACTIVE_HIGH)
-						? value | (0xff & bitMask[IPT_COIN1])
-						: value & ~bitMask[IPT_COIN1];
-				break;
+		case KeyEvent.VK_6:
+			value = (activityType[IPT_COIN2] == IP_ACTIVE_HIGH) ? value
+					| (0xff & bitMask[IPT_COIN1]) : value & ~bitMask[IPT_COIN1];
+			break;
 
-			case KeyEvent.VK_1 :
-				value =
-					(activityType[IPT_START1] == IP_ACTIVE_HIGH)
-						? value | (0xff & bitMask[IPT_START1])
-						: value & ~bitMask[IPT_START1];
-				break;
+		case KeyEvent.VK_1:
+			value = (activityType[IPT_START1] == IP_ACTIVE_HIGH) ? value
+					| (0xff & bitMask[IPT_START1]) : value
+					& ~bitMask[IPT_START1];
+			break;
 
-			case KeyEvent.VK_2 :
-				value =
-					(activityType[IPT_START2] == IP_ACTIVE_HIGH)
-						? value | (0xff & bitMask[IPT_START2])
-						: value & ~bitMask[IPT_START2];
-				break;
+		case KeyEvent.VK_2:
+			value = (activityType[IPT_START2] == IP_ACTIVE_HIGH) ? value
+					| (0xff & bitMask[IPT_START2]) : value
+					& ~bitMask[IPT_START2];
+			break;
 
-			case KeyEvent.VK_LEFT :
-				if (!analog) {
-					value =
-						(activityType[IPT_JOYSTICK_LEFT] == IP_ACTIVE_HIGH)
-							? value | (0xff & bitMask[IPT_JOYSTICK_LEFT])
-							: value & ~bitMask[IPT_JOYSTICK_LEFT];
-				} else {
-					switch (type) {
-						case IPT_PADDLE :
-						case IPT_AD_STICK_X :
-							value = reverse ? 255 : 0;
-					}
+		case KeyEvent.VK_LEFT:
+			if (!analog) {
+				value = (activityType[IPT_JOYSTICK_LEFT] == IP_ACTIVE_HIGH) ? value
+						| (0xff & bitMask[IPT_JOYSTICK_LEFT])
+						: value & ~bitMask[IPT_JOYSTICK_LEFT];
+			} else {
+				switch (type) {
+				case IPT_PADDLE:
+				case IPT_AD_STICK_X:
+					value = reverse ? 255 : 0;
 				}
-				break;
+			}
+			break;
 
-			case KeyEvent.VK_D :
-				if (!analog) {
-					value =
-						(activityType[IPT_JOYSTICK_LEFT | IPF_PLAYER2] == IP_ACTIVE_HIGH)
-							? value | (0xff & bitMask[IPT_JOYSTICK_LEFT | IPF_PLAYER2])
-							: value & ~bitMask[IPT_JOYSTICK_LEFT | IPF_PLAYER2];
-				} else {
-					switch (type) {
-						case IPT_PADDLE :
-							value = reverse ? 255 : 0;
-							break;
-					}
+		case KeyEvent.VK_D:
+			if (!analog) {
+				value = (activityType[IPT_JOYSTICK_LEFT | IPF_PLAYER2] == IP_ACTIVE_HIGH) ? value
+						| (0xff & bitMask[IPT_JOYSTICK_LEFT | IPF_PLAYER2])
+						: value & ~bitMask[IPT_JOYSTICK_LEFT | IPF_PLAYER2];
+			} else {
+				switch (type) {
+				case IPT_PADDLE:
+					value = reverse ? 255 : 0;
+					break;
 				}
-				break;
+			}
+			break;
 
-			case KeyEvent.VK_RIGHT :
-				if (!analog) {
-					value =
-						(activityType[IPT_JOYSTICK_RIGHT] == IP_ACTIVE_HIGH)
-							? value | (0xff & bitMask[IPT_JOYSTICK_RIGHT])
-							: value & ~bitMask[IPT_JOYSTICK_RIGHT];
-				} else {
-					switch (type) {
-						case IPT_PADDLE :
-						case IPT_AD_STICK_X :
-							value = reverse ? 0 : 255;
-					}
+		case KeyEvent.VK_RIGHT:
+			if (!analog) {
+				value = (activityType[IPT_JOYSTICK_RIGHT] == IP_ACTIVE_HIGH) ? value
+						| (0xff & bitMask[IPT_JOYSTICK_RIGHT])
+						: value & ~bitMask[IPT_JOYSTICK_RIGHT];
+			} else {
+				switch (type) {
+				case IPT_PADDLE:
+				case IPT_AD_STICK_X:
+					value = reverse ? 0 : 255;
 				}
-				break;
+			}
+			break;
 
-			case KeyEvent.VK_G :
-				if (!analog) {
-					value =
-						(activityType[IPT_JOYSTICK_RIGHT | IPF_PLAYER2] == IP_ACTIVE_HIGH)
-							? value | (0xff & bitMask[IPT_JOYSTICK_RIGHT | IPF_PLAYER2])
-							: value & ~bitMask[IPT_JOYSTICK_RIGHT | IPF_PLAYER2];
-				} else {
-					switch (type) {
-						case IPT_PADDLE :
-							value = reverse ? 0 : 255;
-							break;
-					}
+		case KeyEvent.VK_G:
+			if (!analog) {
+				value = (activityType[IPT_JOYSTICK_RIGHT | IPF_PLAYER2] == IP_ACTIVE_HIGH) ? value
+						| (0xff & bitMask[IPT_JOYSTICK_RIGHT | IPF_PLAYER2])
+						: value & ~bitMask[IPT_JOYSTICK_RIGHT | IPF_PLAYER2];
+			} else {
+				switch (type) {
+				case IPT_PADDLE:
+					value = reverse ? 0 : 255;
+					break;
 				}
-				break;
+			}
+			break;
 
-			case KeyEvent.VK_UP :
-				if (!analog) {
-					value =
-						(activityType[IPT_JOYSTICK_UP] == IP_ACTIVE_HIGH)
-							? value | (0xff & bitMask[IPT_JOYSTICK_UP])
-							: value & ~bitMask[IPT_JOYSTICK_UP];
-				} else {
-					switch (type) {
-						case IPT_PADDLE :
-						case IPT_AD_STICK_Y :
-							value = reverse ? 255 : 0;
-					}
-
+		case KeyEvent.VK_UP:
+			if (!analog) {
+				value = (activityType[IPT_JOYSTICK_UP] == IP_ACTIVE_HIGH) ? value
+						| (0xff & bitMask[IPT_JOYSTICK_UP])
+						: value & ~bitMask[IPT_JOYSTICK_UP];
+			} else {
+				switch (type) {
+				case IPT_PADDLE:
+				case IPT_AD_STICK_Y:
+					value = reverse ? 255 : 0;
 				}
-				break;
 
-			case KeyEvent.VK_R :
-				value =
-					(activityType[IPT_JOYSTICK_UP | IPF_PLAYER2] == IP_ACTIVE_HIGH)
-						? value | (0xff & bitMask[IPT_JOYSTICK_UP | IPF_PLAYER2])
-						: value & ~bitMask[IPT_JOYSTICK_UP | IPF_PLAYER2];
-				break;
+			}
+			break;
 
-			case KeyEvent.VK_DOWN :
-				if (!analog) {
-					value =
-						(activityType[IPT_JOYSTICK_DOWN] == IP_ACTIVE_HIGH)
-							? value | (0xff & bitMask[IPT_JOYSTICK_DOWN])
-							: value & ~bitMask[IPT_JOYSTICK_DOWN];
-				} else {
-					switch (type) {
-						case IPT_PADDLE :
-						case IPT_AD_STICK_Y :
-							value = reverse ? 0 : 255;
-					}
+		case KeyEvent.VK_R:
+			value = (activityType[IPT_JOYSTICK_UP | IPF_PLAYER2] == IP_ACTIVE_HIGH) ? value
+					| (0xff & bitMask[IPT_JOYSTICK_UP | IPF_PLAYER2])
+					: value & ~bitMask[IPT_JOYSTICK_UP | IPF_PLAYER2];
+			break;
 
+		case KeyEvent.VK_DOWN:
+			if (!analog) {
+				value = (activityType[IPT_JOYSTICK_DOWN] == IP_ACTIVE_HIGH) ? value
+						| (0xff & bitMask[IPT_JOYSTICK_DOWN])
+						: value & ~bitMask[IPT_JOYSTICK_DOWN];
+			} else {
+				switch (type) {
+				case IPT_PADDLE:
+				case IPT_AD_STICK_Y:
+					value = reverse ? 0 : 255;
 				}
-				break;
 
-			case KeyEvent.VK_F :
-				value =
-					(activityType[IPT_JOYSTICK_DOWN | IPF_PLAYER2] == IP_ACTIVE_HIGH)
-						? value | (0xff & bitMask[IPT_JOYSTICK_DOWN | IPF_PLAYER2])
-						: value & ~bitMask[IPT_JOYSTICK_DOWN | IPF_PLAYER2];
-				break;
+			}
+			break;
 
-			case KeyEvent.VK_CONTROL :
-				value =
-					(activityType[IPT_BUTTON1] == IP_ACTIVE_HIGH)
-						? value | (0xff & bitMask[IPT_BUTTON1])
-						: value & ~bitMask[IPT_BUTTON1];
-				break;
+		case KeyEvent.VK_F:
+			value = (activityType[IPT_JOYSTICK_DOWN | IPF_PLAYER2] == IP_ACTIVE_HIGH) ? value
+					| (0xff & bitMask[IPT_JOYSTICK_DOWN | IPF_PLAYER2])
+					: value & ~bitMask[IPT_JOYSTICK_DOWN | IPF_PLAYER2];
+			break;
 
-			case KeyEvent.VK_A :
-				value =
-					(activityType[IPT_BUTTON1 | IPF_PLAYER2] == IP_ACTIVE_HIGH)
-						? value | (0xff & bitMask[IPT_BUTTON1 | IPF_PLAYER2])
-						: value & ~bitMask[IPT_BUTTON1 | IPF_PLAYER2];
-				break;
+		case KeyEvent.VK_CONTROL:
+			value = (activityType[IPT_BUTTON1] == IP_ACTIVE_HIGH) ? value
+					| (0xff & bitMask[IPT_BUTTON1]) : value
+					& ~bitMask[IPT_BUTTON1];
+			break;
 
-			case KeyEvent.VK_SPACE :
-				value =
-					(activityType[IPT_BUTTON2] == IP_ACTIVE_HIGH)
-						? value | (0xff & bitMask[IPT_BUTTON2])
-						: value & ~bitMask[IPT_BUTTON2];
-				break;
+		case KeyEvent.VK_A:
+			value = (activityType[IPT_BUTTON1 | IPF_PLAYER2] == IP_ACTIVE_HIGH) ? value
+					| (0xff & bitMask[IPT_BUTTON1 | IPF_PLAYER2])
+					: value & ~bitMask[IPT_BUTTON1 | IPF_PLAYER2];
+			break;
 
-			case KeyEvent.VK_S :
-				value =
-					(activityType[IPT_BUTTON2 | IPF_PLAYER2] == IP_ACTIVE_HIGH)
-						? value | (0xff & bitMask[IPT_BUTTON2 | IPF_PLAYER2])
-						: value & ~bitMask[IPT_BUTTON2 | IPF_PLAYER2];
-				break;
+		case KeyEvent.VK_SPACE:
+			value = (activityType[IPT_BUTTON2] == IP_ACTIVE_HIGH) ? value
+					| (0xff & bitMask[IPT_BUTTON2]) : value
+					& ~bitMask[IPT_BUTTON2];
+			break;
 
-			case KeyEvent.VK_Z :
-				value =
-					(activityType[IPT_BUTTON3] == IP_ACTIVE_HIGH)
-						? value | (0xff & bitMask[IPT_BUTTON3])
-						: value & ~bitMask[IPT_BUTTON3];
-				break;
+		case KeyEvent.VK_S:
+			value = (activityType[IPT_BUTTON2 | IPF_PLAYER2] == IP_ACTIVE_HIGH) ? value
+					| (0xff & bitMask[IPT_BUTTON2 | IPF_PLAYER2])
+					: value & ~bitMask[IPT_BUTTON2 | IPF_PLAYER2];
+			break;
 
-			case KeyEvent.VK_Q :
-				value =
-					(activityType[IPT_BUTTON3 | IPF_PLAYER2] == IP_ACTIVE_HIGH)
-						? value | (0xff & bitMask[IPT_BUTTON3 | IPF_PLAYER2])
-						: value & ~bitMask[IPT_BUTTON3 | IPF_PLAYER2];
-				break;
+		case KeyEvent.VK_Z:
+			value = (activityType[IPT_BUTTON3] == IP_ACTIVE_HIGH) ? value
+					| (0xff & bitMask[IPT_BUTTON3]) : value
+					& ~bitMask[IPT_BUTTON3];
+			break;
 
-			case KeyEvent.VK_X :
-				value =
-					(activityType[IPT_BUTTON4] == IP_ACTIVE_HIGH)
-						? value | (0xff & bitMask[IPT_BUTTON4])
-						: value & ~bitMask[IPT_BUTTON4];
-				break;
+		case KeyEvent.VK_Q:
+			value = (activityType[IPT_BUTTON3 | IPF_PLAYER2] == IP_ACTIVE_HIGH) ? value
+					| (0xff & bitMask[IPT_BUTTON3 | IPF_PLAYER2])
+					: value & ~bitMask[IPT_BUTTON3 | IPF_PLAYER2];
+			break;
 
-			case KeyEvent.VK_W :
-				value =
-					(activityType[IPT_BUTTON4 | IPF_PLAYER2] == IP_ACTIVE_HIGH)
-						? value | (0xff & bitMask[IPT_BUTTON4 | IPF_PLAYER2])
-						: value & ~bitMask[IPT_BUTTON4 | IPF_PLAYER2];
-				break;
+		case KeyEvent.VK_X:
+			value = (activityType[IPT_BUTTON4] == IP_ACTIVE_HIGH) ? value
+					| (0xff & bitMask[IPT_BUTTON4]) : value
+					& ~bitMask[IPT_BUTTON4];
+			break;
 
-            case KeyEvent.VK_C :
-                value =
-                    (activityType[IPT_BUTTON5] == IP_ACTIVE_HIGH)
-                        ? value | (0xff & bitMask[IPT_BUTTON5])
-                        : value & ~bitMask[IPT_BUTTON5];
-                break;
+		case KeyEvent.VK_W:
+			value = (activityType[IPT_BUTTON4 | IPF_PLAYER2] == IP_ACTIVE_HIGH) ? value
+					| (0xff & bitMask[IPT_BUTTON4 | IPF_PLAYER2])
+					: value & ~bitMask[IPT_BUTTON4 | IPF_PLAYER2];
+			break;
 
-            case KeyEvent.VK_V :
-                value =
-                    (activityType[IPT_BUTTON6] == IP_ACTIVE_HIGH)
-                        ? value | (0xff & bitMask[IPT_BUTTON6])
-                        : value & ~bitMask[IPT_BUTTON6];
-                break;
+		case KeyEvent.VK_C:
+			value = (activityType[IPT_BUTTON5] == IP_ACTIVE_HIGH) ? value
+					| (0xff & bitMask[IPT_BUTTON5]) : value
+					& ~bitMask[IPT_BUTTON5];
+			break;
 
-        }
+		case KeyEvent.VK_V:
+			value = (activityType[IPT_BUTTON6] == IP_ACTIVE_HIGH) ? value
+					| (0xff & bitMask[IPT_BUTTON6]) : value
+					& ~bitMask[IPT_BUTTON6];
+			break;
+
+		}
 
 	}
 
@@ -321,191 +297,167 @@ public class InputPort implements ReadHandler {
 
 		switch (keyCode) {
 
-			case KeyEvent.VK_5 :
-				value =
-					(activityType[IPT_COIN1] == IP_ACTIVE_LOW)
-						? value | (0xff & bitMask[IPT_COIN1])
-						: value & ~bitMask[IPT_COIN1];
-				break;
+		case KeyEvent.VK_5:
+			value = (activityType[IPT_COIN1] == IP_ACTIVE_LOW) ? value
+					| (0xff & bitMask[IPT_COIN1]) : value & ~bitMask[IPT_COIN1];
+			break;
 
-			case KeyEvent.VK_6 :
-				value =
-					(activityType[IPT_COIN2] == IP_ACTIVE_LOW)
-						? value | (0xff & bitMask[IPT_COIN1])
-						: value & ~bitMask[IPT_COIN1];
-				break;
+		case KeyEvent.VK_6:
+			value = (activityType[IPT_COIN2] == IP_ACTIVE_LOW) ? value
+					| (0xff & bitMask[IPT_COIN1]) : value & ~bitMask[IPT_COIN1];
+			break;
 
-			case KeyEvent.VK_1 :
-				value =
-					(activityType[IPT_START1] == IP_ACTIVE_LOW)
-						? value | (0xff & bitMask[IPT_START1])
-						: value & ~bitMask[IPT_START1];
-				break;
+		case KeyEvent.VK_1:
+			value = (activityType[IPT_START1] == IP_ACTIVE_LOW) ? value
+					| (0xff & bitMask[IPT_START1]) : value
+					& ~bitMask[IPT_START1];
+			break;
 
-			case KeyEvent.VK_2 :
-				value =
-					(activityType[IPT_START2] == IP_ACTIVE_LOW)
-						? value | (0xff & bitMask[IPT_START2])
-						: value & ~bitMask[IPT_START2];
-				break;
+		case KeyEvent.VK_2:
+			value = (activityType[IPT_START2] == IP_ACTIVE_LOW) ? value
+					| (0xff & bitMask[IPT_START2]) : value
+					& ~bitMask[IPT_START2];
+			break;
 
-			case KeyEvent.VK_LEFT :
-				if (!analog) {
-					value =
-						(activityType[IPT_JOYSTICK_LEFT] == IP_ACTIVE_LOW)
-							? value | (0xff & bitMask[IPT_JOYSTICK_LEFT])
-							: value & ~bitMask[IPT_JOYSTICK_LEFT];
-				} else {
+		case KeyEvent.VK_LEFT:
+			if (!analog) {
+				value = (activityType[IPT_JOYSTICK_LEFT] == IP_ACTIVE_LOW) ? value
+						| (0xff & bitMask[IPT_JOYSTICK_LEFT])
+						: value & ~bitMask[IPT_JOYSTICK_LEFT];
+			} else {
+				value = center;
+			}
+			break;
+
+		case KeyEvent.VK_D:
+			if (!analog) {
+				value = (activityType[IPT_JOYSTICK_LEFT | IPF_PLAYER2] == IP_ACTIVE_LOW) ? value
+						| (0xff & bitMask[IPT_JOYSTICK_LEFT | IPF_PLAYER2])
+						: value & ~bitMask[IPT_JOYSTICK_LEFT | IPF_PLAYER2];
+			} else {
+				switch (type) {
+				case IPT_PADDLE:
 					value = center;
+					break;
 				}
-				break;
+			}
+			break;
 
-			case KeyEvent.VK_D :
-				if (!analog) {
-					value =
-						(activityType[IPT_JOYSTICK_LEFT | IPF_PLAYER2] == IP_ACTIVE_LOW)
-							? value | (0xff & bitMask[IPT_JOYSTICK_LEFT | IPF_PLAYER2])
-							: value & ~bitMask[IPT_JOYSTICK_LEFT | IPF_PLAYER2];
-				} else {
-					switch (type) {
-						case IPT_PADDLE :
-							value = center;
-							break;
-					}
-				}
-				break;
+		case KeyEvent.VK_RIGHT:
+			if (!analog) {
+				value = (activityType[IPT_JOYSTICK_RIGHT] == IP_ACTIVE_LOW) ? value
+						| (0xff & bitMask[IPT_JOYSTICK_RIGHT])
+						: value & ~bitMask[IPT_JOYSTICK_RIGHT];
+			} else {
+				value = center;
+			}
+			break;
 
-			case KeyEvent.VK_RIGHT :
-				if (!analog) {
-					value =
-						(activityType[IPT_JOYSTICK_RIGHT] == IP_ACTIVE_LOW)
-							? value | (0xff & bitMask[IPT_JOYSTICK_RIGHT])
-							: value & ~bitMask[IPT_JOYSTICK_RIGHT];
-				} else {
+		case KeyEvent.VK_G:
+			if (!analog) {
+				value = (activityType[IPT_JOYSTICK_RIGHT | IPF_PLAYER2] == IP_ACTIVE_LOW) ? value
+						| (0xff & bitMask[IPT_JOYSTICK_RIGHT | IPF_PLAYER2])
+						: value & ~bitMask[IPT_JOYSTICK_RIGHT | IPF_PLAYER2];
+			} else {
+				switch (type) {
+				case IPT_PADDLE:
 					value = center;
+					break;
 				}
-				break;
+			}
+			break;
 
-			case KeyEvent.VK_G :
-				if (!analog) {
-					value =
-						(activityType[IPT_JOYSTICK_RIGHT | IPF_PLAYER2] == IP_ACTIVE_LOW)
-							? value | (0xff & bitMask[IPT_JOYSTICK_RIGHT | IPF_PLAYER2])
-							: value & ~bitMask[IPT_JOYSTICK_RIGHT | IPF_PLAYER2];
-				} else {
-					switch (type) {
-						case IPT_PADDLE :
-							value = center;
-							break;
-					}
-				}
-				break;
+		case KeyEvent.VK_UP:
+			if (!analog) {
+				value = (activityType[IPT_JOYSTICK_UP] == IP_ACTIVE_LOW) ? value
+						| (0xff & bitMask[IPT_JOYSTICK_UP])
+						: value & ~bitMask[IPT_JOYSTICK_UP];
+			} else {
+				value = center;
+			}
+			break;
 
-			case KeyEvent.VK_UP :
-				if (!analog) {
-					value =
-						(activityType[IPT_JOYSTICK_UP] == IP_ACTIVE_LOW)
-							? value | (0xff & bitMask[IPT_JOYSTICK_UP])
-							: value & ~bitMask[IPT_JOYSTICK_UP];
-				} else {
-					value = center;
-				}
-				break;
+		case KeyEvent.VK_R:
+			value = (activityType[IPT_JOYSTICK_UP | IPF_PLAYER2] == IP_ACTIVE_LOW) ? value
+					| (0xff & bitMask[IPT_JOYSTICK_UP | IPF_PLAYER2])
+					: value & ~bitMask[IPT_JOYSTICK_UP | IPF_PLAYER2];
+			break;
 
-			case KeyEvent.VK_R :
-				value =
-					(activityType[IPT_JOYSTICK_UP | IPF_PLAYER2] == IP_ACTIVE_LOW)
-						? value | (0xff & bitMask[IPT_JOYSTICK_UP | IPF_PLAYER2])
-						: value & ~bitMask[IPT_JOYSTICK_UP | IPF_PLAYER2];
-				break;
+		case KeyEvent.VK_DOWN:
+			if (!analog) {
+				value = (activityType[IPT_JOYSTICK_DOWN] == IP_ACTIVE_LOW) ? value
+						| (0xff & bitMask[IPT_JOYSTICK_DOWN])
+						: value & ~bitMask[IPT_JOYSTICK_DOWN];
+			} else {
+				value = center;
+			}
+			break;
 
-			case KeyEvent.VK_DOWN :
-				if (!analog) {
-					value =
-						(activityType[IPT_JOYSTICK_DOWN] == IP_ACTIVE_LOW)
-							? value | (0xff & bitMask[IPT_JOYSTICK_DOWN])
-							: value & ~bitMask[IPT_JOYSTICK_DOWN];
-				} else {
-					value = center;
-				}
-				break;
+		case KeyEvent.VK_F:
+			value = (activityType[IPT_JOYSTICK_DOWN | IPF_PLAYER2] == IP_ACTIVE_LOW) ? value
+					| (0xff & bitMask[IPT_JOYSTICK_DOWN | IPF_PLAYER2])
+					: value & ~bitMask[IPT_JOYSTICK_DOWN | IPF_PLAYER2];
+			break;
 
-			case KeyEvent.VK_F :
-				value =
-					(activityType[IPT_JOYSTICK_DOWN | IPF_PLAYER2] == IP_ACTIVE_LOW)
-						? value | (0xff & bitMask[IPT_JOYSTICK_DOWN | IPF_PLAYER2])
-						: value & ~bitMask[IPT_JOYSTICK_DOWN | IPF_PLAYER2];
-				break;
+		case KeyEvent.VK_CONTROL:
+			value = (activityType[IPT_BUTTON1] == IP_ACTIVE_LOW) ? value
+					| (0xff & bitMask[IPT_BUTTON1]) : value
+					& ~bitMask[IPT_BUTTON1];
+			break;
 
-			case KeyEvent.VK_CONTROL :
-				value =
-					(activityType[IPT_BUTTON1] == IP_ACTIVE_LOW)
-						? value | (0xff & bitMask[IPT_BUTTON1])
-						: value & ~bitMask[IPT_BUTTON1];
-				break;
+		case KeyEvent.VK_A:
+			value = (activityType[IPT_BUTTON1 | IPF_PLAYER2] == IP_ACTIVE_LOW) ? value
+					| (0xff & bitMask[IPT_BUTTON1 | IPF_PLAYER2])
+					: value & ~bitMask[IPT_BUTTON1 | IPF_PLAYER2];
+			break;
 
-			case KeyEvent.VK_A :
-				value =
-					(activityType[IPT_BUTTON1 | IPF_PLAYER2] == IP_ACTIVE_LOW)
-						? value | (0xff & bitMask[IPT_BUTTON1 | IPF_PLAYER2])
-						: value & ~bitMask[IPT_BUTTON1 | IPF_PLAYER2];
-				break;
+		case KeyEvent.VK_SPACE:
+			value = (activityType[IPT_BUTTON2] == IP_ACTIVE_LOW) ? value
+					| (0xff & bitMask[IPT_BUTTON2]) : value
+					& ~bitMask[IPT_BUTTON2];
+			break;
 
-			case KeyEvent.VK_SPACE :
-				value =
-					(activityType[IPT_BUTTON2] == IP_ACTIVE_LOW)
-						? value | (0xff & bitMask[IPT_BUTTON2])
-						: value & ~bitMask[IPT_BUTTON2];
-				break;
+		case KeyEvent.VK_S:
+			value = (activityType[IPT_BUTTON2 | IPF_PLAYER2] == IP_ACTIVE_LOW) ? value
+					| (0xff & bitMask[IPT_BUTTON2 | IPF_PLAYER2])
+					: value & ~bitMask[IPT_BUTTON2 | IPF_PLAYER2];
+			break;
 
-			case KeyEvent.VK_S :
-				value =
-					(activityType[IPT_BUTTON2 | IPF_PLAYER2] == IP_ACTIVE_LOW)
-						? value | (0xff & bitMask[IPT_BUTTON2 | IPF_PLAYER2])
-						: value & ~bitMask[IPT_BUTTON2 | IPF_PLAYER2];
-				break;
+		case KeyEvent.VK_Z:
+			value = (activityType[IPT_BUTTON3] == IP_ACTIVE_LOW) ? value
+					| (0xff & bitMask[IPT_BUTTON3]) : value
+					& ~bitMask[IPT_BUTTON3];
+			break;
 
-			case KeyEvent.VK_Z :
-				value =
-					(activityType[IPT_BUTTON3] == IP_ACTIVE_LOW)
-						? value | (0xff & bitMask[IPT_BUTTON3])
-						: value & ~bitMask[IPT_BUTTON3];
-				break;
+		case KeyEvent.VK_Q:
+			value = (activityType[IPT_BUTTON3 | IPF_PLAYER2] == IP_ACTIVE_LOW) ? value
+					| (0xff & bitMask[IPT_BUTTON3 | IPF_PLAYER2])
+					: value & ~bitMask[IPT_BUTTON3 | IPF_PLAYER2];
+			break;
 
-			case KeyEvent.VK_Q :
-				value =
-					(activityType[IPT_BUTTON3 | IPF_PLAYER2] == IP_ACTIVE_LOW)
-						? value | (0xff & bitMask[IPT_BUTTON3 | IPF_PLAYER2])
-						: value & ~bitMask[IPT_BUTTON3 | IPF_PLAYER2];
-				break;
+		case KeyEvent.VK_X:
+			value = (activityType[IPT_BUTTON4] == IP_ACTIVE_LOW) ? value
+					| (0xff & bitMask[IPT_BUTTON4]) : value
+					& ~bitMask[IPT_BUTTON4];
+			break;
 
-			case KeyEvent.VK_X :
-				value =
-					(activityType[IPT_BUTTON4] == IP_ACTIVE_LOW)
-						? value | (0xff & bitMask[IPT_BUTTON4])
-						: value & ~bitMask[IPT_BUTTON4];
-				break;
+		case KeyEvent.VK_W:
+			value = (activityType[IPT_BUTTON4 | IPF_PLAYER2] == IP_ACTIVE_LOW) ? value
+					| (0xff & bitMask[IPT_BUTTON4 | IPF_PLAYER2])
+					: value & ~bitMask[IPT_BUTTON4 | IPF_PLAYER2];
+			break;
 
-			case KeyEvent.VK_W :
-				value =
-					(activityType[IPT_BUTTON4 | IPF_PLAYER2] == IP_ACTIVE_LOW)
-						? value | (0xff & bitMask[IPT_BUTTON4 | IPF_PLAYER2])
-						: value & ~bitMask[IPT_BUTTON4 | IPF_PLAYER2];
-				break;
-                
-            case KeyEvent.VK_C :
-                value =
-                    (activityType[IPT_BUTTON5] == IP_ACTIVE_LOW)
-                        ? value | (0xff & bitMask[IPT_BUTTON5])
-                        : value & ~bitMask[IPT_BUTTON5];
-                break;
-                
-            case KeyEvent.VK_V :
-                value =
-                    (activityType[IPT_BUTTON4] == IP_ACTIVE_LOW)
-                        ? value | (0xff & bitMask[IPT_BUTTON6])
-                        : value & ~bitMask[IPT_BUTTON6];
-                break;
+		case KeyEvent.VK_C:
+			value = (activityType[IPT_BUTTON5] == IP_ACTIVE_LOW) ? value
+					| (0xff & bitMask[IPT_BUTTON5]) : value
+					& ~bitMask[IPT_BUTTON5];
+			break;
+
+		case KeyEvent.VK_V:
+			value = (activityType[IPT_BUTTON4] == IP_ACTIVE_LOW) ? value
+					| (0xff & bitMask[IPT_BUTTON6]) : value
+					& ~bitMask[IPT_BUTTON6];
+			break;
 		}
 	}
 
@@ -519,9 +471,9 @@ public class InputPort implements ReadHandler {
 		if (!analog) {
 			return value;
 		} else {
-		//	value = (value + Mouse.getDX());
-			
-		//	return (value / 2) & 0xff;
+			// value = (value + Mouse.getDX());
+
+			// return (value / 2) & 0xff;
 			return 0;
 		}
 	}
@@ -545,7 +497,8 @@ public class InputPort implements ReadHandler {
 	public void setBit(int bitMask, int activityType, int inputType) {
 		this.bitMask[inputType] = bitMask;
 		this.activityType[inputType] = activityType;
-		value = (activityType == IP_ACTIVE_LOW) ? value | (0xff & bitMask) : value & ~bitMask;
+		value = (activityType == IP_ACTIVE_LOW) ? value | (0xff & bitMask)
+				: value & ~bitMask;
 	}
 
 	/**
@@ -556,14 +509,16 @@ public class InputPort implements ReadHandler {
 	 * @param inputType
 	 * @param frames
 	 */
-	public void setBitImpulse(int bitMask, int activityType, int inputType, int frames) {
+	public void setBitImpulse(int bitMask, int activityType, int inputType,
+			int frames) {
 		this.bitMask[inputType] = bitMask;
 		this.activityType[inputType] = activityType;
 		this.impulseActivityType[bitSet(bitMask)] = activityType;
 		this.impulse[bitSet(bitMask)] = true;
 		this.impulseInputType[bitSet(bitMask)] = inputType;
 		this.impulseDelay[bitSet(bitMask)] = frames;
-		value = (activityType == IP_ACTIVE_LOW) ? value | (0xff & bitMask) : value & ~bitMask;
+		value = (activityType == IP_ACTIVE_LOW) ? value | (0xff & bitMask)
+				: value & ~bitMask;
 	}
 
 	/**
@@ -576,10 +531,8 @@ public class InputPort implements ReadHandler {
 					impulseCounter[i]--;
 				else {
 					int bitMask = 1 << i;
-					value =
-						(impulseActivityType[i] == IP_ACTIVE_LOW)
-							? value & ~bitMask
-							: value | (0xff & bitMask);
+					value = (impulseActivityType[i] == IP_ACTIVE_LOW) ? value
+							& ~bitMask : value | (0xff & bitMask);
 				}
 			}
 		}
@@ -614,7 +567,8 @@ public class InputPort implements ReadHandler {
 	 * @param activityType
 	 */
 	public void setService(int bitMask, int activityType) {
-		value = (activityType == IP_ACTIVE_LOW) ? value | (0xff & bitMask) : value & ~bitMask;
+		value = (activityType == IP_ACTIVE_LOW) ? value | (0xff & bitMask)
+				: value & ~bitMask;
 	}
 
 	/**
@@ -628,7 +582,8 @@ public class InputPort implements ReadHandler {
 	 * @param c
 	 * @param d
 	 */
-	public void setAnalog(int bitMask, int center, int type, int a, int b, int c, int d) {
+	public void setAnalog(int bitMask, int center, int type, int a, int b,
+			int c, int d) {
 		this.analog = true;
 		this.type = type & 31;
 		this.reverse = (type & IPF_REVERSE) != 0;

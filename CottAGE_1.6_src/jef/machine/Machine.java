@@ -28,19 +28,18 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-*/
+ */
 
 package jef.machine;
 
 import jef.video.BitMap;
 
-
 /**
  * @author Erik Duijs
  * 
- * Machine.java
+ *         Machine.java
  * 
- * A class implementing Machine is the main emulator class.
+ *         A class implementing Machine is the main emulator class.
  */
 public interface Machine {
 
@@ -51,7 +50,9 @@ public interface Machine {
 
 	/**
 	 * Do everything needed for 1 frame.
-	 * @param render TODO
+	 * 
+	 * @param render
+	 *            TODO
 	 * @return TODO
 	 */
 	public BitMap refresh(boolean render);
@@ -59,7 +60,7 @@ public interface Machine {
 	/**
 	 * Returns a BitMap representing the emulated display.
 	 */
-	//public BitMap getDisplay();
+	// public BitMap getDisplay();
 
 	/**
 	 * Reset the machine (hard or soft).
@@ -75,25 +76,30 @@ public interface Machine {
 	 * Handle key release events.
 	 */
 	public void keyRelease(int keyCode);
-	
+
 	public void writeInput(int data);
 
 	/**
 	 * Returns a property value
 	 */
 	public int getProperty(int property);
-	
+
 	/**
-	 * Get the progress within a frame. 0.0 is the start of the frame, 1.1 the end.
+	 * Get the progress within a frame. 0.0 is the start of the frame, 1.1 the
+	 * end.
+	 * 
 	 * @return the progress
 	 */
 	public double getProgress();
-	
+
 	public void setHighScoreSupported(boolean b);
+
 	public boolean isHighScoreSupported();
+
 	public void setHighScore(long score);
+
 	public long getHighScore();
-	
+
 	public final int FPS = 0;
 	public static final int ROT = 3;
 	public static final int WIDTH = 1;

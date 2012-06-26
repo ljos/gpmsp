@@ -7,9 +7,9 @@ import jef.machine.MachineDriver;
  * 
  * @author Erik Duijs
  * 
- * VideoEmulator.java */
+ *         VideoEmulator.java
+ */
 public interface VideoEmulator extends VideoConstants {
 
-	
-	public void  init(MachineDriver md);
+	public void init(MachineDriver md);
 }

@@ -28,31 +28,32 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-*/
+ */
 
 package jef.map;
 
 /**
  * @author Erik Duijs
  * 
- * IOWritePort.java */
+ *         IOWritePort.java
+ */
 public class IOWritePort implements WriteHandler {
 
-	private int			size;
-	private WriteHandler	writeMap[];
-	private UndefinedWrite  defwrite  = new UndefinedWrite();
+	private int size;
+	private WriteHandler writeMap[];
+	private UndefinedWrite defwrite = new UndefinedWrite();
 	static final boolean debug = false;
 
 	public IOWritePort() {
 		this.size = 0x100;
 		this.writeMap = new WriteHandler[size];
-		set(0, size-1, defwrite);
+		set(0, size - 1, defwrite);
 	}
 
 	public IOWritePort(int size) {
 		this.size = size;
 		this.writeMap = new WriteHandler[size];
-		set(0, size-1, defwrite);
+		set(0, size - 1, defwrite);
 	}
 
 	public void set(int from, int until, WriteHandler memWrite) {
@@ -65,18 +66,21 @@ public class IOWritePort implements WriteHandler {
 		return size;
 	}
 
-	/*public WriteHandler[] get() {
-		return writeMap;
-	}*/
-    @Override
+	/*
+	 * public WriteHandler[] get() { return writeMap; }
+	 */
+	@Override
 	public void write(int address, int data) {
-        writeMap[address].write(address, data);
-    }
+		writeMap[address].write(address, data);
+	}
 
 	public class UndefinedWrite implements WriteHandler {
 		@Override
 		public void write(int address, int value) {
-			if (debug) System.out.println("Undefined Write at " + Integer.toHexString(address) + ", value : " + Integer.toHexString(value));
+			if (debug)
+				System.out.println("Undefined Write at "
+						+ Integer.toHexString(address) + ", value : "
+						+ Integer.toHexString(value));
 		}
 	}
 }

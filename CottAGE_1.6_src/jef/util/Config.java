@@ -28,14 +28,14 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-*/
+ */
 
 package jef.util;
 
 /**
  * @author Erik Duijs
  * 
- * Static class with configuration parameters.
+ *         Static class with configuration parameters.
  */
 public class Config {
 
@@ -46,5 +46,5 @@ public class Config {
 	public static int SOUND_SAMPLING_FREQ = 22050;
 
 	/** Buffer size used for sound playback using javax.sound */
-	public static int SOUND_BUFFER_SIZE   = 4096;
+	public static int SOUND_BUFFER_SIZE = 4096;
 }
