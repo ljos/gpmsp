@@ -28,27 +28,28 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-*/
+ */
 
 package jef.map;
 
 /**
  * @author Erik Duijs
  * 
- * MemoryReadAddress.java */
+ *         MemoryReadAddress.java
+ */
 public class MemoryReadAddress implements ReadMap {
 
-//	private int			size;
-	private ReadHandler	readMap[];
-	private UndefinedRead   defread  = new UndefinedRead();
+	// private int size;
+	private ReadHandler readMap[];
+	private UndefinedRead defread = new UndefinedRead();
 
-	public ReadHandler	RAM;
-	public MEMreadBanked 	BANKS[] = new MEMreadBanked[8];
+	public ReadHandler RAM;
+	public MEMreadBanked BANKS[] = new MEMreadBanked[8];
 
-	public int[]		mem;
+	public int[] mem;
 	static final boolean debug = false;
-    
- //   private int opcodeOffset = 0;
+
+	// private int opcodeOffset = 0;
 
 	public MemoryReadAddress(int[] mem) {
 		this.mem = mem;
@@ -59,7 +60,7 @@ public class MemoryReadAddress implements ReadMap {
 
 	@Override
 	public void setBankAddress(int bank, int address) {
-		BANKS[bank-1].setBankAdr(address); // the 1st bank is 1, not 0
+		BANKS[bank - 1].setBankAdr(address); // the 1st bank is 1, not 0
 	}
 
 	@Override
@@ -74,21 +75,21 @@ public class MemoryReadAddress implements ReadMap {
 		ReadHandler rh = null;
 
 		switch (readerType) {
-			case MRA_RAM:
-			case MRA_ROM:
-			case MRA_NOP:
-				rh = RAM;
-				break;
-			case MRA_BANK1:
-			case MRA_BANK2:
-			case MRA_BANK3:
-			case MRA_BANK4:
-			case MRA_BANK5:
-			case MRA_BANK6:
-			case MRA_BANK7:
-			case MRA_BANK8:
-				rh = BANKS[readerType - MRA_BANK1] = new MEMreadBanked(from);
-				break;
+		case MRA_RAM:
+		case MRA_ROM:
+		case MRA_NOP:
+			rh = RAM;
+			break;
+		case MRA_BANK1:
+		case MRA_BANK2:
+		case MRA_BANK3:
+		case MRA_BANK4:
+		case MRA_BANK5:
+		case MRA_BANK6:
+		case MRA_BANK7:
+		case MRA_BANK8:
+			rh = BANKS[readerType - MRA_BANK1] = new MEMreadBanked(from);
+			break;
 		}
 
 		for (int i = from; i <= until; i++) {
@@ -100,20 +101,22 @@ public class MemoryReadAddress implements ReadMap {
 	public int getSize() {
 		return mem.length;
 	}
-    
-    @Override
-	public int read(int address) {
-        return readMap[address].read(address);
-    }
 
-	//public ReadHandler[] get() {
-	//	return readMap;
-	//}
+	@Override
+	public int read(int address) {
+		return readMap[address].read(address);
+	}
+
+	// public ReadHandler[] get() {
+	// return readMap;
+	// }
 
 	public class UndefinedRead implements ReadHandler {
 		@Override
 		public int read(int address) {
-			if (debug) System.out.println("Undefined Read at " + Integer.toHexString(address));
+			if (debug)
+				System.out.println("Undefined Read at "
+						+ Integer.toHexString(address));
 			return 0;
 		}
 	}
@@ -143,13 +146,14 @@ public class MemoryReadAddress implements ReadMap {
 		}
 	}
 
-    /* (non-Javadoc)
-     * @see jef.map.ReadMap#getMemory()
-     */
-    @Override
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see jef.map.ReadMap#getMemory()
+	 */
+	@Override
 	public int[] getMemory() {
-        return mem;
-    }
-
+		return mem;
+	}
 
 }

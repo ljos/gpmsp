@@ -8,9 +8,9 @@ package jef.video;
 
 /**
  * @author Erik Duijs
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * 
+ *         To change the template for this generated type comment go to Window -
+ *         Preferences - Java - Code Generation - Code and Comments
  */
 public interface VideoConstants {
 	public static final int ROT0 = 0;
@@ -24,10 +24,10 @@ public interface VideoConstants {
 	public static final int TRANSPARENCY_PEN = 1;
 	public static final int TRANSPARENCY_COLOR = 2;
 
-	public static final int VIDEO_TYPE_RASTER	= 1;
-	public static final int VIDEO_SUPPORTS_DIRTY	= 2;
-	public static final int VIDEO_MODIFIES_PALETTE	= 4;
+	public static final int VIDEO_TYPE_RASTER = 1;
+	public static final int VIDEO_SUPPORTS_DIRTY = 2;
+	public static final int VIDEO_MODIFIES_PALETTE = 4;
 	public static final int VIDEO_UPDATE_AFTER_VBLANK = 8;
 	public static final int VIDEO_BUFFERS_SPRITERAM = 16;
-	
+
 }

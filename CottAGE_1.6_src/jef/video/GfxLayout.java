@@ -19,7 +19,8 @@ public class GfxLayout {
 	/** The graphic takes this amount of consecutive bytes */
 	public int bytes;
 
-	public GfxLayout(int w, int h, int total, int planes, int[] offsPlane, int[] offsX, int[] offsY, int bytes) {
+	public GfxLayout(int w, int h, int total, int planes, int[] offsPlane,
+			int[] offsX, int[] offsY, int bytes) {
 		this.w = w;
 		this.h = h;
 		this.total = total;

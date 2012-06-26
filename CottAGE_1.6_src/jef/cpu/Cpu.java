@@ -28,7 +28,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-*/
+ */
 
 package jef.cpu;
 
@@ -37,53 +37,53 @@ package jef.cpu;
  * 
  * @author Erik Duijs
  * 
- * Cpu.java */
+ *         Cpu.java
+ */
 public interface Cpu {
-	
+
 	public static final boolean TRACE = false;
 
 	/** Initialize the CPU */
-	public boolean	init(jef.cpuboard.CpuBoard ram, int debug);
+	public boolean init(jef.cpuboard.CpuBoard ram, int debug);
 
 	/** Trigger an interrupt */
-	public void		interrupt(int type, boolean irq);
+	public void interrupt(int type, boolean irq);
 
 	/** Reset the CPU */
-	public void		reset();
+	public void reset();
 
 	/** Execute the CPU for a given amount of Cycles */
-	public void 	exec(int cycles);
+	public void exec(int cycles);
 
 	/** Return the currently executed instruction */
-	public long		getInstruction();
+	public long getInstruction();
 
 	/** Set a specific property of the CPU */
-	public void		setProperty(int property, int value);
+	public void setProperty(int property, int value);
 
 	/** Set debug mode */
-	public void		setDebug(int debug);
+	public void setDebug(int debug);
 
 	/** Get the debug mode */
-	public int		getDebug();
+	public int getDebug();
 
 	/** Tag the CPU */
-	public void		setTag(String tag);
+	public void setTag(String tag);
 
 	/** Get the tag */
-	public String	getTag();
-	
+	public String getTag();
+
 	public int getCyclesLeft();
 
-
 	/** Interrupt type */
-	public static final int	INTERRUPT_TYPE_IRQ  = 0;
+	public static final int INTERRUPT_TYPE_IRQ = 0;
 	/** Interrupt type */
-	public static final int	INTERRUPT_TYPE_NMI  = 1;
+	public static final int INTERRUPT_TYPE_NMI = 1;
 	/** Interrupt type */
-	public static final int	INTERRUPT_TYPE_FIRQ = 2;
+	public static final int INTERRUPT_TYPE_FIRQ = 2;
 	/** Interrupt type */
-	public static final int	INTERRUPT_TYPE_IGNORE = -1;
+	public static final int INTERRUPT_TYPE_IGNORE = -1;
 
 	/** Property type */
-	public static final int	PROPERTY_Z80_IRQ_VECTOR = 0;
+	public static final int PROPERTY_Z80_IRQ_VECTOR = 0;
 }

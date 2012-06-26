@@ -28,7 +28,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-*/
+ */
 
 package jef.cpuboard;
 
@@ -42,45 +42,43 @@ import jef.map.WriteMap;
 /**
  * @author Erik Duijs
  * 
- * CpuDriver defines the properties of how a CPU interfaces with the hardware.
- * Mainly CPU type, memory maps and interrupt behaviour.
+ *         CpuDriver defines the properties of how a CPU interfaces with the
+ *         hardware. Mainly CPU type, memory maps and interrupt behaviour.
  * 
- * CpuDriver.java
+ *         CpuDriver.java
  */
 public class CpuDriver {
 
 	/** The CPU */
-	public Cpu 					cpu;
+	public Cpu cpu;
 
 	/** The CPU's clock speed */
-	public int 				frq;
+	public int frq;
 
 	/** The memory map for reading */
-	public ReadMap	mra;
+	public ReadMap mra;
 
 	/** The memory map for writing */
 	public WriteMap mwa;
 
 	/** The map for reading ports */
-	public IOReadPort			ior;
+	public IOReadPort ior;
 
 	/** The map for writing to ports */
-	public IOWritePort			iow;
+	public IOWritePort iow;
 
 	/** The InterruptHandler */
-	public InterruptHandler		irh;
+	public InterruptHandler irh;
 
 	/** Interrupts per frame */
-	public int					ipf;
+	public int ipf;
 
 	/** If isAudioCpu is true, this Cpu can be disabled if sound is disabled. */
-	public boolean				isAudioCpu = false;
+	public boolean isAudioCpu = false;
 
 	/** Constructor */
-	public CpuDriver( Cpu cpu, int frq,
-            ReadMap mra, WriteMap mwa,
-					IOReadPort ior, IOWritePort iow,
-					InterruptHandler irh, int ipf ) {
+	public CpuDriver(Cpu cpu, int frq, ReadMap mra, WriteMap mwa,
+			IOReadPort ior, IOWritePort iow, InterruptHandler irh, int ipf) {
 		this.cpu = cpu;
 		this.frq = frq;
 		this.mra = mra;

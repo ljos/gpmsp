@@ -38,10 +38,11 @@ import jef.video.BitMap;
 /**
  * @author Erik Duijs
  * 
- * BasicMachine.java
+ *         BasicMachine.java
  * 
- * BasicMachine is a reference implementation of the Machine interface and is
- * the main emulation class. Subclass if more specific functions are needed.
+ *         BasicMachine is a reference implementation of the Machine interface
+ *         and is the main emulation class. Subclass if more specific functions
+ *         are needed.
  */
 public class BasicMachine implements Machine {
 
@@ -144,7 +145,7 @@ public class BasicMachine implements Machine {
 	public void setHighScoreSupported(boolean b) {
 		this.highScoreSupported = b;
 	}
-	
+
 	/**
 	 * Check if high scores are supported.
 	 */
@@ -152,7 +153,7 @@ public class BasicMachine implements Machine {
 	public boolean isHighScoreSupported() {
 		return this.highScoreSupported;
 	}
-	
+
 	/**
 	 * Update the high score, but only if high scores are supported and if the
 	 * score is higher than the current high score.
@@ -163,7 +164,7 @@ public class BasicMachine implements Machine {
 			this.highScore = score;
 		}
 	}
-	
+
 	/**
 	 * Return the high score
 	 */
@@ -178,13 +179,13 @@ public class BasicMachine implements Machine {
 	 * score support.
 	 */
 
-
 	/**
 	 * Reset the current high score to 0
 	 */
 	public void resetHighScore() {
 		this.highScore = 0;
 	}
+
 	/**
 	 * Reset machine
 	 */
@@ -228,14 +229,13 @@ public class BasicMachine implements Machine {
 			md.input[i].keyRelease(keyCode);
 		}
 	}
-	
+
 	@Override
 	public void writeInput(int data) {
 		for (int i = 0; i < md.input.length; i++) {
 			md.input[i].write(data);
 		}
 	}
-
 
 	/**
 	 * Update InputPorts (for impulse events)
@@ -274,9 +274,10 @@ public class BasicMachine implements Machine {
 			currentSlice = slice;
 
 			for (int c = 0; c < cd.length; c++) { // iterate through all cpu
-												  // boards,
-												  // give them their timeslice
-												  // and cause an interrupt whene needed.
+													// boards,
+													// give them their timeslice
+													// and cause an interrupt
+													// whene needed.
 
 				if (!cd[c].isAudioCpu) {
 
@@ -292,7 +293,8 @@ public class BasicMachine implements Machine {
 					int interruptsPerFrame = cd[c].ipf;
 
 					if (interruptsPerFrame > 0) {
-						int slicesPerInterrupt = slicesPerFrame / interruptsPerFrame;
+						int slicesPerInterrupt = slicesPerFrame
+								/ interruptsPerFrame;
 
 						if ((slice % slicesPerInterrupt) == 0) {
 							cb[c].interrupt(cd[c].irh.irq(), true);
@@ -309,7 +311,7 @@ public class BasicMachine implements Machine {
 		}
 
 		// UPDATE INPUT (for Impulse Events)
-		//updateInput();
+		// updateInput();
 		return backBuffer;
 	}
 
@@ -323,8 +325,8 @@ public class BasicMachine implements Machine {
 	}
 
 	/**
-	 * Creates a new CpuBoard Currently this is always a BasicCpuBoard, which
-	 * is fine in most cases. Sometimes a customized CpuBoard is needed, for
+	 * Creates a new CpuBoard Currently this is always a BasicCpuBoard, which is
+	 * fine in most cases. Sometimes a customized CpuBoard is needed, for
 	 * example if read8opc() needs to be overloaded for runtime opcode
 	 * decryption.
 	 */
@@ -345,6 +347,7 @@ public class BasicMachine implements Machine {
 	public InterruptHandler nmi_interrupt_switched() {
 		return new NMI_interrupt_switched();
 	}
+
 	public class NMI_interrupt_switched implements InterruptHandler {
 		@Override
 		public int irq() {
@@ -358,6 +361,7 @@ public class BasicMachine implements Machine {
 	public InterruptHandler interrupt_switched() {
 		return new Interrupt_switched();
 	}
+
 	public class Interrupt_switched implements InterruptHandler {
 		@Override
 		public int irq() {
@@ -371,6 +375,7 @@ public class BasicMachine implements Machine {
 	public WriteHandler nmi_interrupt_enable() {
 		return new NMI_interrupt_enable();
 	}
+
 	public class NMI_interrupt_enable implements WriteHandler {
 		@Override
 		public void write(int address, int value) {
@@ -384,6 +389,7 @@ public class BasicMachine implements Machine {
 	public WriteHandler interrupt_enable() {
 		return new Interrupt_enable();
 	}
+
 	public class Interrupt_enable implements WriteHandler {
 		@Override
 		public void write(int address, int value) {
@@ -397,6 +403,7 @@ public class BasicMachine implements Machine {
 	public InterruptHandler nmi_interrupt() {
 		return new NMI_interrupt();
 	}
+
 	public class NMI_interrupt implements InterruptHandler {
 		@Override
 		public int irq() {
@@ -410,6 +417,7 @@ public class BasicMachine implements Machine {
 	public InterruptHandler interrupt() {
 		return new Interrupt();
 	}
+
 	public class Interrupt implements InterruptHandler {
 		@Override
 		public int irq() {
@@ -424,11 +432,12 @@ public class BasicMachine implements Machine {
 	 */
 	@Override
 	public double getProgress() {
-		double cyclesPerFrame = (double) md.getCpuDriver()[0].frq / (double) md.fps;
+		double cyclesPerFrame = (double) md.getCpuDriver()[0].frq
+				/ (double) md.fps;
 		double cyclesPerSlice = cyclesPerFrame / slicesPerFrame;
 		double curSliceCyclesLeft = cb[0].getCpu().getCyclesLeft();
-		double cyclesPerFrameLeft =
-			cyclesPerFrame - (((currentSlice + 1) * cyclesPerSlice) - curSliceCyclesLeft);
+		double cyclesPerFrameLeft = cyclesPerFrame
+				- (((currentSlice + 1) * cyclesPerSlice) - curSliceCyclesLeft);
 		return 1.0 - (cyclesPerFrameLeft / cyclesPerFrame);
 	}
 

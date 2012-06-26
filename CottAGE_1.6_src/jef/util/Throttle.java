@@ -28,100 +28,100 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-*/
+ */
 
 package jef.util;
 
 /**
- * Provides the speed throttling functionality based
- * on System.currentTimeMillis() and Thread.sleep().
- * Heavily based on code by Arnon Cardoso.
+ * Provides the speed throttling functionality based on
+ * System.currentTimeMillis() and Thread.sleep(). Heavily based on code by Arnon
+ * Cardoso.
  * 
  * @author Erik Duijs, Arnon Goncalves Cardoso
  */
 public class Throttle {
 
 	/** throttle, frameskip constants **/
-    static final int MAX_THROTTLE_STEP = 5;
+	static final int MAX_THROTTLE_STEP = 5;
 
 	/** throttle, frameskip constants **/
-    static final int MIN_THROTTLE_STEP = 1;
+	static final int MIN_THROTTLE_STEP = 1;
 
 	/** throttle, frameskip constants **/
-    static final int DEFAULT_THROTTLE_STEP = 1;
+	static final int DEFAULT_THROTTLE_STEP = 1;
 
 	/** throttle, frameskip constants **/
-    static final int DEFAULT_TARGET_FPS = 60;
+	static final int DEFAULT_TARGET_FPS = 60;
 
 	/** throttle, frameskip constants **/
-    static final int FRAMES_UNTIL_THROTTLE_RECALC = 40;
+	static final int FRAMES_UNTIL_THROTTLE_RECALC = 40;
 
 	/** throttle, frameskip constants **/
-    static final int MAX_FRAME_SKIP = 5;
+	static final int MAX_FRAME_SKIP = 5;
 
 	/** throttle, frameskip constants **/
-    static final float MAX_FPS_DEVIATION = 0.10f;
+	static final float MAX_FPS_DEVIATION = 0.10f;
 
 	/** throttle, frameskip constants **/
-    static final boolean TRY_ALT_SKIP_CALC = true;
+	static final boolean TRY_ALT_SKIP_CALC = true;
 
 	/** Throttle is enabled by default */
-    private boolean throttle;
+	private boolean throttle;
 
 	/** Auto Frame Skip */
-    private boolean autoFS;
+	private boolean autoFS;
 
-    /** Frames Per Second */
-    private long fps;
-    
-    /** Sum Frames Per Second for measuring avg FPS */
-    private long sumFPS = 0;
-    
-    /** Average FPS */
-    private float avgFPS = 0f;
+	/** Frames Per Second */
+	private long fps;
 
-    /** Amount of sleep time in ms. */
-    private long sleep;
+	/** Sum Frames Per Second for measuring avg FPS */
+	private long sumFPS = 0;
+
+	/** Average FPS */
+	private float avgFPS = 0f;
+
+	/** Amount of sleep time in ms. */
+	private long sleep;
 
 	/** The FPS that needs to be throttled to */
-    private int targetFPS;
+	private int targetFPS;
 
-    /** How fast the throttle changes sleep time */
-    private int throttleStep;
+	/** How fast the throttle changes sleep time */
+	private int throttleStep;
 
-    /** Minimum FPS */
-    private int minFPS;
+	/** Minimum FPS */
+	private int minFPS;
 
-    /** Maximum FPS */
-    private int maxFPS;
+	/** Maximum FPS */
+	private int maxFPS;
 
-    /** Minimum sleeptime to have effect on the JVM */
-    private long minimumSleep;
+	/** Minimum sleeptime to have effect on the JVM */
+	private long minimumSleep;
 
-    /** Frame Skip */
-    private int fskip;
+	/** Frame Skip */
+	private int fskip;
 
-    /** Time in ms. */
-    private long t;
+	/** Time in ms. */
+	private long t;
 
-    /** Time in ms. */
-    private long tempT;
+	/** Time in ms. */
+	private long tempT;
 
-    /** Framenumber relative to last recalc */
-    private int frameNumber;
-    
-    /** Count recalc for measuring avg fps */
-    private long recalcCount = 0;
+	/** Framenumber relative to last recalc */
+	private int frameNumber;
 
-    /**
-     * Initialize the throttle.
-     */
-    
-    public Throttle(int fps) {
-    	this.init(fps);
-    }
-    
-    private void init(int _fps) {
+	/** Count recalc for measuring avg fps */
+	private long recalcCount = 0;
+
+	/**
+	 * Initialize the throttle.
+	 */
+
+	public Throttle(int fps) {
+		this.init(fps);
+	}
+
+	private void init(int _fps) {
 
 		targetFPS = _fps;
 		throttle = true;
@@ -133,38 +133,43 @@ public class Throttle {
 		avgFPS = 0f;
 		fps = 0;
 
-        // This part is weird... Its intention is to set the minimumSleep variable, which is the
-        // minimum amount of milliseconds that the throttle may slow down 1 frame.
-        // Why? Because, depending on the VM and/or OS (not sure yet), there is a minimum value
-        // for Thread.Sleep(ms) to have an effect.
-        // When running M$ JRE on Win2k, this value is incredibly high (11 ms.),
-        // Running SUN JRE on Win2k, it's better (5 ms.).
-        // It would be logical to look for vm.vendor, but this is not allowed in an applet :o(
-        // Now, I look for os.name (which is allowed) and make use of the fact that the M$ VM
-        // thinks that Windows 2000 is NT, where Sun seems to be better at distinguishing between
-        // M$'s OS-es (!).
-        // This mega dirty hack works on win2k, but probably not on NT.
-        // ....This whole throttling in java gives me a headache....
-        String osname = System.getProperty("os.name");
-        minimumSleep = osname.endsWith("NT") ? 11 : 5;
-        sleep = minimumSleep;
-        throttleStep = DEFAULT_THROTTLE_STEP;
-        minFPS = targetFPS - (int)(targetFPS * MAX_FPS_DEVIATION);
-        if(minFPS == targetFPS) {
-            minFPS = targetFPS - 1;
-        }
-        maxFPS = targetFPS + (int)(targetFPS * MAX_FPS_DEVIATION);
-        if(maxFPS == targetFPS) {
-            maxFPS = targetFPS + 1;
-        }
+		// This part is weird... Its intention is to set the minimumSleep
+		// variable, which is the
+		// minimum amount of milliseconds that the throttle may slow down 1
+		// frame.
+		// Why? Because, depending on the VM and/or OS (not sure yet), there is
+		// a minimum value
+		// for Thread.Sleep(ms) to have an effect.
+		// When running M$ JRE on Win2k, this value is incredibly high (11 ms.),
+		// Running SUN JRE on Win2k, it's better (5 ms.).
+		// It would be logical to look for vm.vendor, but this is not allowed in
+		// an applet :o(
+		// Now, I look for os.name (which is allowed) and make use of the fact
+		// that the M$ VM
+		// thinks that Windows 2000 is NT, where Sun seems to be better at
+		// distinguishing between
+		// M$'s OS-es (!).
+		// This mega dirty hack works on win2k, but probably not on NT.
+		// ....This whole throttling in java gives me a headache....
+		String osname = System.getProperty("os.name");
+		minimumSleep = osname.endsWith("NT") ? 11 : 5;
+		sleep = minimumSleep;
+		throttleStep = DEFAULT_THROTTLE_STEP;
+		minFPS = targetFPS - (int) (targetFPS * MAX_FPS_DEVIATION);
+		if (minFPS == targetFPS) {
+			minFPS = targetFPS - 1;
+		}
+		maxFPS = targetFPS + (int) (targetFPS * MAX_FPS_DEVIATION);
+		if (maxFPS == targetFPS) {
+			maxFPS = targetFPS + 1;
+		}
 
-        fps = targetFPS;
-        t = System.currentTimeMillis();
+		fps = targetFPS;
+		t = System.currentTimeMillis();
 	}
 
 	/**
-	 * Call this method each frame.
-	 * Here the actual throttling takes place.
+	 * Call this method each frame. Here the actual throttling takes place.
 	 */
 	public void throttle() {
 		// Try slow down to the machine's original speed
@@ -196,7 +201,7 @@ public class Throttle {
 	 * Returns true if a frame needs to be skipped.
 	 */
 	public boolean skipFrame() {
-		return !((fskip==0)||((frameNumber%(fskip+1))==0));
+		return !((fskip == 0) || ((frameNumber % (fskip + 1)) == 0));
 	}
 
 	/**
@@ -247,7 +252,7 @@ public class Throttle {
 	 * Get current FPS.
 	 */
 	public int getFPS() {
-		return (int)fps;
+		return (int) fps;
 	}
 
 	/**
@@ -258,90 +263,88 @@ public class Throttle {
 	public int getTargetFPS() {
 		return targetFPS;
 	}
-	
+
 	/**
 	 * Get the average FPS
-	 * 	 * @return float	 */
+	 * 
+	 * @return float
+	 */
 	public float getAverageFPS() {
 		return avgFPS;
 	}
 
 	/**
-	 * Called after FRAMES_UNTIL_THROTTLE_RECALC is reached.
-	 * Here the sleep time and auto frame skip is re-evaluated.
+	 * Called after FRAMES_UNTIL_THROTTLE_RECALC is reached. Here the sleep time
+	 * and auto frame skip is re-evaluated.
 	 */
 	private void recalcTiming() {
 		tempT = System.currentTimeMillis();
 		try {
 			fps = 1000 / ((tempT - t) / FRAMES_UNTIL_THROTTLE_RECALC);
-		} catch(ArithmeticException e) {
-			
+		} catch (ArithmeticException e) {
+
 		}
 		t = tempT;
-		
+
 		recalcCount = recalcCount + 1;
 		sumFPS = sumFPS + fps;
-		
-		avgFPS = (float)( (int) ((sumFPS * 100) / recalcCount)) / 100;
 
-		if(throttle) {
-			if(fps < minFPS) {
-				if(sleep > minimumSleep) {
-					if(TRY_ALT_SKIP_CALC) {
-						sleep-=(targetFPS-fps)/(targetFPS-minFPS);
-					}
-					else{
+		avgFPS = (float) ((int) ((sumFPS * 100) / recalcCount)) / 100;
+
+		if (throttle) {
+			if (fps < minFPS) {
+				if (sleep > minimumSleep) {
+					if (TRY_ALT_SKIP_CALC) {
+						sleep -= (targetFPS - fps) / (targetFPS - minFPS);
+					} else {
 						sleep--;
 					}
 				}
-				if(sleep <= minimumSleep) {
+				if (sleep <= minimumSleep) {
 					throttleStep++;
-					if(throttleStep > MAX_THROTTLE_STEP) {
+					if (throttleStep > MAX_THROTTLE_STEP) {
 						throttleStep = MAX_THROTTLE_STEP;
-						if(autoFS) {
+						if (autoFS) {
 							throttleStep = MIN_THROTTLE_STEP;
 							fskip++;
-							if(fskip > MAX_FRAME_SKIP) {
+							if (fskip > MAX_FRAME_SKIP) {
 								fskip = MAX_FRAME_SKIP;
 								throttleStep = MAX_THROTTLE_STEP;
 							}
 						}
 					} else {
-						if(TRY_ALT_SKIP_CALC) {
+						if (TRY_ALT_SKIP_CALC) {
 							sleep += minimumSleep;
-						}
-						else {
+						} else {
 							sleep = (1000 / targetFPS - 1);
 						}
 					}
 				}
-			} else if(fps > maxFPS) {
-				if(TRY_ALT_SKIP_CALC) {
-					sleep+=(fps-targetFPS)/(maxFPS-targetFPS);
-				}
-				else {
+			} else if (fps > maxFPS) {
+				if (TRY_ALT_SKIP_CALC) {
+					sleep += (fps - targetFPS) / (maxFPS - targetFPS);
+				} else {
 					sleep++;
 				}
-				if(sleep > (1000 / targetFPS - 1)) {
+				if (sleep > (1000 / targetFPS - 1)) {
 					throttleStep--;
-					if(throttleStep < MIN_THROTTLE_STEP) {
+					if (throttleStep < MIN_THROTTLE_STEP) {
 						throttleStep = MIN_THROTTLE_STEP;
-						if(autoFS) {
+						if (autoFS) {
 							throttleStep = MAX_THROTTLE_STEP;
 							fskip--;
-							if(fskip < 0) {
+							if (fskip < 0) {
 								fskip = 0;
 								throttleStep = MIN_THROTTLE_STEP;
 							}
 						}
 					} else {
-						if(TRY_ALT_SKIP_CALC) {
+						if (TRY_ALT_SKIP_CALC) {
 							sleep -= minimumSleep;
-							if(sleep < minimumSleep) {
+							if (sleep < minimumSleep) {
 								sleep = minimumSleep;
 							}
-						}
-						else {
+						} else {
 							sleep = minimumSleep;
 						}
 					}

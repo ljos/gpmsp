@@ -28,31 +28,32 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
-*/
+ */
 
 package jef.map;
 
 /**
  * @author Erik Duijs
  * 
- * IOReadPort.java */
+ *         IOReadPort.java
+ */
 public class IOReadPort implements ReadHandler {
 
-	private int			size;
-	private ReadHandler	readMap[];
-	private UndefinedRead  defread  = new UndefinedRead();
+	private int size;
+	private ReadHandler readMap[];
+	private UndefinedRead defread = new UndefinedRead();
 	static final boolean debug = false;
 
 	public IOReadPort() {
 		this.size = 0x100;
 		this.readMap = new ReadHandler[size];
-		set(0, size-1, defread);
+		set(0, size - 1, defread);
 	}
 
 	public IOReadPort(int size) {
 		this.size = size;
 		this.readMap = new ReadHandler[size];
-		set(0, size-1, defread);
+		set(0, size - 1, defread);
 	}
 
 	public void set(int from, int until, ReadHandler memRead) {
@@ -72,14 +73,16 @@ public class IOReadPort implements ReadHandler {
 	public class UndefinedRead implements ReadHandler {
 		@Override
 		public int read(int address) {
-			if (debug) System.out.println("Undefined Read at " + Integer.toHexString(address));
+			if (debug)
+				System.out.println("Undefined Read at "
+						+ Integer.toHexString(address));
 			return 0;
 		}
 	}
 
-    @Override
+	@Override
 	public int read(int address) {
-        return readMap[address].read(address);
-    }
+		return readMap[address].read(address);
+	}
 
 }

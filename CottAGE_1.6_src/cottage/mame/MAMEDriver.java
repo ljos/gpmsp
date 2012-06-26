@@ -64,7 +64,7 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 
 	protected final ReadHandler soundlatch_r = new Soundlatch_r();
 	protected final WriteHandler soundlatch_w = new Soundlatch_w();
-	
+
 	private int soundLatch = 0;
 
 	private MemoryReadAddress[] mra = new MemoryReadAddress[8];
@@ -87,8 +87,8 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 	private CpuDriver[] cpus = new CpuDriver[8];
 	private int cpu_count = 0;
 
-//	private String GAMEmanufacturer = "";
-//	private String GAMEname = "";
+	// private String GAMEmanufacturer = "";
+	// private String GAMEname = "";
 
 	private String DriverName = "";
 
@@ -126,8 +126,9 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 		public void write(int address, int data) {
 			soundLatch = data;
 		}
-		
+
 	}
+
 	protected void soundlatch_w(int offset, int data) {
 		this.soundLatch = data;
 	}
@@ -139,7 +140,7 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 	protected void cpu_set_irq_line(int cpu, int irqType, int irqTriggerType) {
 		cpus[cpu].cpu.interrupt(irqType, true);
 	}
-	
+
 	protected void cpu_cause_interrupt(int cpu, int irqType) {
 		cpus[cpu].cpu.interrupt(irqType, true);
 	}
@@ -201,46 +202,49 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 
 	protected void Helpers(int name, int valname, int size, int valsize) {
 		switch (name) {
-			case videoram :
-				Fvideoram = valname;
-				break;
-			case colorram :
-				Fcolorram = valname;
-				break;
-			case spriteram :
-				Fspriteram = valname;
-				break;
-			case spriteram_2 :
-				Fspriteram_2 = valname;
-				break;
-			case spriteram_3 :
-				Fspriteram_3 = valname;
-				break;
-			case paletteram :
-				Fpaletteram = valname;
-				break;
-			case paletteram_2 :
-				Fpaletteram_2 = valname;
-				break;
+		case videoram:
+			Fvideoram = valname;
+			break;
+		case colorram:
+			Fcolorram = valname;
+			break;
+		case spriteram:
+			Fspriteram = valname;
+			break;
+		case spriteram_2:
+			Fspriteram_2 = valname;
+			break;
+		case spriteram_3:
+			Fspriteram_3 = valname;
+			break;
+		case paletteram:
+			Fpaletteram = valname;
+			break;
+		case paletteram_2:
+			Fpaletteram_2 = valname;
+			break;
 		}
 		switch (size) {
-			case videoram_size :
-				Fvideoram_size = valsize;
-				break;
-			case spriteram_size :
-				Fspriteram_size = valsize;
-				break;
-			case spriteram_2_size :
-				Fspriteram_2_size = valsize;
-				break;
-			case spriteram_3_size :
-				Fspriteram_3_size = valsize;
-				break;
+		case videoram_size:
+			Fvideoram_size = valsize;
+			break;
+		case spriteram_size:
+			Fspriteram_size = valsize;
+			break;
+		case spriteram_2_size:
+			Fspriteram_2_size = valsize;
+			break;
+		case spriteram_3_size:
+			Fspriteram_3_size = valsize;
+			break;
 		}
 	}
-	protected void	install_mem_read_handler(int cpu, int from, int until, ReadHandler memRead) {
+
+	protected void install_mem_read_handler(int cpu, int from, int until,
+			ReadHandler memRead) {
 		mra[cpu].set(from, until, memRead);
 	}
+
 	protected void MR_START() {
 		mra[mra_count++] = new MemoryReadAddress(REGIONS[cur_region - 1]);
 	}
@@ -276,12 +280,14 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 		MW_ADD(from, until, memWrite);
 	}
 
-	protected void MW_ADD(int from, int until, WriteHandler memWrite, int helper, int helper_size) {
+	protected void MW_ADD(int from, int until, WriteHandler memWrite,
+			int helper, int helper_size) {
 		mwa[mwa_count - 1].set(from, until, memWrite);
 		Helpers(helper, from, helper_size, until + 1 - from);
 	}
 
-	protected void MW_START(int from, int until, WriteHandler memWrite, int helper, int helper_size) {
+	protected void MW_START(int from, int until, WriteHandler memWrite,
+			int helper, int helper_size) {
 		MW_START();
 		MW_ADD(from, until, memWrite, helper, helper_size);
 	}
@@ -291,29 +297,28 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 		Helpers(helper, from, -1, 0);
 	}
 
-	protected void MW_ADD(int from, int until, WriteHandler memWrite, int[] helper) {
+	protected void MW_ADD(int from, int until, WriteHandler memWrite,
+			int[] helper) {
 		mwa[mwa_count - 1].set(from, until, memWrite);
 		helper[0] = from;
 	}
 
-	protected void MW_ADD(int from, int until, int type, int[] helper, int[] helper_size) {
+	protected void MW_ADD(int from, int until, int type, int[] helper,
+			int[] helper_size) {
 		mwa[mwa_count - 1].setMW(from, until, type);
 		helper[0] = from;
 		helper_size[0] = until + 1 - from;
 	}
 
-	protected void MW_ADD(
-		int from,
-		int until,
-		WriteHandler memWrite,
-		int[] helper,
-		int[] helper_size) {
+	protected void MW_ADD(int from, int until, WriteHandler memWrite,
+			int[] helper, int[] helper_size) {
 		mwa[mwa_count - 1].set(from, until, memWrite);
 		helper[0] = from;
 		helper_size[0] = until + 1 - from;
 	}
 
-	protected void MW_START(int from, int until, WriteHandler memWrite, int helper) {
+	protected void MW_START(int from, int until, WriteHandler memWrite,
+			int helper) {
 		MW_START();
 		MW_ADD(from, until, memWrite, helper);
 	}
@@ -342,12 +347,14 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 		MW_ADD(from, until, type, helper);
 	}
 
-	protected void MW_ADD(int from, int until, int type, int helper, int helper_size) {
+	protected void MW_ADD(int from, int until, int type, int helper,
+			int helper_size) {
 		mwa[mwa_count - 1].setMW(from, until, type);
 		Helpers(helper, from, helper_size, until + 1 - from);
 	}
 
-	protected void MW_START(int from, int until, int type, int helper, int helper_size) {
+	protected void MW_START(int from, int until, int type, int helper,
+			int helper_size) {
 		MW_START();
 		MW_ADD(from, until, type, helper, helper_size);
 	}
@@ -358,7 +365,8 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 	}
 
 	protected void PR_ADD(int from, int until, ReadHandler memRead) {
-		if (ior[ior_count - 1]!=null) ior[ior_count - 1].set(from, until, memRead);
+		if (ior[ior_count - 1] != null)
+			ior[ior_count - 1].set(from, until, memRead);
 	}
 
 	protected void PR_START(int from, int until, ReadHandler memRead) {
@@ -372,7 +380,8 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 	}
 
 	protected void PW_ADD(int from, int until, WriteHandler memWrite) {
-		if (iow[iow_count-1]!=null) iow[iow_count - 1].set(from, until, memWrite);
+		if (iow[iow_count - 1] != null)
+			iow[iow_count - 1].set(from, until, memWrite);
 	}
 
 	protected void PW_START(int from, int until, WriteHandler memWrite) {
@@ -380,13 +389,17 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 		PW_ADD(from, until, memWrite);
 	}
 
-	protected void GDI_ADD(int mem, int offset, GfxLayout gfx, int colorOffset, int numberOfColors) {
-		gdis[gdi_count] = new GfxDecodeInfo(REGIONS[mem], offset, gfx, colorOffset, numberOfColors);
+	protected void GDI_ADD(int mem, int offset, GfxLayout gfx, int colorOffset,
+			int numberOfColors) {
+		gdis[gdi_count] = new GfxDecodeInfo(REGIONS[mem], offset, gfx,
+				colorOffset, numberOfColors);
 		gdi_count++;
 	}
 
-	protected void GDI_ADD(int mem, int offset, int[][] gfx, int colorOffset, int numberOfColors) {
-		gdis[gdi_count] = new GfxDecodeInfo(REGIONS[mem], offset, gfx, colorOffset, numberOfColors);
+	protected void GDI_ADD(int mem, int offset, int[][] gfx, int colorOffset,
+			int numberOfColors) {
+		gdis[gdi_count] = new GfxDecodeInfo(REGIONS[mem], offset, gfx,
+				colorOffset, numberOfColors);
 		gdi_count++;
 	}
 
@@ -397,18 +410,18 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 		ior[cpu_count] = new IOReadPort();
 		iow[cpu_count] = new IOWritePort();
 
-		cpus[cpu_count] =
-			new CpuDriver(cpu, frq, null, null, ior[cpu_count], iow[cpu_count], null, 0);
+		cpus[cpu_count] = new CpuDriver(cpu, frq, null, null, ior[cpu_count],
+				iow[cpu_count], null, 0);
 		cpu_count++;
 
 		cur_region++;
 	}
-	
+
 	protected void MDRV_VIDEO_EOF(Eof_callback eof_callback) {
 		mdalloc();
 		md.eof_callback = eof_callback;
 	}
-	
+
 	protected void MDRV_CPU_ADD(int type, int frq) {
 		Cpu cpu = new Z80();
 		MDRV_CPU_ADD(cpu, frq);
@@ -418,9 +431,9 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 		Cpu cpu = null;
 
 		switch (type) {
-			case 0 :
-				cpu = new Z80();
-				break;
+		case 0:
+			cpu = new Z80();
+			break;
 		}
 
 		cpu.setTag(tag);
@@ -488,26 +501,8 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 				System.out.println("cpus :" + cpuDriver.length);
 			}
 
-			md =
-				new MachineDriver(
-					cpuDriver,
-					0,
-					0,
-					0,
-					NOP,
-					0,
-					0,
-					null,
-					null,
-					0,
-					0,
-					null,
-					null,
-					0,
-					null,
-					null,
-					null,
-					null);
+			md = new MachineDriver(cpuDriver, 0, 0, 0, NOP, 0, 0, null, null,
+					0, 0, null, null, 0, null, null, null, null);
 
 			/* Update RAM addresses */
 			if (Fvideoram != -1)
@@ -625,7 +620,8 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 		inp_count++;
 	}
 
-	protected void PORT_ANALOG(int bitMask, int center, int type, int a, int b, int c, int d) {
+	protected void PORT_ANALOG(int bitMask, int center, int type, int a, int b,
+			int c, int d) {
 		inps[inp_count - 1].setAnalog(bitMask, center, type, a, b, c, d);
 	}
 
@@ -633,12 +629,15 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 		inps[inp_count - 1].setBit(bitMask, activityType, inputType);
 	}
 
-	protected void PORT_BITX(int bitMask, int defSetting, int c, String name, int d, int e) {
+	protected void PORT_BITX(int bitMask, int defSetting, int c, String name,
+			int d, int e) {
 		inps[inp_count - 1].setDipName(bitMask, defSetting, name);
 	}
 
-	protected void PORT_BIT_IMPULSE(int bitMask, int activityType, int inputType, int frames) {
-		inps[inp_count - 1].setBitImpulse(bitMask, activityType, inputType, frames);
+	protected void PORT_BIT_IMPULSE(int bitMask, int activityType,
+			int inputType, int frames) {
+		inps[inp_count - 1].setBitImpulse(bitMask, activityType, inputType,
+				frames);
 	}
 
 	protected void PORT_DIPNAME(int bitMask, int defSetting, String name) {
@@ -684,14 +683,8 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 		return crc;
 	}
 
-	protected void GAME(
-		int year,
-		boolean roms,
-		InputPort[] inp,
-		boolean ini,
-		int rot,
-		String man,
-		String nam) {
+	protected void GAME(int year, boolean roms, InputPort[] inp, boolean ini,
+			int rot, String man, String nam) {
 		if (!bInfo) {
 			md.ROT = rot;
 			md.input = inp;
@@ -707,15 +700,8 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 		}
 	}
 
-	protected void GAME(
-		int year,
-		boolean roms,
-		String parent,
-		InputPort[] inp,
-		boolean ini,
-		int rot,
-		String man,
-		String nam) {
+	protected void GAME(int year, boolean roms, String parent, InputPort[] inp,
+			boolean ini, int rot, String man, String nam) {
 		if (!bInfo) {
 			md.ROT = rot;
 			md.input = inp;
@@ -731,147 +717,62 @@ public abstract class MAMEDriver implements Driver, MAMEConstants {
 		}
 	}
 
-	protected void GAME(
-		int year,
-		boolean roms,
-		int parent,
-		boolean mdrv,
-		boolean inp,
-		boolean ini,
-		int rot,
-		String man,
-		String nam) {
+	protected void GAME(int year, boolean roms, int parent, boolean mdrv,
+			boolean inp, boolean ini, int rot, String man, String nam) {
 		GAME(Integer.toString(year), roms, null, mdrv, inp, ini, rot, man, nam);
 	}
 
-	protected void GAME(
-		int year,
-		boolean roms,
-		int parent,
-		boolean mdrv,
-		boolean inp,
-		int ini,
-		int rot,
-		String man,
-		String nam) {
+	protected void GAME(int year, boolean roms, int parent, boolean mdrv,
+			boolean inp, int ini, int rot, String man, String nam) {
 		GAME(Integer.toString(year), roms, null, mdrv, inp, true, rot, man, nam);
 	}
 
-	protected void GAME(
-		int year,
-		boolean roms,
-		int parent,
-		boolean mdrv,
-		boolean inp,
-		InitHandler ini,
-		int rot,
-		String man,
-		String nam) {
+	protected void GAME(int year, boolean roms, int parent, boolean mdrv,
+			boolean inp, InitHandler ini, int rot, String man, String nam) {
 		GAME(Integer.toString(year), roms, null, mdrv, inp, ini, rot, man, nam);
 	}
 
-	protected void GAME(
-		String year,
-		boolean roms,
-		int parent,
-		boolean mdrv,
-		boolean inp,
-		boolean ini,
-		int rot,
-		String man,
-		String nam) {
+	protected void GAME(String year, boolean roms, int parent, boolean mdrv,
+			boolean inp, boolean ini, int rot, String man, String nam) {
 		GAME(year, roms, null, mdrv, inp, ini, rot, man, nam);
 	}
 
-	protected void GAME(
-		String year,
-		boolean roms,
-		int parent,
-		boolean mdrv,
-		boolean inp,
-		int ini,
-		int rot,
-		String man,
-		String nam) {
+	protected void GAME(String year, boolean roms, int parent, boolean mdrv,
+			boolean inp, int ini, int rot, String man, String nam) {
 		GAME(year, roms, null, mdrv, inp, true, rot, man, nam);
 	}
 
-	protected void GAME(
-		int year,
-		boolean roms,
-		String parent,
-		boolean mdrv,
-		boolean inp,
-		boolean ini,
-		int rot,
-		String man,
-		String nam) {
-		GAME(Integer.toString(year), roms, parent, mdrv, inp, ini, rot, man, nam);
+	protected void GAME(int year, boolean roms, String parent, boolean mdrv,
+			boolean inp, boolean ini, int rot, String man, String nam) {
+		GAME(Integer.toString(year), roms, parent, mdrv, inp, ini, rot, man,
+				nam);
 	}
 
-	protected void GAME(
-		int year,
-		boolean roms,
-		String parent,
-		boolean mdrv,
-		boolean inp,
-		int ini,
-		int rot,
-		String man,
-		String nam) {
-		GAME(Integer.toString(year), roms, parent, mdrv, inp, true, rot, man, nam);
+	protected void GAME(int year, boolean roms, String parent, boolean mdrv,
+			boolean inp, int ini, int rot, String man, String nam) {
+		GAME(Integer.toString(year), roms, parent, mdrv, inp, true, rot, man,
+				nam);
 	}
 
-	protected void GAME(
-		int year,
-		boolean roms,
-		String parent,
-		boolean mdrv,
-		boolean inp,
-		InitHandler ini,
-		int rot,
-		String man,
-		String nam) {
-		GAME(Integer.toString(year), roms, parent, mdrv, inp, ini, rot, man, nam);
+	protected void GAME(int year, boolean roms, String parent, boolean mdrv,
+			boolean inp, InitHandler ini, int rot, String man, String nam) {
+		GAME(Integer.toString(year), roms, parent, mdrv, inp, ini, rot, man,
+				nam);
 	}
 
-	protected void GAME(
-		String year,
-		boolean roms,
-		String parent,
-		boolean mdrv,
-		boolean inp,
-		int ini,
-		int rot,
-		String man,
-		String nam) {
+	protected void GAME(String year, boolean roms, String parent, boolean mdrv,
+			boolean inp, int ini, int rot, String man, String nam) {
 		GAME(year, roms, parent, mdrv, inp, true, rot, man, nam);
 	}
 
-	protected void GAME(
-		String year,
-		boolean roms,
-		String parent,
-		boolean mdrv,
-		boolean inp,
-		InitHandler ini,
-		int rot,
-		String man,
-		String nam) {
+	protected void GAME(String year, boolean roms, String parent, boolean mdrv,
+			boolean inp, InitHandler ini, int rot, String man, String nam) {
 		GAME(year, roms, parent, mdrv, inp, true, rot, man, nam);
 		ini.init();
 	}
 
-	protected void GAME(
-		String year,
-		boolean roms,
-		String parent,
-		boolean mdrv,
-		boolean inp,
-		boolean ini,
-		int rot,
-		String man,
-		String nam) {
+	protected void GAME(String year, boolean roms, String parent, boolean mdrv,
+			boolean inp, boolean ini, int rot, String man, String nam) {
 		int i;
 
 		if (!bInfo) {

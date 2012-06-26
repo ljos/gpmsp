@@ -408,8 +408,9 @@ public final class RomLoader {
 								.toHexString(this.romlist_crc[i]))))) {
 					// if ((!this.romlist_loaded[i]) &&
 					// (ze.getName().equals(this.romlist_names[i]))) {
-					if (this.romlist_crc[i] == 0){
-						System.out.print("Loading " + this.romlist_names[i]+ "(NO GOOD DUMP KNOWN)...");
+					if (this.romlist_crc[i] == 0) {
+						System.out.print("Loading " + this.romlist_names[i]
+								+ "(NO GOOD DUMP KNOWN)...");
 					}
 					try {
 						jef.video.Console.TXT[jef.video.Console.cTXT] = "Loading "

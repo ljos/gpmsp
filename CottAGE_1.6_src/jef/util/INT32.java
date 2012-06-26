@@ -6,7 +6,7 @@ package jef.util;
 /**
  * @author Erik Duijs
  * 
- * Utility class for porting C INT32 types which are used by reference.
+ *         Utility class for porting C INT32 types which are used by reference.
  */
 public class INT32 {
 	public int value;

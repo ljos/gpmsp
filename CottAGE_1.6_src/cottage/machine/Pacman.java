@@ -16,14 +16,34 @@ public class Pacman extends BasicMachine implements Machine {
 	public int readOffset = 0x18000;
 	public static boolean fastBoard = true;
 
-	public InterruptHandler pacman_nmi_interrupt(cottage.machine.Pacman m)	{	return new Pacman_NMI_interrupt(m); }
-	public InterruptHandler pacman_interrupt(cottage.machine.Pacman m)	{	return new Pacman_interrupt(m); }
-	public WriteHandler interrupt_enable_w(cottage.machine.Pacman m) {		return new Interrupt_enable_w(m); }
-	public WriteHandler interrupt_vector_w(cottage.machine.Pacman m) {		return new Interrupt_vector_w(m); }
-	public ReadHandler theglob_decrypt_rom(cottage.machine.Pacman m) {		return new Theglob_decrypt_rom(m); }
-	public ReadHandler	MRA_BANK1(cottage.machine.Pacman m, int[] mem)	{	return new mra_bank1(m,mem); }
-	public VoidFunction theglob_init_machine(cottage.machine.Pacman m, int[] mem) { return new init(m,mem); }
-	
+	public InterruptHandler pacman_nmi_interrupt(cottage.machine.Pacman m) {
+		return new Pacman_NMI_interrupt(m);
+	}
+
+	public InterruptHandler pacman_interrupt(cottage.machine.Pacman m) {
+		return new Pacman_interrupt(m);
+	}
+
+	public WriteHandler interrupt_enable_w(cottage.machine.Pacman m) {
+		return new Interrupt_enable_w(m);
+	}
+
+	public WriteHandler interrupt_vector_w(cottage.machine.Pacman m) {
+		return new Interrupt_vector_w(m);
+	}
+
+	public ReadHandler theglob_decrypt_rom(cottage.machine.Pacman m) {
+		return new Theglob_decrypt_rom(m);
+	}
+
+	public ReadHandler MRA_BANK1(cottage.machine.Pacman m, int[] mem) {
+		return new mra_bank1(m, mem);
+	}
+
+	public VoidFunction theglob_init_machine(cottage.machine.Pacman m, int[] mem) {
+		return new init(m, mem);
+	}
+
 	@Override
 	public CpuBoard createCpuBoard(int id) {
 		if (fastBoard)
@@ -72,7 +92,7 @@ public class Pacman extends BasicMachine implements Machine {
 		@Override
 		public int read(int offset) {
 
-			if ( (offset & 0x01) != 0) {
+			if ((offset & 0x01) != 0) {
 				counter = counter - 1;
 				if (counter < 0)
 					counter = 0x0F;
@@ -80,16 +100,23 @@ public class Pacman extends BasicMachine implements Machine {
 				counter = (counter + 1) & 0x0F;
 			}
 
-			switch(counter) {
-				case 0x08:	m.readOffset = 0x10000;	break;
-				case 0x09:	m.readOffset = 0x14000;	break;
-				case 0x0A:	m.readOffset = 0x18000;	break;
-				case 0x0B:	m.readOffset = 0x1C000;	break;
+			switch (counter) {
+			case 0x08:
+				m.readOffset = 0x10000;
+				break;
+			case 0x09:
+				m.readOffset = 0x14000;
+				break;
+			case 0x0A:
+				m.readOffset = 0x18000;
+				break;
+			case 0x0B:
+				m.readOffset = 0x1C000;
+				break;
 			}
 			return 0;
 		}
 	}
-
 
 	public class Pacman_NMI_interrupt implements InterruptHandler {
 		cottage.machine.Pacman m;
@@ -101,9 +128,9 @@ public class Pacman extends BasicMachine implements Machine {
 		@Override
 		public int irq() {
 			if (Pacman.irqEnabled) {
-				return jef.cpu.Cpu.INTERRUPT_TYPE_NMI;	// nmi
+				return jef.cpu.Cpu.INTERRUPT_TYPE_NMI; // nmi
 			} else {
-				return jef.cpu.Cpu.INTERRUPT_TYPE_IGNORE;	// ignore interrupt
+				return jef.cpu.Cpu.INTERRUPT_TYPE_IGNORE; // ignore interrupt
 			}
 		}
 	}
@@ -118,9 +145,9 @@ public class Pacman extends BasicMachine implements Machine {
 		@Override
 		public int irq() {
 			if (Pacman.irqEnabled) {
-				return jef.cpu.Cpu.INTERRUPT_TYPE_IRQ;	// irq
+				return jef.cpu.Cpu.INTERRUPT_TYPE_IRQ; // irq
 			} else {
-				return jef.cpu.Cpu.INTERRUPT_TYPE_IGNORE;	// ignore interrupt
+				return jef.cpu.Cpu.INTERRUPT_TYPE_IGNORE; // ignore interrupt
 			}
 		}
 	}
@@ -147,7 +174,7 @@ public class Pacman extends BasicMachine implements Machine {
 
 		@Override
 		public void write(int address, int value) {
-			m.cd[0].cpu.setProperty(0,value);
+			m.cd[0].cpu.setProperty(0, value);
 		}
 	}
 }
