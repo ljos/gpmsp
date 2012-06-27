@@ -87,20 +87,16 @@
     (Point. (+ x (.x point)) (+ y (.x point)))))
 
 (defn fitness [tries code time]
-  (log/info "Running" (str code) "," tries " times.")
   (binding [msp (Game. time)]
     (loop [[score time] [0 0]
            times 0] 
       (if (or (<= tries times)
               (and (<= 3 times)
                    (= (/ score times) 120)))
-        (do (log/info (str code) "fininshed with score" (int (/ score times))
-                      "\n with time" (long (/ time times 1000 60)))
-            [(int (/ score times))
-             (long (/ time times))])
+        [(int (/ score times))
+         (long (/ time times))]
         (do (.start msp)
             (.update msp)
-            (log/info "Code:" code "Try:" times)
             (recur
              (do (while (not (.isGameOver msp))
                    (eval`~code)
