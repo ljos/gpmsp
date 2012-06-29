@@ -208,8 +208,11 @@
   (let [mean (/ (reduce + times) SIZE-OF-POPULATION)
         std (/ (reduce + (map #(Math/pow % 2)
                               (map #(- % mean) times)))
-               SIZE-OF-POPULATION)]
-    (long (+ mean std))))
+               SIZE-OF-POPULATION)
+        time (long (+ mean (* 2 std)))]
+    (println "time is " time)
+    (if (< time 30000)
+      30000)))
 
 (defn run-generation [generation]
   (use 'mspacman.individual)
