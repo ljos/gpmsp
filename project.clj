@@ -4,8 +4,9 @@
                  [org.clojure/data.zip "0.1.0"]
                  [org.clojure/tools.logging "0.2.3"]]
   :java-source-path "./" 
-  :jvm-opts ["-Xmx3G"
+  :jvm-opts ["-Xmx4G"
              "-Xms2G"
-             "-Xmn1G"
-             "-XX:+UseConcMarkSweepGC"]
+             "-Xmn2G"
+             "-XX:+UseParallelGC"
+             "-XX:+AggressiveOpts"]
   :main mspacman.core)
