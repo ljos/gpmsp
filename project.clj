@@ -7,6 +7,5 @@
   :jvm-opts ["-Xmx3G"
              "-Xms2G"
              "-Xmn1G"
-             "-XX:+UseParallelGC"
-             "-XX:+AggressiveOpts"]
+             "-XX:+UseParallelGC"]
   :main mspacman.core)
