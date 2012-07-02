@@ -210,7 +210,6 @@
                               (map #(- % mean) times)))
                SIZE-OF-POPULATION)
         time (long (+ mean (* 2 std)))]
-    (println "time is " time)
     (if (< time 30000)
       30000)))
 
@@ -218,6 +217,7 @@
   (use 'mspacman.individual)
   (let [new-time (calc-time (map :time generation))
         elitism (* SIZE-OF-POPULATION ELITISM-RATE)]
+    (println "Time: " new-time)
     (sort compare-fitness
           (pmap #(let [[fitness time] (ind/fitness FITNESS-RUNS % new-time)]
                    (struct individual % fitness time))
