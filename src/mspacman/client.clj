@@ -114,16 +114,16 @@
   (println "Started")
   (let [elitism (* gp/SIZE-OF-POPULATION gp/ELITISM-RATE)]
     (loop [population (gp-over-cluster startp startn)
-           n (inc startn)
-           new-time (gp/calc-time (map :time population))]
-      (println "Time: " new-time)
-      (if (< n gp/NUMBER-OF-GENERATIONS)
-        (recur (gp-over-cluster (concat (take elitism population)
-                                        (map #(struct gp/individual % 0 new-time)
-                                             (gp/recombination elitism population)))
-                                n)
-               (inc n))
-        (shutdown-agents)))))
+           n (inc startn)]
+      (let [new-time (gp/calc-time (map :time population))]
+        (println "Time: " new-time)
+        (if (< n gp/NUMBER-OF-GENERATIONS)
+          (recur (gp-over-cluster (concat (take elitism population)
+                                          (map #(struct gp/individual % 0 new-time)
+                                               (gp/recombination elitism population)))
+                                  n)
+                 (inc n)))))
+    (shutdown-agents)))
 
 (defn start-gp-cluster
   ([]
