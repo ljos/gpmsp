@@ -56,7 +56,7 @@
                          machine))))]
     (doall (filter #(has-user? %) machines))))
 
-(defn- send-inds-to-mahine [individuals machine]
+(defn- send-inds-to-machine [individuals machine]
   (try
     (let [socket (Socket. (format "%s.klientdrift.uib.no" machine) 50000)
           rdr (LineNumberingPushbackReader.
@@ -74,7 +74,7 @@
 (defn- send-population [machines population]
   (mapcat deref
           (doall
-           (map #(future (send-inds-to-mahine %1 %2))
+           (map #(future (send-inds-to-machine %1 %2))
                 (partition (int (/ (count population) (count machines)))
                            population)
                 machines))))
