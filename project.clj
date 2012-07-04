@@ -6,6 +6,5 @@
   :java-source-path "./" 
   :jvm-opts ["-Xmx3G"
              "-Xms2G"
-             "-Xmn1G"
-             "-XX:+UseParallelGC"]
+             "-Xmn1G"]
   :main mspacman.core)
