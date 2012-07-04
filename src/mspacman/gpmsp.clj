@@ -206,9 +206,9 @@
 
 (defn calc-time [times]
   (let [mean (/ (reduce + times) SIZE-OF-POPULATION)
-        std (/ (reduce + (map #(Math/pow % 2)
-                              (map #(- % mean) times)))
-               SIZE-OF-POPULATION)
+        std (Math/sqrt (/ (reduce + (map #(Math/pow % 2)
+                                         (map #(- % mean) times)))
+                          SIZE-OF-POPULATION))
         time (long (+ mean (* 2 std)))]
     (if (< time 30000)
       30000
