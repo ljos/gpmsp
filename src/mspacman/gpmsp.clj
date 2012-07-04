@@ -211,7 +211,8 @@
                SIZE-OF-POPULATION)
         time (long (+ mean (* 2 std)))]
     (if (< time 30000)
-      30000)))
+      30000
+      time)))
 
 (defn run-generation [generation]
   (use 'mspacman.individual)
@@ -277,6 +278,5 @@
           (doall
            (pmap #(let [[fitness time]
                         (ind/fitness FITNESS-RUNS (:program %) run-time)]
-                    (assoc (assoc % :fitness fitness)
-                      :time time))
+                    (assoc (assoc % :fitness fitness) :time time))
                  individuals)))))
