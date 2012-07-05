@@ -11,7 +11,7 @@
 
 (defstruct individual :program :fitness :time)
 
-(def SIZE-OF-POPULATION 200)
+(def SIZE-OF-POPULATION 700)
 (def ELITISM-RATE 0.05)
 (def NUMBER-OF-GENERATIONS 1000)
 (def MAX-STARTING-DEPTH 10)
@@ -208,7 +208,7 @@
   (let [mean (/ (reduce + times) SIZE-OF-POPULATION)
         std (Math/sqrt (/ (reduce + (map #(Math/pow % 2)
                                          (map #(- % mean) times)))
-                          SIZE-OF-POPULATION))
+                SIZE-OF-POPULATION))
         time (long (+ mean (* 2 std)))]
     (if (< time 30000)
       30000
