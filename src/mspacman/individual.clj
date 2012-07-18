@@ -48,9 +48,9 @@
 (defmacro msp-defn [name args & body]
   `(defn ~name ~args
      (try (try ~@body (catch NullPointerException f#
-                        (println f#)))
+                        (.printStackTrace f#)))
        (catch Exception e#
-         (println (format "%s threw exception: " ~name))
+         (.printStackTrace e#)
          (throw e#)))))
 
 (defmacro get-map [f]
@@ -66,22 +66,29 @@
   KeyEvent/VK_RIGHT)
 
 (msp-defn msp-check-area-below [entity]
-  (.checkArea (.getMap msp) entity 0 1))
+  (if (number? entity)
+    (.checkArea (.getMap msp) entity 0 1)))
 (msp-defn msp-check-area-above [entity]
-  (.checkArea (.getMap msp) entity 0 -1))
+  (if (number? entity)
+    (.checkArea (.getMap msp) entity 0 -1)))
 (msp-defn msp-check-area-leftof [entity]
-  (.checkArea (.getMap msp) entity -1 0))
+  (if (number? entity)
+    (.checkArea (.getMap msp) entity -1 0)))
 (msp-defn msp-check-area-rightof [entity]
-  (.checkArea (.getMap msp) entity 1 0))
+  (if (number? entity)
+    (.checkArea (.getMap msp) entity 1 0)))
 
 (msp-defn direction-of [entity]
-  (.directionOf (.getMap msp) entity))
+  (if (number? entity)
+    (.directionOf (.getMap msp) entity)))
 
 (msp-defn oposite-direction-of [entity]
-  (.opositeDirectionOf (.getMap msp)  entity))
+  (if (number? entity)
+    (.opositeDirectionOf (.getMap msp)  entity)))
 
 (defn set-direction! [direction]
- (.setDirection msp direction))
+  (if (number? direction)
+    (.setDirection msp direction)))
 
 (defn fitness [tries code time]
   (binding [msp (NOAGame. time)]
