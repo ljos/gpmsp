@@ -12,7 +12,7 @@
 (defstruct individual :program :fitness :time)
 
 (def SIZE-OF-POPULATION 300)
-(def ELITISM-RATE 0.05)
+(def ELITISM-RATE 0.00)
 (def NUMBER-OF-GENERATIONS 1000)
 (def MAX-STARTING-DEPTH 10)
 (def MAX-STARTING-WIDTH-OF-EXPR 10)
