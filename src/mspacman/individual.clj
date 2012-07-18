@@ -8,9 +8,9 @@
 (def ^:dynamic msp nil)
 
 (def VALUE-LIST (concat [100 1000 10000 100000 1000000 10000000 100000000
-                         1000000000 Double/MAX_VALUE]
+                         1000000000 Integer/MAX_VALUE]
                         [-100 -1000 -10000 -100000 -1000000 -10000000 -100000000
-                         -1000000000 Double/MIN_VALUE]
+                         -1000000000 Integer/MIN_VALUE]
                         (range -100 100)))
 (def RADIUS-LIST (range 0 288))
 (def X-LIST (range -224 224))
