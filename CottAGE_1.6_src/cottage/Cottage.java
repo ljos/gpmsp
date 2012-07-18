@@ -180,7 +180,7 @@ public class Cottage extends GfxProducer {
 		System.out.println("Running...");
 
 		t = new Throttle(m.getProperty(Machine.FPS));
-		t.enable(false);
+		t.enable(true);
 
 		BitMap bm = m.refresh(true);
 		while (!stop) {
