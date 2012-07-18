@@ -31,23 +31,13 @@
 
 (declare expand)
 (defn atomize [term]
-  (cond (= term 'value)
-        ,(rand-nth ind/VALUE-LIST)
-        (= term 'radius)
-        ,(rand-nth ind/RADIUS-LIST)
-        (= term 'pill)
-        ,(rand-nth ind/PILL-LIST)
-        (= term 'superpill)
-        ,(rand-nth ind/SUPERPILL-LIST)
-        (= term 'blue)
-        ,(rand-nth ind/BLUE-LIST)
-        (= term 'x)
-        ,(rand-nth ind/X-LIST)
-        (= term 'y)
-        ,(rand-nth ind/Y-LIST)  
+  (cond (= term 'entity)
+        ,(rand-nth ind/ENTITY-LIST)
         (symbol? term)
         ,`~term
         (number? term)
+        ,term
+        (empty? term)
         ,term
         :else
         ,(expand term 1)))
@@ -74,8 +64,8 @@
                              (expand (rand-nth ind/FUNCTION-LIST)
                                      (dec depth))
                              ())
-                          point
-                          ,(expand (rand-nth ind/POINT-LIST)
+                          bool
+                          ,(expand (rand-nth ind/BOOLEAN-LIST)
                                    (dec depth))
                           ,(atomize term))]
                 (recur (if (and (= term 'expr+)
@@ -86,7 +76,7 @@
                        (dec expr-width))))))))
 
 (defn create-random-individual []
-  (expand '(do expr+) (inc (rand-int MAX-STARTING-DEPTH))))
+  (expand '(if bool expr expr) (inc (rand-int MAX-STARTING-DEPTH))))
 
 (defn create-random-population []
   (take SIZE-OF-POPULATION (repeatedly #(create-random-individual))))
@@ -120,38 +110,6 @@
     fitness-proportionate (fitness-proportionate-selection population)
     tournament-selection (tournament-selection TOURNAMENT-SIZE population)))
 
-(defn reproduction [parents]
-  (letfn [(reproduce [parent-1 parent-2]
-            (concat '(do)
-                    (take (/ (count (rest parent-1)) 2) (rest parent-1))
-                    (drop (/ (count (rest parent-2)) 2) (rest parent-2))))]
-    (vector (reproduce (first parents) (second parents))
-            (reproduce (second parents) (first parents)))))
-
-(defn find-relevant-expr [loc]
-  (let [l (zip/node (zip/leftmost loc))
-        n (count (zip/lefts loc))
-        expr (first (filter #(and (not (symbol? %))
-                                  (= (first %) l))
-                            ind/EXPR-LIST))
-        c (if (= (second expr) 'expr+)
-            'expr+
-            (nth expr n))]
-    (try
-      (case c 
-        (expr expr? expr+) (rand-nth ind/FUNCTION-LIST)
-        pill (rand-nth ind/PILL-LIST)
-        superpill (rand-nth ind/SUPERPILL-LIST)
-        point (rand-nth ind/POINT-LIST)
-        blue (rand-nth ind/BLUE-LIST)
-        value (rand-nth ind/VALUE-LIST)
-        radius (rand-nth ind/RADIUS-LIST)
-        x (rand-nth ind/X-LIST)
-        y (rand-nth ind/Y-LIST))
-      (catch java.lang.IllegalArgumentException e
-        (throw (java.lang.IllegalArgumentException.
-                (format "\n###\nL: %s\nN: %s\nE: %s\nC: %s\n###" l n expr c) e))))))
-
 (defn select-random-node [tree]
   (if-not (seq? tree)
     (zip/seq-zip tree)
@@ -169,22 +127,40 @@
                       val)
                     (inc n))))))
 
+(defn reproduction [parents]
+  (letfn [(reproduce [parent-1 parent-2]
+            (let [f (select-random-node parent-1)
+                  s (select-random-node parent-2)]
+              (zip/root (zip/replace f (zip/node s)))))]
+    (vector (reproduce (first parents) (second parents))
+            (reproduce (second parents) (first parents)))))
+
+(defn find-relevant-expr [loc]
+  (let [l (zip/node (zip/leftmost loc))
+        n (count (zip/lefts loc))
+        expr (first (filter #(and (not (symbol? %))
+                                  (= (first %) l))
+                            ind/EXPR-LIST))
+        c (if (= (second expr) 'expr+)
+            'expr+
+            (nth expr n))]
+    (try
+      (case c 
+        (expr expr? expr+) (rand-nth ind/FUNCTION-LIST)
+        bool (rand-nth ind/BOOLEAN-LIST)
+        entity (rand-nth ind/ENTITY-LIST))
+      (catch java.lang.IllegalArgumentException e
+        (throw (java.lang.IllegalArgumentException.
+                (format "\n###\nL: %s\nN: %s\nE: %s\nC: %s\n###" l n expr c) e))))))
+
 (defn mutation [tree]
-  (case (rand-nth ['replace 'remove 'insert])
-    replace (let [original (select-random-node tree)
-                  replacement (expand (if (empty? (rest tree))
-                                        (create-random-individual)
-                                        (find-relevant-expr original))
-                                      (inc (rand-int MUTATION-DEPTH)))]
-              (zip/root
-               (zip/replace original replacement)))
-    remove (conj (let [r (rest tree)
-                       l (split-at (rand-int (count r)) r)]
-                   (concat (first l) (rest (second l))))
-                 (first tree))
-    insert (zip/root (zip/insert-right (zip/down (zip/seq-zip tree))
-                                       (expand (rand-nth ind/FUNCTION-LIST)
-                                               (inc (rand-int MUTATION-DEPTH)))))))
+  (let [original (select-random-node tree)
+        replacement (expand (if (empty? (rest tree))
+                              (create-random-individual)
+                              (find-relevant-expr original))
+                            (inc (rand-int MUTATION-DEPTH)))]
+    (zip/root
+     (zip/replace original replacement))))
 
 (defn recombination [elitism population]
   (loop [indivs (- SIZE-OF-POPULATION elitism)

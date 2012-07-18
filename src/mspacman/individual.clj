@@ -1,42 +1,54 @@
 (ns mspacman.individual
   (:require [clojure.tools.logging :only (info) :as log]))
 
-(import '(no.uib.bjo013.mspacman Game GfxMsPacman))
+(import '(no.uib.bjo013.mspacman NOAGame GfxMsPacman))
 (import javax.swing.JFrame)
-(import '(java.awt BorderLayout Point))
+(import '(java.awt BorderLayout event.KeyEvent))
 
 (def ^:dynamic msp nil)
+(def ENTITY-LIST '(mspacman
+                   blinky
+                   pinky
+                   inky
+                   sue
+                   closest-pill
+                   closest-superpill
+                   closest-blue
+                   farthest-blue
+                   farthest-superpill))
+(def BOOLEAN-LIST '((msp-check-area-below entity)
+                    (msp-check-area-above entity)
+                    (msp-check-area-leftof entity)
+                    (msp-check-area-rightof entity)
+                    (or bool bool)
+                    (and bool bool)))
+(def FUNCTION-LIST '((if bool expr)
+                     (if bool expr expr)
+                     (move-down)
+                     (move-up)
+                     (move-left)
+                     (move-right)
+                     (direction-of entity)
+                     (oposite-direction-of entity)
+                     ()))
+(def EXPR-LIST (concat BOOLEAN-LIST
+                       FUNCTION-LIST))
 
-(def VALUE-LIST (concat [100 1000 10000 100000 1000000 10000000 100000000
-                         1000000000 Integer/MAX_VALUE]
-                        [-100 -1000 -10000 -100000 -1000000 -10000000 -100000000
-                         -1000000000 Integer/MIN_VALUE]
-                        (range -100 100)))
-(def RADIUS-LIST (range 0 288))
-(def X-LIST (range -224 224))
-(def Y-LIST (range -288 288))
-(def FUNCTION-LIST '((adjust-point point value)
-                     (adjust-neighbor point radius value)))
-(def PILL-LIST (range 0 220))
-(def SUPERPILL-LIST (range 0 4))
-(def BLUE-LIST (range 0 4))
-(def POINT-LIST '((get-mspacman)
-                  (get-blinky)
-                  (get-pinky)
-                  (get-inky)
-                  (get-sue)
-                  (get-pill pill)
-                  (get-superpill superpill)
-                  (get-blue blue)
-                  (translate-point point x y)))
-(def EXPR-LIST (concat '((do expr+))
-                       FUNCTION-LIST
-                       POINT-LIST))
-
+(def mspacman 0)
+(def blinky 1)
+(def pinky 2)
+(def inky 3)
+(def sue 4)
+(def closest-pill 5)
+(def closest-superpill 6)
+(def closest-blue 7)
+(def farthest-blue 8)
+(def farthest-superpill 9)
 
 (defmacro msp-defn [name args & body]
   `(defn ~name ~args
-     (try (try ~@body (catch NullPointerException f#))
+     (try (try ~@body (catch NullPointerException f#
+                        (println f#)))
        (catch Exception e#
          (println (format "%s threw exception: " ~name))
          (throw e#)))))
@@ -44,50 +56,35 @@
 (defmacro get-map [f]
   `(~f (.getMap msp)))
 
-(msp-defn get-mspacman []
-  (get-map .getMsPacman))
+(msp-defn move-down []
+  KeyEvent/VK_DOWN)
+(msp-defn move-up []
+  KeyEvent/VK_UP)
+(msp-defn move-left []
+  KeyEvent/VK_LEFT)
+(msp-defn move-right []
+  KeyEvent/VK_RIGHT)
 
-(msp-defn get-blinky []
-  (get-map .getBlinky))
+(msp-defn msp-check-area-below [entity]
+  (.checkArea (.getMap msp) entity 0 1))
+(msp-defn msp-check-area-above [entity]
+  (.checkArea (.getMap msp) entity 0 -1))
+(msp-defn msp-check-area-leftof [entity]
+  (.checkArea (.getMap msp) entity -1 0))
+(msp-defn msp-check-area-rightof [entity]
+  (.checkArea (.getMap msp) entity 1 0))
 
-(msp-defn get-pinky []
-  (get-map .getPinky))
+(msp-defn direction-of [entity]
+  (.directionOf (.getMap msp) entity))
 
-(msp-defn get-inky []
-  (get-map .getInky))
+(msp-defn oposite-direction-of [entity]
+  (.opositeDirectionOf (.getMap msp)  entity))
 
-(msp-defn get-sue []
-  (get-map .getSue))
-
-(msp-defn get-pill [n]
-  (.get (get-map .getPills) (Integer. n)))
-
-(msp-defn get-superpill [n]
-  (.get (get-map .getSuperPills) (Integer. n)))
-
-(msp-defn get-blue [n]
-  (try (.get (get-map .getBlueGhosts) 0)
-       (catch IndexOutOfBoundsException e)))
-
-
-(msp-defn set-target [^Point point]
-  {:pre [(= Point (type point))]}
-  (.setTarget msp point))
-
-(msp-defn adjust-point [point n]
-  (when (= Point (type point))
-    (.adjustScore msp point (double n))))
-
-(msp-defn adjust-neighbor [origin radius value]
-  (when (= Point (type origin))
-    (.adjustNeighbors msp origin radius (double value))))
-
-(msp-defn translate-point [^Point point ^Number x ^Number y]
-  (when (= Point (type point))
-    (Point. (+ x (.x point)) (+ y (.x point)))))
+(defn set-direction! [direction]
+ (.setDirection msp direction))
 
 (defn fitness [tries code time]
-  (binding [msp (Game. time)]
+  (binding [msp (NOAGame. time)]
     (loop [[score time] [0 0]
            times 0] 
       (if (or (<= tries times)
@@ -99,14 +96,14 @@
             (.update msp)
             (recur
              (do (while (not (.isGameOver msp))
-                   (eval`~code)
+                   (set-direction! (eval code))
                    (.update msp))
                  [(+ (.getScore msp) score)
                   (+ (.getTime msp) time)])
              (inc times)))))))
 
 (defn fitness-graphic [tries code time]
-  (binding [msp (Game. time)]
+  (binding [msp (NOAGame. time)]
     (let [gfx (doto (GfxMsPacman. (.initialize msp))
                 (.setSize 224 (+ 288 22)))
           frame (doto (JFrame.)
@@ -133,7 +130,7 @@
           (do (.setBitmap gfx (.start msp))
               (recur 
                (do (while (and (not (.isGameOver msp)))
-                     (eval `~code)
+                     (set-direction! (eval code))
                      (.setBitmap gfx (.update msp))
                      (locking gfx
                        (.notify gfx)))
