@@ -30,10 +30,6 @@
             (transient {})
             (map match-groups string-list)))))
 
-(defn get-data-for [machine]
-  (for [file (range 100)]
-    (read-string (slurp (format "MN121037.klientdrift.uib.no_generation_%tL.txt" (long file))))))
-
 (defn get-all-files [path]
   (remove nil?
           (map #(if (.isFile %) (.getName %))
@@ -41,20 +37,37 @@
 
 (defn group-files [path]
   (let [files (get-all-files path)]
-    (group-by-matching #"(\w\w\d{6}\.klientdrift\.uib\.no).+\d{3}\.txt" files)))
+    (group-by-matching #"(\w\w\d{6}).+\d{3}\.txt" files)))
 
 (defn convert-data [path]
   (let [data (group-files path)]
      (doseq [machine (keys data)
-             :let [prd (for [mdata (sort (get data machine))]
-                         (let  [d (sort > (map :fitness
-                                               (read-string
-                                                (slurp (format "%s/%s" path mdata)))))]
-                           (first d)))]]
-       (spit (format "/Users/bjarte/Dropbox/master/generation-data/clean-data/%s-%s.best.txt"
-                     (second (re-find #"[a-z]+(\d+)" (.getName (File. path))))
-                     (second (re-find #"(^\w\w\d{6}).+" machine)))
-             (reduce (fn [string [idx dat]]
-                       (str string idx " " dat "\n"))
-                     ""
-                     (map-indexed vector prd))))))
+             :let [data (for [mdata (sort (get data machine))]
+                          (sort > (map :fitness
+                                       (let [population
+                                             (read-string
+                                              (slurp (format "%s/%s" path mdata)))]
+                                         (if-not (:population population)
+                                           population
+                                           (:population population))))))
+                   best (map first data)
+                   average (map #(int (/ (reduce + %) (count %))) data)
+                   filename "/Users/bjarte/Dropbox/master/generation-data/clean-data/%s-%s.%s.txt"
+                   date (second (re-find #"[a-z]+(\d+)" (.getName (File. path))))
+                   mname (second (re-find #"(^\w\w\d{6}).*" machine))
+                   f (fn [dat] (reduce (fn [string [idx dat]]
+                                         (str string idx " " dat "\n"))
+                                       ""
+                                       (map-indexed vector dat)))]]
+       (spit (format filename date mname "best")
+             (f best))
+       (spit (format filename date mname "average")
+             (f average)))))
+
+(defn convert-all-data [path]
+  (doall
+   (pmap convert-data
+         (remove nil?
+                 (map #(if (.isDirectory %) (.getAbsolutePath %))
+                      (vec (.listFiles (File. path)))))))
+  (println 'done))
