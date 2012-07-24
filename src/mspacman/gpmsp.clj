@@ -172,12 +172,16 @@
 (defn mutation [tree]
   (case (rand-nth ['replace 'remove 'insert])
     replace (let [original (select-random-node tree)
-                  replacement (expand (if (empty? (rest (zip/root tree)))
+                  replacement (expand (if (empty? (rest tree))
                                         (create-random-individual)
                                         (find-relevant-expr original))
                                       (inc (rand-int MUTATION-DEPTH)))]
-              (zip/root
-               (zip/replace original replacement)))
+              (println "O:" original)
+              (println "R:" replacement)
+              (if (empty? (rest tree))
+                replacement
+                (zip/root
+                 (zip/replace original replacement))))
     remove (conj (let [r (rest tree)
                        l (split-at (rand-int (count r)) r)]
                    (concat (first l) (rest (second l))))
