@@ -176,8 +176,6 @@
                                         (create-random-individual)
                                         (find-relevant-expr original))
                                       (inc (rand-int MUTATION-DEPTH)))]
-              (println "O:" original)
-              (println "R:" replacement)
               (if (empty? (rest tree))
                 replacement
                 (zip/root
