@@ -11,17 +11,17 @@
 
 (defstruct individual :program :fitness :time)
 
-(def SIZE-OF-POPULATION 300)
+(def SIZE-OF-POPULATION 500)
 (def ELITISM-RATE 0.00)
 (def NUMBER-OF-GENERATIONS 1000)
 (def MAX-STARTING-DEPTH 10)
-(def MAX-STARTING-WIDTH-OF-EXPR 10)
-(def MUTATION-RATE 0.15)
-(def REPRODUCTION-RATE 0.75)
-(def MUTATION-DEPTH 3)
+(def MAX-STARTING-WIDTH-OF-EXPR 20)
+(def MUTATION-RATE 0.3)
+(def REPRODUCTION-RATE 0.69)
+(def MUTATION-DEPTH 5)
 (def RAND-INT-RATE 0.25)
 (def EXPR?-RATE 0.50)
-(def FITNESS-RUNS 8)
+(def FITNESS-RUNS 16)
 
 (def SELECTION 'fitness-proportionate)
 (def TOURNAMENT-SIZE 10)
@@ -213,7 +213,7 @@
         std (Math/sqrt (/ (reduce + (map #(Math/pow % 2)
                                          (map #(- % mean) times)))
                 SIZE-OF-POPULATION))
-        time (long (+ mean (* 2 std)))]
+        time (long (+ mean (* 4 std)))]
     (if (< time 30000)
       30000
       time)))
