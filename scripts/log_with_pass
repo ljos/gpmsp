@@ -1,0 +1,11 @@
+#!/usr/bin/expect -f
+set timeout 10
+set machine [lindex $argv 0]
+set command [lindex $argv 1]
+spawn -noecho ssh -oConnectTimeout=10 -oStrictHostKeyChecking=no -oPubkeyAuthentication=no $machine $command
+expect "*?assword*"
+send -- "**********"
+send -- "\r"
+send -- "logout"
+send -- "\r"
+expect eof

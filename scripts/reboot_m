@@ -1,0 +1,7 @@
+#!/usr/bin/expect -f
+set timeout 10
+spawn -noecho sudo reboot
+expect "*?assword*"
+send -- "**********"
+send -- "\r"
+expect eof

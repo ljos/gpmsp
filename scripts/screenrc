@@ -1,0 +1,2 @@
+logfile log/%H.log
+startup_message off

@@ -1,0 +1,2 @@
+#!/bin/bash
+screen -d -m ~/.lein/bin/lein run -m mspacman.server/start-server

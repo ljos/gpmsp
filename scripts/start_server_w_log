@@ -1,0 +1,2 @@
+#!/bin/bash
+start_server 2>&1|tee ~/log/$(hostname -s|tr [A-Z] [a-z]).log

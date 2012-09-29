@@ -1,0 +1,2 @@
+#!/bin/bash
+~/scripts/run-on-all "~/scripts/start_server"

@@ -1,0 +1,9 @@
+#!/bin/bash
+if [ -z $(pgrep unity-greeter) ]
+then 
+    echo "user here"
+    exit 1
+else
+    echo "reboot!"
+    reboot_m
+fi;
