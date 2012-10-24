@@ -1,0 +1,492 @@
+#+STARTUP: showall indent hidestars beamer
+#+COLUMNS: %40ITEM %10BEAMER_env(Env) %9BEAMER_envargs(Env Args) %4BEAMER_col(Col) %10BEAMER_extra(Extra)
+#+LATEX_CLASS: beamer
+#+BEAMER_FRAME_LEVEL: 2
+
+#+LATEX_HEADER: \usepackage{qtree}
+
+#+LATEX_HEADER: \usetheme{default}
+#+LATEX_HEADER: \usecolortheme{seahorse}
+#+LATEX_HEADER: \useinnertheme{default}
+#+LATEX_HEADER: \useoutertheme{infolines}
+
+#+LATEX_HEADER: \institute[Dept. of InfoMedia]{Department of Information Science and Media Studies \\ University of Bergen}
+
+#+BEAMER_HEADER_EXTRA: \title[GP in Non-Determinstic Games]{Using Genetic Programming for Agents in Non-Deterministic Games}
+#+BEAMER_HEADER_EXTRA: \beamertemplatenavigationsymbolsempty 
+#+AUTHOR: Bjarte Johansen
+
+* Introduction
+** Introduction
+In 2007 a competition for creating agents that play Ms. Pac-Man started at the
+“IEEE Congress on Evolutionary Computation 2007”. The goal was to beat the
+standing world record (for humans) of 921,360 points made by Abdner Ashman
+in 2005. No machine has beaten that score yet; only receiving 36,280 points in
+the game.
+** Motivation
+The motivation for the thesis has been to
+1. Explore the use of Genetic Programming in non-deterministic games.
+2. Experiment with distributed parallel processing.
+3. Make agents that can play as well or better then humans.
+* Ms. Pac-Man
+** Ms. Pac-Man
+*** text                                              :BMCOL:B_ignoreheading:
+:PROPERTIES:
+:BEAMER_col: 0.55
+:BEAMER_env: ignoreheading
+:END:
+Ms. Pac-Man
+- is an arcade game.
+- was release in 1982 by Midway.
+- is a modification of Pac-Man; another popular game.
+*** figure                                            :BMCOL:B_ignoreheading:
+:PROPERTIES:
+:BEAMER_col: 0.45
+:BEAMER_env: ignoreheading
+:END:
+#+ATTR_LATEX: width=\textwidth
+[[./graphics/mspacman1.png]]
+** Why is Ms. Pac-Man interesting?
+*** text                                            :B_ignoreheading:BMCOL:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:BEAMER_col: 0.55
+:END:
+Ms. Pac-Man is an interesting game because
+- it is non-deterministic.
+- it has simple rules and a well-defined goal.
+- but also has plenty of variation.
+*** figure                                          :B_ignoreheading:BMCOL:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:BEAMER_col: 0.45
+:END:
+#+ATTR_LATEX: width=\textwidth
+[[./graphics/mspacman2.png]]
+** The Ms. Pac-Man competition
+#+BEGIN_table [ht]
+\small
+|      | Default | Wirth   | Handa   | Elno    |
+|------+---------+---------+---------+---------|
+|      | 1,330   | 1,120   | 1,000   | 650     |
+|      | 230     | 820     | 1,300   | 1,040   |
+|      | 1,940   | 780     | 2,170   | 1,310   |
+|      | 2,390   | 1,250   | 1,760   | 1,790   |
+|      | 2,990   | 3,370   | 1,880   | 1,360   |
+|      | 2,060   | 1,700   | 1,310   | 680     |
+|      | 3,810   | 1,490   | 2,270   | 620     |
+|      | 3,140   | 1,990   | 2,270   | 620     |
+|      | 3,149   | 1,990   | 2,210   | 1,830   |
+|      | 1,010   | 1,380   | 1,700   | 1,370   |
+|      | 1,990   | 2,830   | 1,910   | 1,160   |
+|------+---------+---------+---------+---------|
+| Max  | *3,810* | *3,370* | *2,270* | *1,830* |
+| Mean | *2,269* | *1,673* | *1,751* | *1,181* |
+\caption{Results from the 2007 competition.}
+\label{tab:2011comp}
+#+END_table
+** The Ms. Pac-Man competition
+#+BEGIN_table [ht]
+\small
+|                   | Bruce    | Kyong-Joong | Nozomu   | Ruck     | TsungChe   |
+|-------------------+----------+-------------+----------+----------+------------|
+|                   | 12,180   | 5,070       | 23,870   | 12,290   | 6,350      |
+|                   | *13,700* | 8,300       | 20,150   | 19,330   | 8,420      |
+|                   | 12,640   | *19,900*    | 30,200   | 21,250   | 7,770      |
+|                   | 3,240    | 6,560       | *36,280* | 23,690   | 16,790     |
+| Prior 10 runs     | 7,570    | 9,020       | 21,410   | 13,660   | *20,300*   |
+|                   | 5,370    | 13,900      | 16,830   | 9,110    | 13,880     |
+|                   | 7,960    | 8,549       | 32,310   | 15,760   | 7,310      |
+|                   | 12,180   | 7,690       | 20,640   | 24,060   | 8,350      |
+|                   | 3,880    | 16,600      | 31,940   | 25,420   | 14,520     |
+|                   | 6,790    | 12,750      | 24,580   | 15,730   | 19,810     |
+|-------------------+----------+-------------+----------+----------+------------|
+|                   | 6,800    | /(15,760)/  | 24,460   | 21,860   | /(12,840)/ |
+| Live session runs | 5,930    | /(12,360)/  | 16,130   | *27,240* | /(4,920)/  |
+|                   | 5,180    | 12,380      | 18,530   | 5,440    | 5,710      |
+|-------------------+----------+-------------+----------+----------+------------|
+| Max               | *13,700* | *19,900*    | *36,280* | *27,240* | *20,300*   |
+| Mean              | *7,955*  | *11,448*    | *24,341* | *18,065* | *11,305*   |
+| \multicolumn{4}{l}{\footnotesize Note: Entries in parentheses was run after the live event.} | \\
+\caption{Results from the 2011 competition.}
+\label{tab:2011comp}
+#+END_table
+* Genetic Programming
+** Genetic Programming
+We will now look at the key parts of Genetic Programming
+- Representation.
+- Initialization.
+- Fitness evaluation.
+- Selection.
+- Recombination.
+** Representation
+There are a couple of things needed to represent a program in GP
+*** Function set
+The function set provides a list of functions to build the programs with.
+*** Terminal set
+The terminal set provides a set of variables and end nodes to the program.
+*** Sufficiency
+The primitive set needs to be complete enough that it can represent most if not
+all of the problem space.
+** Initialization
+The creation of a new population can happen in several different ways. The
+easiest and maybe most common are
+*** Types                                           :B_ignoreheading:BMCOL:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:BEAMER_col: 0.55
+:END:
+**** Full                                                           
+Produces "full" trees.
+**** Grow
+Produces trees with branches that might terminate before they reach full depth.
+**** Ramped half-and-half
+A mix between full and grow.
+*** Trees                                           :BMCOL:B_ignoreheading:
+:PROPERTIES:
+:BEAMER_col: 0.45
+:BEAMER_env: ignoreheading
+:END:
+#+LATEX: \Tree [.* [.* z 4 ] [.+ 7 x ] ] 
+#+LATEX: \vspace{20px}
+#+LATEX: \Tree [.* y [.- x 1 ]]
+** Fitness Evaluation
+The fitness evaluation needs to 
+- conform to the task at hand.
+- determine how well a single programs is performing.
+- return a metric on the performance of the programs.
+** Selection
+Selection depends on the fitness evaluation to be able to order and select new
+individuals for inclusion in a new generation. Selection can happen in a
+multitude of different ways. E.g.
+- Rank-based selection
+- Fitness proportionate selection.
+- Tournament selection
+- etc.
+** Recombination
+Recombination uses the individuals from the selection step to create new
+individuals for a new generation. There are 3 main ways of doing that
+*** Reproduction
+Copying an individual into the new generation.
+*** Mutation
+Changing a sub-tree in an individual.
+*** Crossover
+Swapping sub-trees between two or more individuals.
+* Design and Development
+** Design and Development
+We will no look at the design and development of the system
+- Requirements
+- System Diagram
+- The Genetic Programming Library
+- The Emulator
+- The Distribution Framework
+- Tools
+** Requirements
+The agents from the GP library should follow the rules of the competition
+1. The program should interact with the game by capturing screen pixels.
+2. The program should not noticeably slow down the game.
+3. The program will have three attempts at playing the game.
+\vspace{11px}
+The only rule that we do not strictly follow is rule number 3.
+** System Diagram
+#+ATTR_LATEX: width=\textwidth
+[[./graphics/system-diagram.pdf]]
+** The Genetic Programming Library
+*** text                                            :B_ignoreheading:BMCOL:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:BEAMER_col: 0.55
+:END:
+- Initializes the population with the grow method.
+- Tests each individuals performance in the game.
+- Fitness proportionate selection.
+**** Recombines selected individuals
+***** mutation
+- removing
+- adding
+- replacing
+***** crossover
+***** reproduction
+**** Back to testing.
+*** diagram                                         :B_ignoreheading:BMCOL:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:BEAMER_col: 0.45
+:END:
+#+ATTR_LATEX: width=\textwidth
+[[./graphics/gpframeworkdiagram.pdf]]
+** The Emulator
+The emulator runs an old binary of the original Ms. Pac-Man game. It has
+received /some/ modification for use with the GP-library. It can now
+- run in headless mode
+- have multiple instances running next to each other.
+- calculate and return a more discrete map then just the pixel values.
+- calculate shortest paths using A*.
+** The Distribution Framework
+The Distribution Framework is a set of tools to make it easier to distribute the
+calculation of the fitness of the agents onto a larger machine park.
+*** The servers
+receives the agents and calculates their fitness score.
+*** The client
+does the initialization, recombination and selection of individuals before
+splitting up the population and sending the smaller parts to the servers.
+** Tools
+A large set of tools have been used to complete the project. These include
+- Java
+- CottAGE
+- Clojure
+- SSH
+- clojure-control
+- github
+* Iterations
+** Iterations
+We will now look at the iterations and experiments that where done in them.
+*** Iteration 1
+- Experiment
+*** Iteration 2
+- Experiment
+*** Iteration 3
+- Experiment
+*** Iteration 4
+- Experiment 1
+- Experiment 2
+** Iteration 1
+*** text                                            :B_ignoreheading:BMCOL:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:BEAMER_col: 0.55
+:END:
+The focus of iteration 1 was to
+**** figure out the emulator.
+- remove dependency on GUI.
+- run it in the background.
+- minimal API for the GP Library.
+**** create a preliminary GP Library.
+- minimal primitive set.
+- a recombination operator; mutation.
+- fitness function.
+- selection; fitness proportionate selection.
+*** figure                                          :B_ignoreheading:BMCOL:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:BEAMER_col: 0.45
+:END:
+=(move-left)=, =(move-right)=, =(move-up)=, =(move-down)=, \\
+=(do expr+)=, \\
+=(get-pixel int int)=, =(get-pixels)=, \\
+=(if expr expr expr?)=,
+=(rand-int 288)=,
+~(= expr+)~, \\ =(msp> expr+)=, =(msp< expr+)=,
+=(or expr+)=, =(and expr+)=,
+=(msp-sleep)=,
+=int=, =()=
+** Iteration 1 > Experiment
+*** text                                            :B_ignoreheading:BMCOL:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:BEAMER_col: 0.55
+:END:
+The experiments on iteration 1 showed that
+- the agents could play Ms. Pac-Man.
+- the emulator could run in the background.
+- the agents could also improve over generations.
+*** figure                                          :B_ignoreheading:BMCOL:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:BEAMER_col: 0.45
+:END:
+#+ATTR_LATEX: width=\textwidth
+[[./generation-data/clean-data/graphs/111125-MN121033.png]]
+** Iteration 2
+*** text                                            :B_ignoreheading:BMCOL:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:BEAMER_col: 0.55
+:END:
+The focus of iteration 2 was to
+- increase the primitive set size.
+- reduce the problem space for the algorithm.
+- remove side-effects from the agents.
+- reduce the need for timing.
+- implement elitism.
+- implement crossover.
+- implement more mutation operators.
+- enable distribution of calculation.
+*** figure                                          :B_ignoreheading:BMCOL:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:BEAMER_col: 0.45
+:END:
+=mspacman=, =blinky=, =pinky=, =sue=, =pills=, =walls=, =walkway=,
+=(msp-check-area-* entity)=,
+=(msp-relative-distance entity item)= \\
+=(msp-closer? entity item)=
+** Iteration 2 > Experiment
+*** text                                            :B_ignoreheading:BMCOL:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:BEAMER_col: 0.55
+:END:
+The experiments from iteration 2 showed 
+- that the current implementation of the system was stable.
+- an interesting point about elitism.
+- a problem with some of the optimization that was done.
+*** figure                                          :B_ignoreheading:BMCOL:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:BEAMER_col: 0.45
+:END:
+#+ATTR_LATEX: width=\textwidth
+[[./generation-data/clean-data/graphs/120110-mn121035.png]]
+** Iteration 3
+*** text                                            :B_ignoreheading:BMCOL:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:BEAMER_col: 0.55
+:END:
+The focus of iteration 3 was to
+**** narrow the search space further.
+- Introduce A*.
+- make map more discrete.
+**** discover a bug in the move code.
+Which was subsequently fixed.
+**** speed up the emulator.
+*** figure                                          :B_ignoreheading:BMCOL:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:BEAMER_col: 0.45
+:END:
+=(set-target point)=, =(adjust-point point n)=, =(adjust-neighbor origin radius
+value)=,\\ =(trans-point point x y)=, =(get-*)=
+** Iteration 3 > Experiment
+*** text                                            :B_ignoreheading:BMCOL:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:BEAMER_col: 0.55
+:END:
+The experiments from iteration 3 showed
+- a bug that affected stability in the servers.
+- a marked improvement over previous generations.
+- promise.
+*** figure                                          :B_ignoreheading:BMCOL:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:BEAMER_col: 0.45
+:END:
+#+ATTR_LATEX: width=\textwidth
+[[./generation-data/clean-data/graphs/120419-mn121034.png]]
+** Iteration 4
+*** text                                            :B_ignoreheading:BMCOL:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:BEAMER_col: 0.55
+:END:
+The focus of iteration 4 was to
+- fix the problems with instability in iteration 3.
+- test the old ideas with the bug in the movement code removed.
+- optimize the worst hot spots in the code.
+*** figure                                          :B_ignoreheading:BMCOL:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:BEAMER_col: 0.45
+:END:
+#+ATTR_LATEX: width=\textwidth
+[[./graphics/astar.png]]
+
+** Iteration 4 > Experiment 1
+*** text                                            :B_ignoreheading:BMCOL:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:BEAMER_col: 0.55
+:END:
+In this experiment in iteration 4 the object was to test if the promising
+results from iteration 3 would be real. The results showed
+- an almost picture perfect continuation of iteration 3.
+- the highest scores for any experiment; an average of 9,848 points with a top
+  score of 11,890.
+- a loss in diversity for older generations.
+*** figure                                          :B_ignoreheading:BMCOL:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:BEAMER_col: 0.45
+:END:
+#+ATTR_LATEX: width=\textwidth
+[[./generation-data/clean-data/graphs/120718-mn121033.png]]
+** Iteration 4 > Experiment 2
+*** text                                            :B_ignoreheading:BMCOL:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:BEAMER_col: 0.55
+:END:
+This experiment was done to test the ideas from iteration 2 with the current bug
+fixes in the movement code. The results showed
+- that the previous approach was valid.
+- problems with a too small primitive set.
+- another effect of elitism/no elitism.
+*** figure                                          :B_ignoreheading:BMCOL:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:BEAMER_col: 0.45
+:END:
+#+ATTR_LATEX: width=\textwidth
+[[./generation-data/clean-data/graphs/120723-mn121033.png]]
+* Evaluation
+** Evaluation
+We will now look at the evaluation of the
+- Genetic Programming Library
+- The Emulator
+- The Distribution Framework
+** Genetic Programming Library
+The strengths of the Genetic Programming Library
+- it performs well.
+- it scales over multiple machines.
+- it is modular.
+- it is easily configurable.
+The weaknesses
+- it is difficult to adapt to new situation.
+- interchanging recombination operators will require some work.
+- parts of it are hardwired into the problem domain.
+** The Emulator
+The strengths of the Emulator are
+- it runs in the background.
+- contains an API for Ms. Pac-Man to make the map more discrete.
+- it runs the original Ms. Pac-Man binaries.
+- it has a faster-then-real-time-mode
+The weaknesses
+- it could use some optimization.
+- a bug that makes it difficult to tell exactly where entities are.
+- other bugs?
+** The Distribution Framework
+The strengths of the Distribution Framework are
+- it is stable.
+- it scales.
+- each component fails gracefully.
+- it doesn't disturb other students (much).
+The weaknesses
+- it can lose data.
+- it lacks security.
+* Conclusion
+** Conclusion
+From the thesis some conclusions can be made
+- A Genetic Programming Library has been made that works for the given task.
+- It is possible to distribute the computing of the GP process over a large
+  machine park.
+- The produced agents are  much better then the first agents from the
+  competition.
+- The agents does however not beat current researchers.
+- Progress has been made, but more research is needed to claim to be better then
+  the currently best agents.
+** What could have been done differently?
+There are some mistakes that have been done that could have allowed for better
+results had I know them at the time I started.
+- I could have spent more time researching to find other GP Libraries.
+- More time could have been spent looking at the emulator in the beginning.
+- A failure was made with staying with clojure-control as a distribution
+  framework for too long.
+** Further work
+- iteration 2.
+- repurpose the GP Library for other tasks.
+- test other methods on the emulator.
+- test other games with the emulator.
+** Questions?
+Thank you for your time.
